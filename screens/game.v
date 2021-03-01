@@ -15,7 +15,7 @@ mut:
 pub fn (mut self Game) load() {
 	props := stages.get_props(self.current_stage)
 	width := props[0].add_width
-	cs :=  props[0].color_scheme
+	cs := props[0].color_scheme
 	self.ground.load(width, cs)
 	self.player.load()
 }

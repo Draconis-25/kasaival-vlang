@@ -2,6 +2,7 @@ module player
 
 import vraylib
 import lyra
+import math
 
 pub struct Core {
 mut:
@@ -23,23 +24,36 @@ pub fn (mut self Core) load() {
 
 [live]
 pub fn (mut self Core) update() {
+	mut dx, mut dy := 0.0, 0.0
 	if vraylib.is_key_down(vraylib.key_right) {
-		self.x += self.speed
+		dx = 1
 	}
 	if vraylib.is_key_down(vraylib.key_left) {
-		self.x -= self.speed
+		dx = -1
 	}
 	if vraylib.is_key_down(vraylib.key_up) {
-		self.y -= self.speed
+		dy = -1
 	}
 	if vraylib.is_key_down(vraylib.key_down) {
-		self.y += self.speed
+		dy = 1
 	}
+	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
+		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
+		mut angle := math.atan2(pos.x - self.x, pos.y - self.y)
+		if angle < 0 {
+			angle += math.pi * 2
+		}
+		dx = math.sin(angle)
+		dy = math.cos(angle)
+	}
+	self.x += f32(dx) * self.speed
+	self.y += f32(dy) * self.speed
 }
 
 [live]
 pub fn (self &Core) draw() {
-	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x, self.y}, 0, 1, vraylib.white)
+	w, h := self.texture.width, self.texture.height
+	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - f32(w) * .5, self.y - h}, 0, 1, vraylib.white)
 }
 
 [live]
