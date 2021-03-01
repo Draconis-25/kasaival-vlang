@@ -1,29 +1,32 @@
 module screens
 
 import vraylib
+import player
+import ground
 
-pub struct Game {}
-
-pub struct Player {
-	pub mut: hi string = "hao"
+pub struct Game {
+mut:
+	player player.Core = player.Core{}
+	ground ground.Core = ground.Core{}
 }
 
-
-[live]
 pub fn (mut self Game) load() {
+	self.ground.load()
+	self.player.load()
 }
 
-[live]
-pub fn (self &Game) update() Next {
-	if vraylib.is_mouse_button_pressed(vraylib.mouse_left_button) {
-	}
+pub fn (mut self Game) update() Next {
+	self.ground.update()
+	self.player.update()
 	return .@none
 }
 
-[live]
 pub fn (self &Game) draw() {
-
+	self.ground.draw()
+	self.player.draw()
 }
 
 pub fn (self &Game) unload() {
+	self.ground.unload()
+	self.player.unload()
 }

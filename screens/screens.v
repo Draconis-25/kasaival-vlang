@@ -34,19 +34,15 @@ pub fn (mut current Current) load() {
 }
 
 pub fn (mut current Current) update() {
+	mut next := Next{}
+	defer {
+		if next != .@none {
+			current.set_screen(next)
+		}
+	}
 	match current.screen {
-		.menu {
-			next := current.menu.update()
-			if next != .@none {
-				current.set_screen(next)
-			}
-		}
-		.game {
-			next := current.game.update()
-			if next != .@none {
-				current.set_screen(next)
-			}
-		}
+		.menu { next = current.menu.update() }
+		.game { next = current.game.update() }
 		.@none {}
 	}
 }
