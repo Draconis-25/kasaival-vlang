@@ -11,7 +11,7 @@ mut:
 	hp      f32 = 100
 	xp      f32 = 0
 	lvl     int = 0
-	speed   int = 2
+	speed   int = 4
 	texture C.Texture2D
 }
 

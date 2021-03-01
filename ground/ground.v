@@ -4,9 +4,9 @@ import vraylib
 import lyra
 
 struct Tile {
-	p1 C.Vector2
-	p2 C.Vector2
-	p3 C.Vector2
+	p1    C.Vector2
+	p2    C.Vector2
+	p3    C.Vector2
 	color C.Color
 }
 
@@ -17,19 +17,30 @@ mut:
 	height f32
 }
 
-pub fn (mut self Core) load() {
+fn get_color(i int, cs [][]int) C.Color {
+	grv := vraylib.get_random_value
+	r := grv(cs[i][0], cs[i][1])
+	g := grv(cs[i][2], cs[i][3])
+	b := grv(cs[i][4], cs[i][5])
+	return C.Color{byte(r), byte(g), byte(b), 255}
+}
+
+pub fn (mut self Core) load(width int, cs [][]int) {
 	gh := f32(lyra.game_height)
 	self.height = gh * .5
 	mut y := gh - self.height
 	w := self.height / self.rows
 	h := w
-	start_x := 0 - w
-	end_x := 0 + 2000 + w
+	start_x := lyra.start_x - w
+	end_x := lyra.start_x + width + w
 	for y < gh + h {
 		mut x := start_x
 		for x < end_x {
-			self.tiles << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w * .5, y}, C.Color{80, 255, 40, 255}}
-			self.tiles << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y + h}, C.Color{80, 0, 40, 255}}
+			mut cs_i := 0
+			self.tiles << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
+				w * .5, y}, get_color(cs_i, cs)}
+			self.tiles << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y +
+				h}, get_color(cs_i, cs)}
 			x += w
 		}
 		y += h
@@ -39,7 +50,6 @@ pub fn (mut self Core) load() {
 [live]
 pub fn (mut self Core) update() {
 }
-
 
 [live]
 pub fn (self &Core) draw() {

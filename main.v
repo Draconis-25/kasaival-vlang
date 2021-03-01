@@ -4,7 +4,6 @@ import vraylib
 import screens
 import lyra
 
-[live]
 fn set_up_camera(mut camera C.Camera2D) {
 	screen_width := f32(vraylib.get_screen_width())
 	screen_height := f32(vraylib.get_screen_height())
@@ -31,7 +30,7 @@ fn main() {
 	vraylib.init_window(800, 650, 'Kasaival')
 	vraylib.set_target_fps(60)
 	mut current := screens.Current{}
-	current.set_screen(.menu)
+	current.set_screen(.game)
 	// loop
 	for {
 		if vraylib.window_should_close() {
