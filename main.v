@@ -4,12 +4,17 @@ import vraylib
 import screens
 import lyra
 
+// the initiale window screen size
+const (
+	screen_width = 800
+	screen_height = 450
+)
 
 fn main() {
 	// init
 	mut camera := C.Camera2D{}
 	camera.target = C.Vector2{0, 0}
-	vraylib.init_window(800, 650, 'Kasaival')
+	vraylib.init_window(screen_width, screen_height, 'Kasaival')
 	vraylib.set_target_fps(60)
 	mut current := screens.Current{}
 	current.set_screen(.game)
