@@ -5,6 +5,7 @@ import player
 import ground
 import background
 import stages
+import lyra
 
 pub struct Game {
 mut:
@@ -23,10 +24,10 @@ pub fn (mut self Game) load() {
 	self.player.load()
 }
 
-pub fn (mut self Game) update() Next {
+pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.background.update()
 	self.ground.update()
-	self.player.update()
+	self.player.update(eye)
 	return .@none
 }
 

@@ -1,64 +1,66 @@
 module screens
 
+import lyra
+
 enum Next {
 	@none
 	menu
 	game
 }
 
-pub struct Current {
+pub struct Core {
 pub mut:
-	screen Next
+	name Next
 	menu   Menu
 	game   Game
 }
 
-pub fn (mut current Current) set_screen(screen_name Next) {
-	current.unload()
-	current.screen = screen_name
-	current.load()
+pub fn (mut self Core) set(screen_name Next) {
+	self.unload()
+	self.name = screen_name
+	self.load()
 }
 
-pub fn (mut current Current) load() {
-	match current.screen {
+pub fn (mut self Core) load() {
+	match self.name {
 		.menu {
-			current.menu = Menu{}
-			current.menu.load()
+			self.menu = Menu{}
+			self.menu.load()
 		}
 		.game {
-			current.game = Game{}
-			current.game.load()
+			self.game = Game{}
+			self.game.load()
 		}
 		.@none {}
 	}
 }
 
-pub fn (mut current Current) update() {
+pub fn (mut self Core) update(mut eye lyra.Eye) {
 	mut next := Next{}
 	defer {
 		if next != .@none {
-			current.set_screen(next)
+			self.set(next)
 		}
 	}
-	match current.screen {
-		.menu { next = current.menu.update() }
-		.game { next = current.game.update() }
+	match self.name {
+		.menu { next = self.menu.update() }
+		.game { next = self.game.update(eye) }
 		.@none {}
 	}
 }
 
-pub fn (mut current Current) draw() {
-	match current.screen {
-		.menu { current.menu.draw() }
-		.game { current.game.draw() }
+pub fn (mut self Core) draw() {
+	match self.name {
+		.menu { self.menu.draw() }
+		.game { self.game.draw() }
 		.@none {}
 	}
 }
 
-pub fn (mut current Current) unload() {
-	match current.screen {
-		.menu { current.menu.unload() }
-		.game { current.game.draw() }
+pub fn (mut self Core) unload() {
+	match self.name {
+		.menu { self.menu.unload() }
+		.game { self.game.unload() }
 		.@none {}
 	}
 }

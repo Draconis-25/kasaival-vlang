@@ -13,11 +13,11 @@ const (
 fn main() {
 	// init
 	mut camera := C.Camera2D{}
-	camera.target = C.Vector2{0, 0}
 	vraylib.init_window(screen_width, screen_height, 'Kasaival')
 	vraylib.set_target_fps(60)
-	mut current := screens.Current{}
-	current.set_screen(.game)
+	mut screen := screens.Core{}
+	screen.set(.game)
+	eye := lyra.Eye{}
 	// loop
 	for {
 		if vraylib.window_should_close() {
@@ -29,16 +29,17 @@ fn main() {
 				vraylib.toggle_fullscreen()
 			}
 			camera.zoom, camera.offset = lyra.get_game_scale()
-			current.update()
+			screen.update(eye)
+			camera.target = C.Vector2{eye.cx, 0}
 			// draw
 			vraylib.begin_drawing()
 			vraylib.begin_mode_2d(camera)
 			vraylib.clear_background(vraylib.black)
-			current.draw()
+			screen.draw()
 			vraylib.end_mode_2d()
 			vraylib.end_drawing()
 		}
 	}
-	current.unload()
+	screen.unload()
 	vraylib.close_window()
 }

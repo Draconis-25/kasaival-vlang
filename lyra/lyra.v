@@ -7,11 +7,8 @@ pub const (
 	game_height = 1080
 	start_x     = -100
 )
-
 pub struct Eye {
-	zoom f32
-	offset_x f32
-	offset_y f32
+	pub mut: cx f32 = 0
 }
 
 pub fn get_game_scale() (f32, C.Vector2) {
