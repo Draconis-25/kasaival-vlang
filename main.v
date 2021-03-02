@@ -16,8 +16,8 @@ fn main() {
 	vraylib.init_window(screen_width, screen_height, 'Kasaival')
 	vraylib.set_target_fps(60)
 	mut screen := screens.Core{}
-	screen.set(.game)
 	eye := lyra.Eye{}
+	screen.load(.game, eye)
 	// loop
 	for {
 		if vraylib.window_should_close() {
@@ -35,7 +35,7 @@ fn main() {
 			vraylib.begin_drawing()
 			vraylib.begin_mode_2d(camera)
 			vraylib.clear_background(vraylib.black)
-			screen.draw()
+			screen.draw(eye)
 			vraylib.end_mode_2d()
 			vraylib.end_drawing()
 		}

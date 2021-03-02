@@ -22,9 +22,8 @@ pub fn (mut self Core) load() {
 	self.y = lyra.game_height * .5 - f32(self.texture.height) * .5
 }
 
-[live]
-pub fn (mut self Core) update(mut eye lyra.Eye) {
-	mut dx, mut dy := f32(0), f32(0)
+fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
+	mut dx, mut dy := 0.0, 0.0
 	if vraylib.is_key_down(vraylib.key_right) {
 		dx = 1
 	}
@@ -39,29 +38,34 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	}
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
-		mut angle := math.atan2(pos.x - self.x, pos.y - self.y)
+		mut angle := math.atan2(pos.x - self.x + eye.cx, pos.y - self.y)
 		if angle < 0 {
 			angle += math.pi * 2
 		}
-		dx = f32(math.sin(angle))
-		dy = f32(math.cos(angle))
+		dx = math.sin(angle)
+		dy = math.cos(angle)
 	}
-	ground_width := 0
+	return f32(dx), f32(dy)
+}
+
+[live]
+pub fn (mut self Core) update(mut eye lyra.Eye) {
+	mut dx, mut dy := get_direction(self, eye)
 	ground_height := 400
 	dx *= self.speed
 	dy *= self.speed
 	x, y := self.x + dx, self.y + dy
-	if (x < eye.cx + lyra.game_width / 5 && eye.cx > lyra.start_x) || (x > eye.cx + lyra.game_width - (lyra.game_width / 5) && eye.cx < ground_width + lyra.start_x + lyra.game_width) {
+	if (x < eye.cx + lyra.game_width / 5 && eye.cx > lyra.start_x) || (x > eye.cx + lyra.game_width - (lyra.game_width / 5) && eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
-    if x < eye.cx + lyra.start_x + self.texture.width || x > eye.cx + lyra.game_width - self.texture.width {
+    if x < eye.cx + lyra.start_x + self.texture.width || x > eye.cx + lyra.game_width - f32(self.texture.width) * .5{
 		dx = 0
 	}
     if y > lyra.game_height {
         self.y = lyra.game_height
 		dy = 0
-    } else if y < lyra.game_height - self.texture.height - 42 - ground_height {
-        self.y = lyra.game_height - self.texture.height - 42 - ground_height
+    } else if y < lyra.game_height - self.texture.height - 42 - eye.gh {
+        self.y = lyra.game_height - self.texture.height - 42 - eye.gh
 		dy = 0
     }
 	self.x += dx

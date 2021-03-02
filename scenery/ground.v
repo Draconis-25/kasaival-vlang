@@ -1,4 +1,4 @@
-module ground
+module scenery
 
 import vraylib
 import lyra
@@ -10,11 +10,10 @@ struct Tile {
 	color C.Color
 }
 
-pub struct Core {
+pub struct Ground {
 mut:
 	tiles  []Tile
 	rows   int = 9
-	height f32
 }
 
 fn get_color(i int, cs [][]int) C.Color {
@@ -25,15 +24,15 @@ fn get_color(i int, cs [][]int) C.Color {
 	return C.Color{byte(r), byte(g), byte(b), 255}
 }
 
-pub fn (mut self Core) load(width int, cs [][]int) {
-	gh := f32(lyra.game_height)
-	self.height = gh * .5
-	mut y := gh - self.height
-	w := self.height / self.rows
+pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
+	eye.gh = lyra.game_height * .5
+	mut y := lyra.game_height - eye.gh
+	w := eye.gh / self.rows
 	h := w
 	start_x := lyra.start_x - w
 	end_x := lyra.start_x + width + w
-	for y < gh + h {
+	eye.gw = start_x + end_x
+	for y < lyra.game_height + h {
 		mut x := start_x
 		for x < end_x {
 			mut cs_i := 0
@@ -48,16 +47,16 @@ pub fn (mut self Core) load(width int, cs [][]int) {
 }
 
 [live]
-pub fn (mut self Core) update() {
+pub fn (mut self Ground) update() {
 }
 
 [live]
-pub fn (self &Core) draw() {
+pub fn (self &Ground) draw() {
 	for tile in self.tiles {
 		vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)
 	}
 }
 
 [live]
-pub fn (self &Core) unload() {
+pub fn (self &Ground) unload() {
 }

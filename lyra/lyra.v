@@ -9,6 +9,8 @@ pub const (
 )
 pub struct Eye {
 	pub mut: cx f32 = 0
+	gw f32 = 1000
+	gh f32 = 400
 }
 
 pub fn get_game_scale() (f32, C.Vector2) {
