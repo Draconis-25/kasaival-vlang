@@ -1,6 +1,5 @@
 module screens
 
-import vraylib
 import player
 import scenery
 import stages
@@ -14,19 +13,20 @@ mut:
 	current_stage stages.StageName = .desert
 }
 
-pub fn (mut self Game) load(eye &lyra.Eye) {
+pub fn (mut self Game) load(mut eye lyra.Eye) {
 	props := stages.get_props(self.current_stage)
 	width := props[0].add_width
 	cs := props[0].color_scheme
 	self.background.load()
-	self.ground.load(eye, width, cs)
-	self.player.load()
+	self.ground.load(mut eye, width, cs)
+	self.player.load()  
 }
 
-pub fn (mut self Game) update(eye &lyra.Eye) Next {
+pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.background.update()
 	self.ground.update()
-	self.player.update(eye)
+	self.player.update(mut eye)
+	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
 	return .@none
 }
 

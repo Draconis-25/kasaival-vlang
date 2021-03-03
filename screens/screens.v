@@ -15,7 +15,7 @@ pub mut:
 	game   Game
 }
 
-pub fn (mut self Core) load(screen_name Next, eye &lyra.Eye) {
+pub fn (mut self Core) load(screen_name Next, mut eye lyra.Eye) {
 	// make sure no screen is loaded
 	self.unload()
 	// set new screen
@@ -28,27 +28,27 @@ pub fn (mut self Core) load(screen_name Next, eye &lyra.Eye) {
 		}
 		.game {
 			self.game = Game{}
-			self.game.load(eye)
+			self.game.load(mut eye)
 		}
 		.@none {}
 	}
 }
 
-pub fn (mut self Core) update(eye &lyra.Eye) {
+pub fn (mut self Core) update(mut eye lyra.Eye) {
 	mut next := Next{}
 	defer {
 		if next != .@none {
-			self.load(next, eye)
+			self.load(next, mut eye)
 		}
 	}
 	match self.name {
 		.menu { next = self.menu.update() }
-		.game { next = self.game.update(eye) }
+		.game { next = self.game.update(mut eye) }
 		.@none {}
 	}
 }
 
-pub fn (mut self Core) draw(eye &lyra.Eye) {
+pub fn (mut self Core) draw(eye lyra.Eye) {
 	match self.name {
 		.menu { self.menu.draw() }
 		.game { self.game.draw(eye) }

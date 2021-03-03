@@ -8,7 +8,7 @@ pub const (
 	start_x     = -100
 )
 pub struct Eye {
-	pub mut: cx f32 = 0
+	pub mut: cx f32
 	gw f32 = 1000
 	gh f32 = 400
 }

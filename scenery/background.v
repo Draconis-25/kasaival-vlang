@@ -19,7 +19,6 @@ pub fn (mut self Background) load() {
 	self.scx = .5
 	self.num = 6
 	for i in 1..self.num + 1 {
-		println(i)
 		self.items << vraylib.load_texture(path + i.str() + ext)
 	}
 }
@@ -31,7 +30,7 @@ pub fn (mut self Background) update() {
 [live]
 pub fn (self &Background) draw(eye &lyra.Eye) {
 	for i, item in self.items {
-		vraylib.draw_texture_ex(item, C.Vector2{lyra.start_x + eye.cx * self.scx * (i + 1) / self.num, 0}, 0, 1, vraylib.white)
+		vraylib.draw_texture_ex(item, C.Vector2{lyra.start_x + eye.cx * self.scx * self.num / (i + f32(self.num) * .5), 0}, 0, 1, vraylib.white)
 	}
 }
 

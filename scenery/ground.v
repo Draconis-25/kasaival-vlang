@@ -7,13 +7,17 @@ struct Tile {
 	p1    C.Vector2
 	p2    C.Vector2
 	p3    C.Vector2
+	mut:
 	color C.Color
 }
 
 pub struct Ground {
 mut:
 	tiles  []Tile
+	grid [][]Tile
+	pos_y []f32
 	rows   int = 9
+	tile_size f32
 }
 
 fn get_color(i int, cs [][]int) C.Color {
@@ -29,16 +33,19 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	mut y := lyra.game_height - eye.gh
 	w := eye.gh / self.rows
 	h := w
+	self.tile_size = h
 	start_x := lyra.start_x - w
 	end_x := lyra.start_x + width + w
 	eye.gw = start_x + end_x
-	for y < lyra.game_height + h {
+	self.grid = [][]Tile{len: self.rows, init: []Tile{}}
+	for i in 0 .. self.rows {
+		self.pos_y << y
 		mut x := start_x
 		for x < end_x {
 			mut cs_i := 0
-			self.tiles << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
+			self.grid[i] << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				w * .5, y}, get_color(cs_i, cs)}
-			self.tiles << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y +
+			self.grid[i] << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y +
 				h}, get_color(cs_i, cs)}
 			x += w
 		}
@@ -50,10 +57,49 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 pub fn (mut self Ground) update() {
 }
 
+fn burn_tile_color(tile Tile, power f32) C.Color {
+	mut r, g, b := tile.color.r, tile.color.g, tile.color.b
+	r = 0
+
+	return C.Color{r, g, b, 255}
+}
+
+
+pub fn (mut self Ground) collide(b []f32, element string, power f32) {
+	mut index := []int{}
+	for i, y in self.pos_y {
+		if y > b[2] && y + self.tile_size < b[3]{
+			index << i
+		}
+	}
+	for i in index {
+		for j, tile in self.grid[i] {
+			mut l := f32(-1)
+			if j % 2 == 0 {
+				l = tile.p1.x
+			}
+			else {
+				l = tile.p2.x
+			}
+			r := tile.p3.x
+			if l < b[1] && r > b[0] {
+				if element == "fire" {
+					self.grid[i][j].color = burn_tile_color(tile, power)
+					
+				}
+				
+			}
+
+		}
+	}
+}
+
 [live]
 pub fn (self &Ground) draw() {
-	for tile in self.tiles {
-		vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)
+	for row in self.grid {
+		for tile in row {
+			vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)
+		}
 	}
 }
 

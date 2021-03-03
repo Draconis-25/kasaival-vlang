@@ -16,8 +16,8 @@ fn main() {
 	vraylib.init_window(screen_width, screen_height, 'Kasaival')
 	vraylib.set_target_fps(60)
 	mut screen := screens.Core{}
-	eye := lyra.Eye{}
-	screen.load(.game, eye)
+	mut eye := lyra.Eye{}
+	screen.load(.game, mut eye)
 	// loop
 	for {
 		if vraylib.window_should_close() {
@@ -29,7 +29,7 @@ fn main() {
 				vraylib.toggle_fullscreen()
 			}
 			camera.zoom, camera.offset = lyra.get_game_scale()
-			screen.update(eye)
+			screen.update(mut eye)
 			camera.target = C.Vector2{eye.cx, 0}
 			// draw
 			vraylib.begin_drawing()

@@ -5,13 +5,17 @@ import lyra
 import math
 
 pub struct Core {
+pub:
+	element string = "fire"
+pub mut:
+	dp f32 = 5
 mut:
 	x       f32
 	y       f32
 	scale   f32 = 1
 	hp      f32 = 100
-	xp      f32 = 0
-	lvl     int = 0
+	xp      f32 
+	lvl     int
 	speed   int = 10
 	texture C.Texture2D
 }
@@ -51,7 +55,6 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 [live]
 pub fn (mut self Core) update(mut eye lyra.Eye) {
 	mut dx, mut dy := get_direction(self, eye)
-	ground_height := 400
 	dx *= self.speed
 	dy *= self.speed
 	x, y := self.x + dx, self.y + dy
@@ -72,10 +75,17 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	self.y += dy
 }
 
+pub fn (self &Core) get_hitbox() []f32 {
+	w := self.texture.width * self.scale
+    h := self.texture.height * self.scale
+    return [self.x - w * 0.5, self.x + w * 0.5, self.y - h * 0.5, self.y + h * .5]
+}
+
+
 [live]
 pub fn (self &Core) draw() {
 	w, h := self.texture.width, self.texture.height
-	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - f32(w) * .5, self.y - h}, 0, 1, vraylib.white)
+	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - f32(w) * .5, self.y - f32(h) * .5}, 0, 1, vraylib.white)
 }
 
 [live]
