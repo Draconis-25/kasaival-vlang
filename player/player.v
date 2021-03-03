@@ -54,6 +54,7 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 
 [live]
 pub fn (mut self Core) update(mut eye lyra.Eye) {
+	w, h := self.texture.width * self.scale * .5, self.texture.height * self.scale * .5
 	mut dx, mut dy := get_direction(self, eye)
 	dx *= self.speed
 	dy *= self.speed
@@ -61,14 +62,14 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	if (x < eye.cx + lyra.game_width / 5 && eye.cx > lyra.start_x) || (x > eye.cx + lyra.game_width - (lyra.game_width / 5) && eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
-    if x < eye.cx + lyra.start_x + self.texture.width || x > eye.cx + lyra.game_width - f32(self.texture.width) * .5{
+    if x < eye.cx + lyra.start_x + w|| x > eye.cx + lyra.game_width - w * .5 {
 		dx = 0
 	}
-    if y > lyra.game_height {
-        self.y = lyra.game_height
+    if y > lyra.game_height - h * .5 {
+        self.y = lyra.game_height - h * .5
 		dy = 0
-    } else if y < lyra.game_height - self.texture.height - 42 - eye.gh {
-        self.y = lyra.game_height - self.texture.height - 42 - eye.gh
+    } else if y < lyra.game_height - h * .4 - eye.gh {
+        self.y = lyra.game_height - h * .4 - eye.gh
 		dy = 0
     }
 	self.x += dx
@@ -77,7 +78,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 
 pub fn (self &Core) get_hitbox() []f32 {	
 	w, h := self.texture.width * self.scale * .5, self.texture.height * self.scale * .5
-    return [self.x - w * 0.5, self.x + w * 0.5, self.y - h * 0.5, self.y + h * .5]
+    return [self.x - w * .5, self.x + w * .5, self.y - h * .5, self.y + h * .5]
 }
 
 
