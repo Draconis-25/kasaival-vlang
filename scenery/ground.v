@@ -94,7 +94,7 @@ fn (mut tile Tile) burn(power f32) {
 pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 	mut index := []int{}
 	for i, y in self.pos_y {
-		if y > b[2] && y + self.tile_size < b[3]{
+		if y < b[3] && y + self.tile_size > b[2]{
 			index << i
 		}
 	}
