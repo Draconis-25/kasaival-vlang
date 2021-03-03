@@ -7,6 +7,7 @@ struct Tile {
 	p1    C.Vector2
 	p2    C.Vector2
 	p3    C.Vector2
+	org_color C.Color
 	mut:
 	color C.Color
 }
@@ -43,26 +44,51 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 		mut x := start_x
 		for x < end_x {
 			mut cs_i := 0
+			mut c := get_color(cs_i, cs)
 			self.grid[i] << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
-				w * .5, y}, get_color(cs_i, cs)}
+				w * .5, y}, c, c}
+			c = get_color(cs_i, cs)
 			self.grid[i] << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y +
-				h}, get_color(cs_i, cs)}
+				h}, c, c}
 			x += w
 		}
 		y += h
 	}
 }
 
+
+fn (mut tile Tile) heal() {
+	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
+	o_r, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
+	if b != o_b {
+		b += byte(f32(o_b - b) * .05)
+	}	
+	if g != o_g {
+		g += byte(f32(o_g - g) * .05)
+	}
+
+	tile.color = C.Color{r, g, b, 255}
+}
+
 [live]
 pub fn (mut self Ground) update() {
+	for row in self.grid {
+		for mut tile in row {
+			tile.heal()
+		}
+	}
 }
 
-fn burn_tile_color(tile Tile, power f32) C.Color {
-	mut r, g, b := tile.color.r, tile.color.g, tile.color.b
-	r = 0
+fn (mut tile Tile) burn(power f32) {
+	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
+	b = 0
+	if g > 100 {
+		g -= 2
+	}
 
-	return C.Color{r, g, b, 255}
+	tile.color = C.Color{r, g, b, 255}
 }
+
 
 
 pub fn (mut self Ground) collide(b []f32, element string, power f32) {
@@ -84,8 +110,8 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 			r := tile.p3.x
 			if l < b[1] && r > b[0] {
 				if element == "fire" {
-					self.grid[i][j].color = burn_tile_color(tile, power)
-					
+					self.grid[i][j].burn(power)
+
 				}
 				
 			}

@@ -75,17 +75,16 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	self.y += dy
 }
 
-pub fn (self &Core) get_hitbox() []f32 {
-	w := self.texture.width * self.scale
-    h := self.texture.height * self.scale
+pub fn (self &Core) get_hitbox() []f32 {	
+	w, h := self.texture.width * self.scale, self.texture.height * self.scale
     return [self.x - w * 0.5, self.x + w * 0.5, self.y - h * 0.5, self.y + h * .5]
 }
 
 
 [live]
 pub fn (self &Core) draw() {
-	w, h := self.texture.width, self.texture.height
-	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - f32(w) * .5, self.y - f32(h) * .5}, 0, 1, vraylib.white)
+	w, h := self.texture.width * self.scale, self.texture.height * self.scale
+	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - w * .5, self.y - h * .5}, 0, 1, vraylib.white)
 }
 
 [live]
