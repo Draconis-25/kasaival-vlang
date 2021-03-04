@@ -6,7 +6,7 @@ import lyra
 
 // the initiale window screen size
 const (
-	screen_width = 800
+	screen_width  = 800
 	screen_height = 450
 )
 

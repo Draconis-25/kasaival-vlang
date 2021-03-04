@@ -11,8 +11,8 @@ enum Next {
 pub struct Core {
 pub mut:
 	name Next
-	menu   Menu
-	game   Game
+	menu Menu
+	game Game
 }
 
 pub fn (mut self Core) load(screen_name Next, mut eye lyra.Eye) {

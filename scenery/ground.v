@@ -4,20 +4,20 @@ import vraylib
 import lyra
 
 struct Tile {
-	p1    C.Vector2
-	p2    C.Vector2
-	p3    C.Vector2
+	p1        C.Vector2
+	p2        C.Vector2
+	p3        C.Vector2
 	org_color C.Color
-	mut:
-	color C.Color
+mut:
+	color     C.Color
 }
 
 pub struct Ground {
 mut:
-	tiles  []Tile
-	grid [][]Tile
-	pos_y []f32
-	rows   int = 9
+	tiles     []Tile
+	grid      [][]Tile
+	pos_y     []f32
+	rows      int = 9
 	tile_size f32
 }
 
@@ -44,15 +44,13 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 		mut x := start_x
 		for x < end_x {
 			mut cs_i := cs.len * (x - start_x) / (end_x - start_x)
-            r := cs_i - int(cs_i)
-            cs_i = vraylib.get_random_value(int(r * 10), 10) / 10 + cs_i
-            
-            if cs_i > cs.len {
-                cs_i = cs.len - 1
+			r := cs_i - int(cs_i)
+			cs_i = vraylib.get_random_value(int(r * 10), 10) / 10 + cs_i
+			if cs_i > cs.len - 1 {
+				cs_i = cs.len - 1
 			}
 			mut c := get_color(int(cs_i), cs)
-			self.grid[i] << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
-				w * .5, y}, c, c}
+			self.grid[i] << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w * .5, y}, c, c}
 			c = get_color(int(cs_i), cs)
 			self.grid[i] << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y +
 				h}, c, c}
@@ -62,17 +60,15 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	}
 }
 
-
 fn (mut tile Tile) heal() {
 	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
 	o_r, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
 	if b != o_b {
 		b += byte(f32(o_b - b) * .05)
-	}	
+	}
 	if g != o_g {
 		g += byte(f32(o_g - g) * .05)
 	}
-
 	tile.color = C.Color{r, g, b, 255}
 }
 
@@ -91,16 +87,13 @@ fn (mut tile Tile) burn(power f32) {
 	if g > 100 {
 		g -= 2
 	}
-
 	tile.color = C.Color{r, g, b, 255}
 }
-
-
 
 pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 	mut index := []int{}
 	for i, y in self.pos_y {
-		if y < b[3] && y + self.tile_size > b[2]{
+		if y < b[3] && y + self.tile_size > b[2] {
 			index << i
 		}
 	}
@@ -109,19 +102,15 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 			mut l := f32(-1)
 			if j % 2 == 0 {
 				l = tile.p1.x
-			}
-			else {
+			} else {
 				l = tile.p2.x
 			}
 			r := tile.p3.x
 			if l < b[1] && r > b[0] {
-				if element == "fire" {
+				if element == 'fire' {
 					self.grid[i][j].burn(power)
-
 				}
-				
 			}
-
 		}
 	}
 }
