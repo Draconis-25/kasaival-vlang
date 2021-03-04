@@ -43,11 +43,17 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 		self.pos_y << y
 		mut x := start_x
 		for x < end_x {
-			mut cs_i := 0
-			mut c := get_color(cs_i, cs)
+			mut cs_i := cs.len * (x - start_x) / (end_x - start_x)
+            r := cs_i - int(cs_i)
+            cs_i = vraylib.get_random_value(int(r * 10), 10) / 10 + cs_i
+            
+            if cs_i > cs.len {
+                cs_i = cs.len - 1
+			}
+			mut c := get_color(int(cs_i), cs)
 			self.grid[i] << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				w * .5, y}, c, c}
-			c = get_color(cs_i, cs)
+			c = get_color(int(cs_i), cs)
 			self.grid[i] << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y +
 				h}, c, c}
 			x += w
