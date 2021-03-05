@@ -10,8 +10,10 @@ const (
 
 struct Branch {
 	deg       int
-	start_pos C.Vector2
-	end_pos   C.Vector2
+	x1 f32
+	y1 f32
+	x2 f32
+	y2 f32
 	w         int
 	h         int
 	mut:
@@ -39,7 +41,7 @@ fn (mut self Core) grow() {
 	prev_row := self.grid[self.current_row]
 	self.current_row++
 	for prev_branch in prev_row {
-		px, py := prev_branch.end_pos.x, prev_branch.end_pos.y
+		px, py := prev_branch.x2, prev_branch.y2
 		w, h := int(f32(prev_branch.w) * .9), int(f32(prev_branch.h) * .9)
 		mut degs := []int{}
 		if split > self.split_chance {
@@ -53,8 +55,8 @@ fn (mut self Core) grow() {
 		for deg in degs {
 			nx := int(px + math.cos(f32(deg) * deg_to_rad) * h)
 			ny := int(py + math.sin(f32(deg) * deg_to_rad) * h)
-			self.grid[self.current_row] <<
-				Branch{deg, C.Vector2{px, py}, C.Vector2{nx, ny}, w, h, lyra.get_color(self.cs)}
+			c := lyra.get_color(self.cs)
+			self.grid[self.current_row] << Branch{deg, px, py, nx, ny, w, h, c}
 		}
 	}
 }
@@ -81,9 +83,7 @@ pub fn (self &Core) collided(element string, dp f32) {
 
 pub fn (self &Core) get_hitbox() []f32 {
 	b := self.grid[0][0]
-	x1, y1 := b.start_pos.x, b.start_pos.y
-	x2, y2 := b.end_pos.x, b.end_pos.y
-	return [x1, x2, y2, y1]
+	return [b.x1, b.x2, b.y2, b.y2]
 }
 
 pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
@@ -94,14 +94,14 @@ pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
 	self.split_angle = [20, 30]
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
-	self.grid[0] << Branch{-90, C.Vector2{x, y}, C.Vector2{x, y - h}, w, h, lyra.get_color(self.cs)}
+	self.grid[0] << Branch{-90, x, y, x, y - h, w, h, lyra.get_color(self.cs)}
 	// grow to current size
 	grow_to_row := vraylib.get_random_value(1, self.max_row)
 	for _ in 1 .. grow_to_row {
 		self.grow()
 	}
-	self.grow_time = 30
-	self.grow_timer = self.grow_time
+	self.grow_time = 100
+	self.grow_timer = vraylib.get_random_value(0, self.grow_time)
 }
 
 pub fn (mut self Core) update() {
@@ -115,9 +115,18 @@ pub fn (mut self Core) update() {
 }
 
 pub fn (self &Core) draw() {
-	for row in self.grid {
+	for i, row in self.grid {
 		for branch in row {
-			vraylib.draw_line_ex(branch.start_pos, branch.end_pos, branch.w, branch.color)
+			x1, y1 := branch.x1, branch.y1
+			mut x2, mut y2 := branch.x2, branch.y2
+			if i == self.current_row {
+				get_next_pos := fn(self &Core, a f32, b f32) f32 {
+					return b + (a - b) * self.grow_timer / self.grow_time
+				}
+				x2 = get_next_pos(self, x1, x2)
+				y2 = get_next_pos(self, y1, y2)
+			}
+			vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, branch.color)
 		}
 	}
 }
