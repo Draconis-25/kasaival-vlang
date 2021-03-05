@@ -8,10 +8,10 @@ pub struct Core {
 pub:
 	element string = 'fire'
 pub mut:
+	y       f32
 	dp      f32 = 5
 mut:
 	x       f32
-	y       f32
 	scale   f32 = 1
 	hp      f32 = 100
 	xp      f32
@@ -69,7 +69,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	if (b[0] + dx < eye.cx && dx < 0) || (b[1] + dx > eye.cx + lyra.game_width) {
 		dx = 0
 	}
-	if (b[3] + dy > lyra.game_height && dy > 0) || (b[2] + dy < lyra.game_height - eye.gh && dy < 0) {
+	if (b[3] + dy > lyra.game_height && dy > 0) || (b[2] + dy < lyra.start_y && dy < 0) {
 		dy = 0
 	}
 	self.x += dx

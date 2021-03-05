@@ -30,9 +30,9 @@ fn get_color(i int, cs [][]int) C.Color {
 }
 
 pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
-	eye.gh = lyra.game_height * .5
-	mut y := lyra.game_height - eye.gh
-	w := eye.gh / self.rows
+	mut y := lyra.start_y
+	gh := lyra.game_height - y
+	w := gh / self.rows
 	h := w
 	self.tile_size = h
 	start_x := lyra.start_x - w
@@ -50,10 +50,11 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 				cs_i = cs.len - 1
 			}
 			mut c := get_color(int(cs_i), cs)
-			self.grid[i] << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w * .5, y}, c, c}
+			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
+				f32(w) * .5, y}, c, c}
 			c = get_color(int(cs_i), cs)
-			self.grid[i] << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y +
-				h}, c, c}
+			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
+				w, y + h}, c, c}
 			x += w
 		}
 		y += h
