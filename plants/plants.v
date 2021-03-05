@@ -96,7 +96,7 @@ pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
 	// make a start branch
 	self.grid[0] << Branch{-90, C.Vector2{x, y}, C.Vector2{x, y - h}, w, h, lyra.get_color(self.cs)}
 	// grow to current size
-	for i in 1 .. grow_to_row {
+	for _ in 1 .. grow_to_row {
 		self.grow()
 	}
 }

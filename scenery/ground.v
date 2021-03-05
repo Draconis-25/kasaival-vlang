@@ -55,7 +55,7 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 
 fn (mut tile Tile) heal() {
 	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
-	o_r, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
+	_, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
 	if b != o_b {
 		b += byte(f32(o_b - b) * .05)
 	}
