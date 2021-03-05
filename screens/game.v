@@ -7,18 +7,22 @@ import scenery
 import stages
 import vraylib
 
-type Entity = plants.Core | player.Core
+enum Entity {
+	player
+	plant
+}
 
 struct Z_Order {
-	i      int
 	y      f32
 	entity Entity
+	i int
 }
 
 pub struct Game {
 mut:
-	entities      []Entity
+	plants []plants.Core
 	entity_order  []Z_Order
+	player player.Core = player.Core{}
 	ground        scenery.Ground = scenery.Ground{}
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName = .desert
@@ -37,7 +41,7 @@ fn (mut self Game) add_plant(eye &lyra.Eye) {
 	h := vraylib.get_random_value(40, 50)
 	cs := [120, 150, 200, 232, 40, 80]
 	plant.load(x, y, w, h, cs)
-	self.entities << plant
+	self.plants << plant
 }
 
 pub fn (mut self Game) load(mut eye lyra.Eye) {
@@ -46,9 +50,7 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	cs := props[0].color_scheme
 	self.background.load()
 	self.ground.load(mut eye, width, cs)
-	mut player := player.Core{}
-	player.load()
-	self.entities << player
+	self.player.load()
 	for _ in 0 .. 10 {
 		self.add_plant(eye)
 	}
@@ -58,17 +60,17 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.background.update()
 	self.ground.update()
 	self.entity_order = []Z_Order{}
-	for mut i, entity in self.entities {
-		if mut entity is plants.Core {
-			entity.update()
-			self.entity_order << Z_Order{i, entity.y, &entity}
+
+		for mut i, plant in self.plants {
+			plant.update()
+			self.entity_order << Z_Order{plant.y, .plant, i}
 		}
-		if mut entity is player.Core {
-			entity.update(mut eye)
-			self.ground.collide(entity.get_hitbox(), entity.element, entity.dp)
-			self.entity_order << Z_Order{i, entity.y, &entity}
-		}
-	}
+
+		self.player.update(mut eye)
+			//check_collision(entity, )
+		self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
+		self.entity_order << Z_Order{self.player.y, .player, -1}
+
 	self.entity_order.sort(a.y < b.y)
 	return .@none
 }
@@ -76,12 +78,14 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 pub fn (self &Game) draw(eye &lyra.Eye) {
 	self.background.draw(eye)
 	self.ground.draw()
-	for z_order in self.entity_order {
-		if z_order.entity is plants.Core {
-			z_order.entity.draw()
-		}
-		if z_order.entity is player.Core {
-			z_order.entity.draw()
+	for obj in self.entity_order {
+		match obj.entity {
+			.plant {
+				self.plants[obj.i].draw()
+			}
+			.player {
+				self.player.draw()
+			}
 		}
 	}
 }
@@ -89,9 +93,5 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 pub fn (self &Game) unload() {
 	self.background.unload()
 	self.ground.unload()
-	for entity in self.entities {
-		if entity is player.Core {
-			entity.unload()
-		}
-	}
+	self.player.unload()
 }
