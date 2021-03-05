@@ -1,8 +1,8 @@
 module main
 
-import vraylib
 import screens
 import lyra
+import vraylib
 
 // the initiale window screen size
 const (

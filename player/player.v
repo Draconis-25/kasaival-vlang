@@ -87,7 +87,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	dx *= self.speed
 	dy *= self.speed
 	eye_bound := lyra.game_width / 5
-	if (self.x + dx < eye.cx +  eye_bound &&	eye.cx > lyra.start_x) || (self.x > eye.cx + lyra.game_width - eye_bound &&	eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
+	if (self.x + dx < eye.cx +  eye_bound &&	eye.cx > lyra.start_x) || (self.x + dx > eye.cx + lyra.game_width - eye_bound &&	eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
 	b := self.get_hitbox()
