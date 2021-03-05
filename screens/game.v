@@ -35,7 +35,8 @@ fn (mut self Game) add_plant(eye &lyra.Eye) {
 	x, y := get_spawn_pos(eye)
 	w := vraylib.get_random_value(20, 30)
 	h := vraylib.get_random_value(40, 50)
-	plant.load(x, y, w, h)
+	cs := [120, 150, 200, 232, 40, 80]
+	plant.load(x, y, w, h, cs)
 	self.entities << plant
 }
 

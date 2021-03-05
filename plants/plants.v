@@ -2,6 +2,7 @@ module plants
 
 import vraylib
 import math
+import lyra
 
 const (
 	deg_to_rad = math.pi / 180
@@ -21,6 +22,7 @@ pub struct Core {
 pub mut:
 	y            f32
 mut:
+	cs []int
 	grid         [][]Branch
 	total_rows   int
 	current_row  int
@@ -49,13 +51,14 @@ fn (mut self Core) grow() {
 			nx := int(px + math.cos(f32(deg) * deg_to_rad) * h)
 			ny := int(py + math.sin(f32(deg) * deg_to_rad) * h)
 			self.grid[index + 1] <<
-				Branch{deg, C.Vector2{px, py}, C.Vector2{nx, ny}, w, h, vraylib.green}
+				Branch{deg, C.Vector2{px, py}, C.Vector2{nx, ny}, w, h, lyra.get_color(self.cs)}
 		}
 	}
 	self.current_row++
 }
 
-pub fn (mut self Core) load(x int, y int, w int, h int) {
+pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
+	self.cs = cs
 	self.y = y
 	grow_to_row := 9
 	self.total_rows = 9
@@ -63,7 +66,7 @@ pub fn (mut self Core) load(x int, y int, w int, h int) {
 	self.split_angle = [20, 30]
 	self.grid = [][]Branch{len: self.total_rows, init: []Branch{}}
 	// make a start branch
-	self.grid[0] << Branch{-90, C.Vector2{x, y}, C.Vector2{x, y - h}, w, h, vraylib.green}
+	self.grid[0] << Branch{-90, C.Vector2{x, y}, C.Vector2{x, y - h}, w, h, lyra.get_color(self.cs)}
 	// grow to current size
 	for i in 1 .. grow_to_row {
 		self.grow()

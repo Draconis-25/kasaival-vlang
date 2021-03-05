@@ -9,6 +9,14 @@ pub const (
 	start_y     = 540
 )
 
+pub fn get_color(cs []int) C.Color {
+	grv := vraylib.get_random_value
+	r := grv(cs[0], cs[1])
+	g := grv(cs[2], cs[3])
+	b := grv(cs[4], cs[5])
+	return C.Color{byte(r), byte(g), byte(b), 255}
+}
+
 pub struct Eye {
 pub mut:
 	cx f32

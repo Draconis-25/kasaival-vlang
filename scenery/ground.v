@@ -21,14 +21,6 @@ mut:
 	tile_size f32
 }
 
-fn get_color(i int, cs [][]int) C.Color {
-	grv := vraylib.get_random_value
-	r := grv(cs[i][0], cs[i][1])
-	g := grv(cs[i][2], cs[i][3])
-	b := grv(cs[i][4], cs[i][5])
-	return C.Color{byte(r), byte(g), byte(b), 255}
-}
-
 pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	mut y := lyra.start_y
 	gh := lyra.game_height - y
@@ -49,10 +41,10 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 			if cs_i > cs.len - 1 {
 				cs_i = cs.len - 1
 			}
-			mut c := get_color(int(cs_i), cs)
+			mut c := lyra.get_color(cs[int(cs_i)])
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
-			c = get_color(int(cs_i), cs)
+			c = lyra.get_color(cs[int(cs_i)])
 			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				w, y + h}, c, c}
 			x += w
