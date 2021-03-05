@@ -57,11 +57,20 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	if is_key_down(key_down) {
 		dy = 1
 	}
+	mut angle := 0.0
+	if dx != 0 && dy != 0 {
+		angle = math.atan2(dx, dy)
+		if angle < 0 {
+			angle += math.pi * 2
+		}
+		dx = math.sin(angle)
+		dy = math.cos(angle)
+	}
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
 		diff_x, diff_y := int(pos.x - self.x + eye.cx), int(pos.y - self.y)
 		if diff_x > 4 || diff_x < -4 || diff_y > 4 || diff_y < -4 {
-			mut angle := math.atan2(diff_x, diff_y)
+			angle = math.atan2(diff_x, diff_y)
 			if angle < 0 {
 				angle += math.pi * 2
 			}
