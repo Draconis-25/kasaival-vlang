@@ -25,17 +25,19 @@ pub mut:
 mut:
 	cs []int
 	grid         [][]Branch
-	total_rows   int
+	max_row   int
 	current_row  int
 	split_chance int
 	split_angle  []int
+	grow_timer int
+	grow_time int
 }
 
 fn (mut self Core) grow() {
 	split := vraylib.get_random_value(0, 10)
 	// previous row
-	index := self.current_row
-	prev_row := self.grid[index]
+	prev_row := self.grid[self.current_row]
+	self.current_row++
 	for prev_branch in prev_row {
 		px, py := prev_branch.end_pos.x, prev_branch.end_pos.y
 		w, h := int(f32(prev_branch.w) * .9), int(f32(prev_branch.h) * .9)
@@ -51,11 +53,10 @@ fn (mut self Core) grow() {
 		for deg in degs {
 			nx := int(px + math.cos(f32(deg) * deg_to_rad) * h)
 			ny := int(py + math.sin(f32(deg) * deg_to_rad) * h)
-			self.grid[index + 1] <<
+			self.grid[self.current_row] <<
 				Branch{deg, C.Vector2{px, py}, C.Vector2{nx, ny}, w, h, lyra.get_color(self.cs)}
 		}
 	}
-	self.current_row++
 }
 
 fn (mut branch Branch) burn(power f32) {
@@ -88,20 +89,29 @@ pub fn (self &Core) get_hitbox() []f32 {
 pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
 	self.cs = cs
 	self.y = y
-	grow_to_row := 9
-	self.total_rows = 9
+	self.max_row = 9
 	self.split_chance = 5
 	self.split_angle = [20, 30]
-	self.grid = [][]Branch{len: self.total_rows, init: []Branch{}}
+	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
 	self.grid[0] << Branch{-90, C.Vector2{x, y}, C.Vector2{x, y - h}, w, h, lyra.get_color(self.cs)}
 	// grow to current size
+	grow_to_row := vraylib.get_random_value(1, self.max_row)
 	for _ in 1 .. grow_to_row {
 		self.grow()
 	}
+	self.grow_time = 30
+	self.grow_timer = self.grow_time
 }
 
 pub fn (mut self Core) update() {
+	if self.current_row < self.max_row - 1 {
+		self.grow_timer--
+		if self.grow_timer == 0 {
+			self.grow()
+			self.grow_timer = self.grow_time
+		}
+	}
 }
 
 pub fn (self &Core) draw() {
