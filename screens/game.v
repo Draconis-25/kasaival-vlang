@@ -56,6 +56,15 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	}
 }
 
+fn check_collision(a []f32, b []f32) bool {
+	if a[0] < b[1] && a[1] > b[0] && a[2] < b[3] && a[3] > b[2] {
+		return true
+	}
+	else {
+		return false
+	}
+}
+
 pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.background.update()
 	self.ground.update()
@@ -64,10 +73,12 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 		for mut i, plant in self.plants {
 			plant.update()
 			self.entity_order << Z_Order{plant.y, .plant, i}
+			if check_collision(self.player.get_hitbox(), plant.get_hitbox()) {
+				plant.collided(self.player.element, self.player.dp)
+			}
 		}
 
 		self.player.update(mut eye)
-			//check_collision(entity, )
 		self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
 		self.entity_order << Z_Order{self.player.y, .player, -1}
 

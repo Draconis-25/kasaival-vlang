@@ -14,6 +14,7 @@ struct Branch {
 	end_pos   C.Vector2
 	w         int
 	h         int
+	mut:
 	color     C.Color
 }
 
@@ -55,6 +56,33 @@ fn (mut self Core) grow() {
 		}
 	}
 	self.current_row++
+}
+
+fn (mut branch Branch) burn(power f32) {
+	mut r, mut g, mut b := branch.color.r, branch.color.g, branch.color.b
+	b = 0
+	if r < 200 {
+		r += 2
+	}
+	if g > 100 {
+		g -= 2
+	}
+	branch.color = C.Color{r, g, b, 255}
+}
+
+pub fn (self &Core) collided(element string, dp f32) {
+	for row in self.grid {
+		for mut branch in row {
+			branch.burn(dp)
+		}
+	}
+}
+
+pub fn (self &Core) get_hitbox() []f32 {
+	b := self.grid[0][0]
+	x1, y1 := b.start_pos.x, b.start_pos.y
+	x2, y2 := b.end_pos.x, b.end_pos.y
+	return [x1, x2, y2, y1]
 }
 
 pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
