@@ -18,9 +18,8 @@ struct Branch {
 
 pub struct Core {
 	element      string = 'plant'
-	pub mut:
-	y f32
-
+pub mut:
+	y            f32
 mut:
 	grid         [][]Branch
 	total_rows   int

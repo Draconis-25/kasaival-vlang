@@ -9,16 +9,16 @@ import vraylib
 
 type Entity = plants.Core | player.Core
 
-struct Z_Order{
-	i int
-	y f32
+struct Z_Order {
+	i      int
+	y      f32
 	entity Entity
 }
 
 pub struct Game {
 mut:
 	entities      []Entity
-	entity_order []Z_Order
+	entity_order  []Z_Order
 	ground        scenery.Ground = scenery.Ground{}
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName = .desert
@@ -52,7 +52,6 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 		self.add_plant(eye)
 	}
 }
-
 
 pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.background.update()

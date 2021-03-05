@@ -23,31 +23,52 @@ mut:
 pub fn (mut self Core) load() {
 	self.texture = vraylib.load_texture('resources/spark_flame.png')
 	self.x = lyra.game_width * .5 - f32(self.texture.width) * .5
-	self.y = lyra.game_height * .5 - f32(self.texture.height) * .5
+	self.y = lyra.game_height * .8
 }
+
+fn is_key_down(keys []int) bool {
+	mut rtn := false
+	for key in keys {
+		if vraylib.is_key_down(key) {
+			rtn = true
+		}
+	}
+	return rtn
+}
+
+const (
+	key_right = [vraylib.key_right]
+	key_left  = [vraylib.key_left]
+	key_up    = [vraylib.key_up]
+	key_down  = [vraylib.key_down]
+)
 
 fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	mut dx, mut dy := 0.0, 0.0
-	if vraylib.is_key_down(vraylib.key_right) {
+	if is_key_down(key_right) {
 		dx = 1
 	}
-	if vraylib.is_key_down(vraylib.key_left) {
+	if is_key_down(key_left) {
 		dx = -1
 	}
-	if vraylib.is_key_down(vraylib.key_up) {
+	if is_key_down(key_up) {
 		dy = -1
 	}
-	if vraylib.is_key_down(vraylib.key_down) {
+	if is_key_down(key_down) {
 		dy = 1
 	}
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
-		mut angle := math.atan2(pos.x - self.x + eye.cx, pos.y - self.y)
-		if angle < 0 {
-			angle += math.pi * 2
+		diff_x, diff_y := int(pos.x - self.x + eye.cx), int(pos.y - self.y)
+		if diff_x > 4 || diff_x < -4 || diff_y > 4 || diff_y < -4 {
+			mut angle := math.atan2(diff_x, diff_y)
+			if angle < 0 {
+				angle += math.pi * 2
+			}
+			dx = math.sin(angle)
+			dy = math.cos(angle)
 		}
-		dx = math.sin(angle)
-		dy = math.cos(angle)
+
 	}
 	return f32(dx), f32(dy)
 }
@@ -78,12 +99,12 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 
 pub fn (self &Core) get_hitbox() []f32 {
 	w, h := self.texture.width * self.scale * .5, self.texture.height * self.scale * .3
-	return [self.x - w * .5, self.x + w * .5, self.y - h, self.y - h * .92]
+	return [self.x - w * .5, self.x + w * .5, self.y, self.y]
 }
 
 [live]
 pub fn (self &Core) draw() {
-	w, h := self.texture.width * self.scale, self.texture.height * self.scale
+	w, h := self.texture.width * self.scale, self.texture.height * self.scale - 32
 	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - w * .5, self.y - h}, 0, 1,
 		vraylib.white)
 }
