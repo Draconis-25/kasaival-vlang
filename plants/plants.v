@@ -62,7 +62,7 @@ fn (mut branch Branch) burn(power f32) {
 	mut r, mut g, mut b := branch.color.r, branch.color.g, branch.color.b
 	b = 0
 	if r < 200 {
-		r += 2
+		r += byte(power * 2)
 	}
 	if g > 100 {
 		g -= 2
@@ -110,7 +110,4 @@ pub fn (self &Core) draw() {
 			vraylib.draw_line_ex(branch.start_pos, branch.end_pos, branch.w, branch.color)
 		}
 	}
-}
-
-pub fn (self &Core) unload() {
 }

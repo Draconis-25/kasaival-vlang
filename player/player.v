@@ -83,7 +83,7 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 
 [live]
 pub fn (mut self Core) update(mut eye lyra.Eye) {
-	w, h := self.texture.width * self.scale * .5, self.texture.height * self.scale * .5
+	w, h := self.texture.width * self.scale, self.texture.height * self.scale
 	mut dx, mut dy := get_direction(self, eye)
 	dx *= self.speed
 	dy *= self.speed
@@ -98,7 +98,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	if (b[0] + dx < eye.cx && dx < 0) || (b[1] + dx > eye.cx + lyra.game_width) {
 		dx = 0
 	}
-	if (b[3] + dy > lyra.game_height && dy > 0) || (b[2] + dy < lyra.start_y && dy < 0) {
+	if (self.y + dy > lyra.game_height && dy > 0) || (self.y + dy < lyra.start_y && dy < 0) {
 		dy = 0
 	}
 	self.x += dx
@@ -106,13 +106,13 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 }
 
 pub fn (self &Core) get_hitbox() []f32 {
-	w, h := self.texture.width * self.scale * .5, self.texture.height * self.scale * .3
-	return [self.x - w * .5, self.x + w * .5, self.y, self.y]
+	w, h := self.texture.width * self.scale, self.texture.height * self.scale
+	return [self.x - w * .5, self.x + w * .5, self.y - h * .5, self.y]
 }
 
 [live]
 pub fn (self &Core) draw() {
-	w, h := self.texture.width * self.scale, self.texture.height * self.scale - 32
+	w, h := self.texture.width * self.scale, self.texture.height * self.scale
 	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - w * .5, self.y - h}, 0, 1,
 		vraylib.white)
 }
