@@ -26,6 +26,7 @@ mut:
 	ground        scenery.Ground = scenery.Ground{}
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName = .desert
+	music C.Music
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
@@ -54,6 +55,9 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	for _ in 0 .. 10 {
 		self.add_plant(eye)
 	}
+	self.music = vraylib.load_music_stream("resources/music/drama.ogg")
+	vraylib.play_music_stream(self.music)
+
 }
 
 fn check_collision(a []f32, b []f32) bool {
@@ -66,6 +70,7 @@ fn check_collision(a []f32, b []f32) bool {
 }
 
 pub fn (mut self Game) update(mut eye lyra.Eye) Next {
+	vraylib.update_music_stream(self.music)
 	self.background.update()
 	self.ground.update()
 	self.entity_order = []Z_Order{}
@@ -102,6 +107,7 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 }
 
 pub fn (self &Game) unload() {
+	vraylib.unload_music_stream(self.music)
 	self.background.unload()
 	self.ground.unload()
 	self.player.unload()
