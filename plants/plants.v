@@ -51,7 +51,7 @@ fn (mut self Core) grow() {
 	prev_row := self.grid[self.current_row]
 	for prev_branch in prev_row {
 		px, py := prev_branch.x2, prev_branch.y2
-		w, h := int(f32(prev_branch.w) * .9), int(f32(prev_branch.h) * .9)
+		w, h := int(f32(prev_branch.w) * .9), int(f32(prev_branch.h) * .95)
 		mut degs := []int{}
 		if split > self.split_chance {
 			degs << prev_branch.deg -
