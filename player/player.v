@@ -90,6 +90,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	if (self.x + dx < eye.cx +  eye_bound &&	eye.cx > lyra.start_x) || (self.x + dx > eye.cx + lyra.game_width - eye_bound &&	eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
+
 	w := self.texture.width * self.scale * .5
 	if self.x + dx < eye.cx + w && dx < 0 {
 		self.x = eye.cx + w
@@ -100,12 +101,12 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	else {
 		self.x += dx
 	}
-
+	h := self.texture.height * self.scale
 	if self.y + dy > lyra.game_height && dy > 0 {
 		self.y = lyra.game_height
 	}
-	else if self.y + dy < lyra.start_y && dy < 0 {
-		self.y = lyra.start_y
+	else if self.y + dy < lyra.start_y + h * .1 && dy < 0 {
+		self.y = lyra.start_y + h * .1
 	}
 	else {
 		self.y += dy
@@ -114,7 +115,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 
 pub fn (self &Core) get_hitbox() []f32 {
 	w, h := self.texture.width * self.scale, self.texture.height * self.scale
-	return [self.x - w * .5, self.x + w * .5, self.y - h , self.y - h * .4]
+	return [self.x - w * .5, self.x + w * .5, self.y - h * .5 , self.y]
 }
 
 [live]

@@ -92,7 +92,7 @@ pub fn (mut self Core) collided(element string, dp f32) {
 
 pub fn (self &Core) get_hitbox() []f32 {
 	b := self.grid[0][0]
-	return [b.x1, b.x2, b.y2, b.y2]
+	return [b.x1, b.x2, b.y2, b.y1]
 }
 
 pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
