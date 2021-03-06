@@ -33,13 +33,22 @@ mut:
 	split_angle  []int
 	grow_timer int
 	grow_time int
+	burning int
+	burn_intensity f32
+}
+
+fn (mut self Core) shrink() {
+	for i in 0..self.grid[self.current_row].len {
+		 self.grid[self.current_row][i] = Branch{}
+	}
+	self.current_row--
+
 }
 
 fn (mut self Core) grow() {
 	split := vraylib.get_random_value(0, 10)
 	// previous row
 	prev_row := self.grid[self.current_row]
-	self.current_row++
 	for prev_branch in prev_row {
 		px, py := prev_branch.x2, prev_branch.y2
 		w, h := int(f32(prev_branch.w) * .9), int(f32(prev_branch.h) * .9)
@@ -56,16 +65,17 @@ fn (mut self Core) grow() {
 			nx := int(px + math.cos(f32(deg) * deg_to_rad) * h)
 			ny := int(py + math.sin(f32(deg) * deg_to_rad) * h)
 			c := lyra.get_color(self.cs)
-			self.grid[self.current_row] << Branch{deg, px, py, nx, ny, w, h, c}
+			self.grid[self.current_row + 1] << Branch{deg, px, py, nx, ny, w, h, c}
 		}
 	}
+	self.current_row++
 }
 
-fn (mut branch Branch) burn(power f32) {
+fn (mut branch Branch) burn_color(self &Core) {
 	mut r, mut g, mut b := branch.color.r, branch.color.g, branch.color.b
 	b = 0
 	if r < 200 {
-		r += byte(power * 2)
+		r += byte(self.burn_intensity * 2)
 	}
 	if g > 100 {
 		g -= 2
@@ -73,11 +83,10 @@ fn (mut branch Branch) burn(power f32) {
 	branch.color = C.Color{r, g, b, 255}
 }
 
-pub fn (self &Core) collided(element string, dp f32) {
-	for row in self.grid {
-		for mut branch in row {
-			branch.burn(dp)
-		}
+pub fn (mut self Core) collided(element string, dp f32) {
+	if element == "fire" {
+		self.burning = 100
+		self.burn_intensity = dp
 	}
 }
 
@@ -105,11 +114,27 @@ pub fn (mut self Core) load(x int, y int, w int, h int, cs []int) {
 }
 
 pub fn (mut self Core) update() {
-	if self.current_row < self.max_row - 1 {
-		self.grow_timer--
-		if self.grow_timer == 0 {
-			self.grow()
-			self.grow_timer = self.grow_time
+	if self.burning > 0 {
+		for row in self.grid {
+			for mut branch in row {
+				branch.burn_color(self)
+			}
+		}
+		if self.current_row >= 0 {
+			if self.grow_timer >= self.grow_time {
+				self.shrink()
+				self.grow_timer = 0
+			}
+			self.grow_timer += int(self.burn_intensity)
+		}
+	}
+	else {
+		if self.current_row < self.max_row - 1 {
+			if self.grow_timer <= 0 {
+				self.grow()
+				self.grow_timer = self.grow_time
+			}
+			self.grow_timer--
 		}
 	}
 }
@@ -119,7 +144,7 @@ pub fn (self &Core) draw() {
 		for branch in row {
 			x1, y1 := branch.x1, branch.y1
 			mut x2, mut y2 := branch.x2, branch.y2
-			if i == self.current_row {
+			if i == self.current_row && self.grow_timer > 0 {
 				get_next_pos := fn(self &Core, a f32, b f32) f32 {
 					return b + (a - b) * self.grow_timer / self.grow_time
 				}
