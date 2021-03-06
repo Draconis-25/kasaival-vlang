@@ -55,7 +55,7 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	for _ in 0 .. 10 {
 		self.add_plant(eye)
 	}
-	self.music = vraylib.load_music_stream("resources/music/drama.ogg")
+	self.music = vraylib.load_music_stream("resources/music/spring/simple_desert.ogg")
 	vraylib.play_music_stream(self.music)
 
 }
