@@ -22,6 +22,16 @@ mut:
 }
 
 pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
+	get_color := fn(cs [][]int, x int, start_x int, end_x int) C.Color {
+		mut id := f32(cs.len * (x - start_x)) / f32((end_x - start_x))
+		r := id - int(id)
+		id = vraylib.get_random_value(int(r * 10), 10) / 10 + id
+		if id > cs.len - 1 {
+			id = cs.len - 1
+		}
+		return lyra.get_color(cs[int(id)])
+	}
+
 	mut y := lyra.start_y
 	gh := lyra.game_height - y
 	w := gh / self.rows
@@ -35,16 +45,11 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 		self.pos_y << y
 		mut x := start_x
 		for x < end_x {
-			mut cs_i := cs.len * (x - start_x) / (end_x - start_x)
-			r := cs_i - int(cs_i)
-			cs_i = vraylib.get_random_value(int(r * 10), 10) / 10 + cs_i
-			if cs_i > cs.len - 1 {
-				cs_i = cs.len - 1
-			}
-			mut c := lyra.get_color(cs[int(cs_i)])
+
+			mut c := get_color(cs, x, start_x, end_x)
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
-			c = lyra.get_color(cs[int(cs_i)])
+			c = get_color(cs, x, start_x, end_x)
 			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				w, y + h}, c, c}
 			x += w
