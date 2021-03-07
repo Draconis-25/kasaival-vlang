@@ -38,10 +38,9 @@ fn get_spawn_pos(eye &lyra.Eye) (int, int) {
 fn (mut self Game) add_plant(eye &lyra.Eye) {
 	mut plant := plants.Core{}
 	x, y := get_spawn_pos(eye)
-	w := vraylib.get_random_value(20, 30)
-	h := vraylib.get_random_value(40, 50)
-	cs := [90, 130, 170, 202, 60, 100]
-	plant.load(x, y, w, h, cs)
+	w := vraylib.get_random_value(20, 25)
+	h := vraylib.get_random_value(38, 42)
+	plant.load(.oak, x, y, w, h)
 	self.plants << plant
 }
 
