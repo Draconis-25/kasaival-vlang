@@ -33,11 +33,8 @@ fn main() {
 			if vraylib.is_key_down(vraylib.key_f) {
 				vraylib.toggle_fullscreen()
 			}
-			if vraylib.is_window_resized() {
-				eye.update_camera()
-			}
 			screen.update(mut eye)
-			eye.camera.target = C.Vector2{eye.cx, 0}
+			eye.update_camera()
 			// draw
 			vraylib.begin_drawing()
 			vraylib.begin_mode_2d(eye.camera)

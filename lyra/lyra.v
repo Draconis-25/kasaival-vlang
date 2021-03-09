@@ -52,5 +52,8 @@ pub fn get_game_pos(pos C.Vector2) C.Vector2 {
 
 
 pub fn (mut eye Eye) update_camera() {
-	eye.camera.zoom, eye.camera.offset = get_game_scale()
+	if vraylib.is_window_resized() {
+		eye.camera.zoom, eye.camera.offset = get_game_scale()
+	}
+	eye.camera.target = C.Vector2{eye.cx, 0}
 }
