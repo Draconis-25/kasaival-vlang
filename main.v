@@ -44,6 +44,14 @@ fn main() {
 			vraylib.clear_background(vraylib.black)
 			screen.draw(eye)
 			vraylib.end_mode_2d()
+
+			// make the rest of the screen black (outside of game)
+			w := int(eye.camera.offset.x)
+			h := vraylib.get_screen_height()
+			vraylib.draw_rectangle(0, 0, w, h, vraylib.black)
+			x :=vraylib.get_screen_width()
+			vraylib.draw_rectangle(x - w, 0, w, h, vraylib.black)
+
 			vraylib.end_drawing()
 		}
 	}
