@@ -4,6 +4,7 @@ import screens
 import lyra
 import vraylib
 
+
 // the initiale window screen size
 const (
 	screen_width  = 800
@@ -12,13 +13,15 @@ const (
 
 fn main() {
 	// init
-	mut camera := C.Camera2D{}
+
 	vraylib.init_window(screen_width, screen_height, 'Kasaival')
 	vraylib.set_target_fps(60)
 	vraylib.set_window_state(vraylib.flag_window_resizable)
 	vraylib.init_audio_device()
 	mut screen := screens.Core{}
 	mut eye := lyra.Eye{}
+	eye.update_camera()
+
 	screen.load(.game, mut eye)
 	// loop
 	for {
@@ -30,12 +33,14 @@ fn main() {
 			if vraylib.is_key_down(vraylib.key_f) {
 				vraylib.toggle_fullscreen()
 			}
-			camera.zoom, camera.offset = lyra.get_game_scale()
+			if vraylib.is_window_resized() {
+				eye.update_camera()
+			}
 			screen.update(mut eye)
-			camera.target = C.Vector2{eye.cx, 0}
+			eye.camera.target = C.Vector2{eye.cx, 0}
 			// draw
 			vraylib.begin_drawing()
-			vraylib.begin_mode_2d(camera)
+			vraylib.begin_mode_2d(eye.camera)
 			vraylib.clear_background(vraylib.black)
 			screen.draw(eye)
 			vraylib.end_mode_2d()

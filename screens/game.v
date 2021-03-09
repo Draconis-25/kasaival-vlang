@@ -87,7 +87,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 
 pub fn (self &Game) draw(eye &lyra.Eye) {
 	self.background.draw(eye)
-	self.ground.draw()
+	self.ground.draw(eye)
 	for obj in self.entity_order {
 		match obj.entity {
 			.plant { self.plants[obj.i].draw() }

@@ -86,6 +86,16 @@ fn (mut tile Tile) burn(power f32) {
 	tile.color = C.Color{r, g, b, 255}
 }
 
+fn (tile &Tile) get_lr(i int) (f32, f32) {
+	mut l := f32(-1)
+			if i % 2 == 0 {
+				l = tile.p1.x
+			} else {
+				l = tile.p2.x
+			}
+	return l, tile.p3.x
+}
+
 pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 	mut index := []int{}
 	for i, y in self.pos_y {
@@ -95,13 +105,7 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 	}
 	for i in index {
 		for j, tile in self.grid[i] {
-			mut l := f32(-1)
-			if j % 2 == 0 {
-				l = tile.p1.x
-			} else {
-				l = tile.p2.x
-			}
-			r := tile.p3.x
+			l, r := tile.get_lr(j)
 			if l < b[1] && r > b[0] {
 				if element == 'fire' {
 					self.grid[i][j].burn(power)
@@ -112,10 +116,14 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 }
 
 [live]
-pub fn (self &Ground) draw() {
+pub fn (self &Ground) draw(eye &lyra.Eye) {
 	for row in self.grid {
-		for tile in row {
-			vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)
+		for i, tile in row {
+			l,r := tile.get_lr(i)
+			w := r - l
+			if l + w > eye.cx && r < eye.cx + lyra.game_width + w {
+				vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)
+			}
 		}
 	}
 }
