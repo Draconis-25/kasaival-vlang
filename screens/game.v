@@ -15,18 +15,18 @@ enum Entity {
 struct Z_Order {
 	y      f32
 	entity Entity
-	i int
+	i      int
 }
 
 pub struct Game {
 mut:
-	plants []plants.Core
+	plants        []plants.Core
 	entity_order  []Z_Order
-	player player.Core = player.Core{}
+	player        player.Core = player.Core{}
 	ground        scenery.Ground = scenery.Ground{}
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName = .desert
-	music C.Music
+	music         C.Music
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
@@ -54,16 +54,14 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	for _ in 0 .. 10 {
 		self.add_plant(eye)
 	}
-	self.music = vraylib.load_music_stream("resources/music/spring/simple_desert.ogg")
+	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
-
 }
 
 fn check_collision(a []f32, b []f32) bool {
 	if a[0] < b[1] && a[1] > b[0] && a[2] < b[3] && a[3] > b[2] {
 		return true
-	}
-	else {
+	} else {
 		return false
 	}
 }
@@ -73,19 +71,16 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.background.update()
 	self.ground.update()
 	self.entity_order = []Z_Order{}
-
-		for mut i, plant in self.plants {
-			plant.update()
-			self.entity_order << Z_Order{plant.y, .plant, i}
-			if check_collision(self.player.get_hitbox(), plant.get_hitbox()) {
-				plant.collided(self.player.element, self.player.dp)
-			}
+	for i, mut plant in self.plants {
+		plant.update()
+		self.entity_order << Z_Order{plant.y, .plant, i}
+		if check_collision(self.player.get_hitbox(), plant.get_hitbox()) {
+			plant.collided(self.player.element, self.player.dp)
 		}
-
-		self.player.update(mut eye)
-		self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
-		self.entity_order << Z_Order{self.player.y, .player, -1}
-
+	}
+	self.player.update(mut eye)
+	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
+	self.entity_order << Z_Order{self.player.y, .player, -1}
 	self.entity_order.sort(a.y < b.y)
 	return .@none
 }
@@ -95,12 +90,8 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 	self.ground.draw()
 	for obj in self.entity_order {
 		match obj.entity {
-			.plant {
-				self.plants[obj.i].draw()
-			}
-			.player {
-				self.player.draw()
-			}
+			.plant { self.plants[obj.i].draw() }
+			.player { self.player.draw() }
 		}
 	}
 }

@@ -37,12 +37,11 @@ fn is_key_down(keys []int) bool {
 }
 
 const (
-	key_right = [vraylib.key_right]
-	key_left  = [vraylib.key_left]
-	key_up    = [vraylib.key_up]
-	key_down  = [vraylib.key_down]
+	key_right = [vraylib.key_right, vraylib.key_d]
+	key_left  = [vraylib.key_left, vraylib.key_a]
+	key_up    = [vraylib.key_up, vraylib.key_w]
+	key_down  = [vraylib.key_down, vraylib.key_o]
 )
-
 
 fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	angle := fn (dx f64, dy f64) (f64, f64) {
@@ -52,7 +51,6 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 		}
 		return math.sin(angle), math.cos(angle)
 	}
-
 	mut dx, mut dy := 0.0, 0.0
 	if is_key_down(key_right) {
 		dx = 1
@@ -66,7 +64,6 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	if is_key_down(key_down) {
 		dy = 1
 	}
-
 	if dx != 0 && dy != 0 {
 		dx, dy = angle(dx, dy)
 	}
@@ -76,7 +73,6 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 		if diff_x > 4 || diff_x < -4 || diff_y > 4 || diff_y < -4 {
 			dx, dy = angle(diff_x, diff_y)
 		}
-
 	}
 	return f32(dx), f32(dy)
 }
@@ -87,35 +83,33 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	dx *= self.speed
 	dy *= self.speed
 	eye_bound := lyra.game_width / 5
-	if (self.x + dx < eye.cx +  eye_bound &&	eye.cx > lyra.start_x) || (self.x + dx > eye.cx + lyra.game_width - eye_bound &&	eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
+	if (self.x + dx < eye.cx + eye_bound &&
+		eye.cx > lyra.start_x) || (self.x + dx >
+		eye.cx + lyra.game_width - eye_bound &&
+		eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
-
 	w := self.texture.width * self.scale * .5
 	if self.x + dx < eye.cx + w && dx < 0 {
 		self.x = eye.cx + w
-	}
-	else if self.x + dx > eye.cx + lyra.game_width - w {
+	} else if self.x + dx > eye.cx + lyra.game_width - w {
 		self.x = eye.cx + lyra.game_width - w
-	}
-	else {
+	} else {
 		self.x += dx
 	}
 	h := self.texture.height * self.scale
 	if self.y + dy > lyra.game_height && dy > 0 {
 		self.y = lyra.game_height
-	}
-	else if self.y + dy < lyra.start_y + h * .1 && dy < 0 {
+	} else if self.y + dy < lyra.start_y + h * .1 && dy < 0 {
 		self.y = lyra.start_y + h * .1
-	}
-	else {
+	} else {
 		self.y += dy
 	}
 }
 
 pub fn (self &Core) get_hitbox() []f32 {
 	w, h := self.texture.width * self.scale, self.texture.height * self.scale
-	return [self.x - w * .5, self.x + w * .5, self.y - h * .5 , self.y]
+	return [self.x - w * .5, self.x + w * .5, self.y - h * .5, self.y]
 }
 
 [live]

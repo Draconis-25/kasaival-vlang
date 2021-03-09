@@ -15,6 +15,7 @@ fn main() {
 	mut camera := C.Camera2D{}
 	vraylib.init_window(screen_width, screen_height, 'Kasaival')
 	vraylib.set_target_fps(60)
+	vraylib.set_window_state(vraylib.flag_window_resizable)
 	vraylib.init_audio_device()
 	mut screen := screens.Core{}
 	mut eye := lyra.Eye{}

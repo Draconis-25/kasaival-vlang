@@ -9,32 +9,31 @@ const (
 )
 
 struct Branch {
-	deg       int
-	x1 f32
-	y1 f32
-	x2 f32
-	y2 f32
-	w         f32
-	h         f32
-	mut:
-	color     C.Color
+	deg   int
+	x1    f32
+	y1    f32
+	x2    f32
+	y2    f32
+	w     f32
+	h     f32
+mut:
+	color C.Color
 }
 
-
 pub struct Core {
-	element      string = 'plant'
+	element        string = 'plant'
 pub mut:
-	y            f32
+	y              f32
 mut:
-	cs []int = [90, 130, 170, 202, 60, 100]
-	grid [][]Branch
-	max_row   int = 8
-	current_row  int
-	split_chance int  = 50
-	split_angle  []int = [20, 30]
-	grow_timer int
-	grow_time int = 200
-	burning int
+	cs             []int = [90, 130, 170, 202, 60, 100]
+	grid           [][]Branch
+	max_row        int = 8
+	current_row    int
+	split_chance   int = 50
+	split_angle    []int = [20, 30]
+	grow_timer     int
+	grow_time      int = 200
+	burning        int
 	burn_intensity f32
 }
 
@@ -43,16 +42,12 @@ enum PlantName {
 	@none
 }
 
-
 pub fn (mut self Core) load(plant PlantName, x int, y int, w int, h int) {
 	match plant {
-		.oak {
-			self.oak()
-		}
+		.oak { self.oak() }
 		.@none {}
 	}
 	self.y = y
-
 	self.grow_timer = vraylib.get_random_value(0, self.grow_time)
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
@@ -78,8 +73,7 @@ pub fn (mut self Core) update() {
 			}
 			self.grow_timer += int(self.burn_intensity)
 		}
-	}
-	else {
+	} else {
 		if self.current_row < self.max_row - 1 {
 			if self.grow_timer <= 0 {
 				self.grow()
@@ -90,13 +84,11 @@ pub fn (mut self Core) update() {
 	}
 }
 
-
 fn (mut self Core) shrink() {
-	for i in 0..self.grid[self.current_row].len {
-		 self.grid[self.current_row][i] = Branch{}
+	for i in 0 .. self.grid[self.current_row].len {
+		self.grid[self.current_row][i] = Branch{}
 	}
 	self.current_row--
-
 }
 
 fn (mut self Core) grow() {
@@ -108,7 +100,7 @@ fn (mut self Core) grow() {
 		w, h := prev_branch.w * .9, prev_branch.h * .95
 		mut degs := []int{}
 		if self.split_chance > split {
-			get_angle := fn(self &Core) int {
+			get_angle := fn (self &Core) int {
 				return vraylib.get_random_value(self.split_angle[0], self.split_angle[1])
 			}
 			degs << prev_branch.deg - get_angle(self)
@@ -139,7 +131,7 @@ fn (mut branch Branch) burn_color(self &Core) {
 }
 
 pub fn (mut self Core) collided(element string, dp f32) {
-	if element == "fire" {
+	if element == 'fire' {
 		self.burning = 100
 		self.burn_intensity = dp
 	}
@@ -150,15 +142,13 @@ pub fn (self &Core) get_hitbox() []f32 {
 	return [b.x1, b.x2, b.y2, b.y1]
 }
 
-
-
 pub fn (self &Core) draw() {
 	for i, row in self.grid {
 		for branch in row {
 			x1, y1 := branch.x1, branch.y1
 			mut x2, mut y2 := branch.x2, branch.y2
 			if i == self.current_row && self.grow_timer > 0 {
-				get_next_pos := fn(self &Core, a f32, b f32) f32 {
+				get_next_pos := fn (self &Core, a f32, b f32) f32 {
 					return b + (a - b) * self.grow_timer / self.grow_time
 				}
 				x2 = get_next_pos(self, x1, x2)
