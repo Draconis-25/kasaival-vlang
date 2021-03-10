@@ -5,7 +5,6 @@ import vraylib
 pub const (
 	game_width  = 1920
 	game_height = 1080
-	start_x     = -100
 	start_y     = 540
 )
 
@@ -20,9 +19,10 @@ pub fn get_color(cs []int) C.Color {
 pub struct Eye {
 pub mut:
 	camera C.Camera2D = C.Camera2D{}
-	cx f32
-	gw f32 = 1000
-	gh f32 = 400
+	start_x int    = -100
+	cx     f32
+	gw     f32 = 1000
+	gh     f32 = 400
 }
 
 pub fn get_game_scale() (f32, C.Vector2) {
@@ -49,7 +49,6 @@ pub fn get_game_pos(pos C.Vector2) C.Vector2 {
 	y = (y - offset.y) / scale
 	return C.Vector2{int(x), int(y)}
 }
-
 
 pub fn (mut eye Eye) update_camera() {
 	if vraylib.is_window_resized() {

@@ -4,7 +4,6 @@ import screens
 import lyra
 import vraylib
 
-
 // the initiale window screen size
 const (
 	screen_width  = 800
@@ -13,15 +12,13 @@ const (
 
 fn main() {
 	// init
-
 	vraylib.init_window(screen_width, screen_height, 'Kasaival')
-	vraylib.set_target_fps(60)
+	vraylib.set_target_fps(30)
 	vraylib.set_window_state(vraylib.flag_window_resizable)
 	vraylib.init_audio_device()
 	mut screen := screens.Core{}
 	mut eye := lyra.Eye{}
 	eye.update_camera()
-
 	screen.load(.game, mut eye)
 	// loop
 	for {
@@ -41,14 +38,12 @@ fn main() {
 			vraylib.clear_background(vraylib.black)
 			screen.draw(eye)
 			vraylib.end_mode_2d()
-
 			// make the rest of the screen black (outside of game)
 			w := int(eye.camera.offset.x)
 			h := vraylib.get_screen_height()
 			vraylib.draw_rectangle(0, 0, w, h, vraylib.black)
-			x :=vraylib.get_screen_width()
+			x := vraylib.get_screen_width()
 			vraylib.draw_rectangle(x - w, 0, w, h, vraylib.black)
-
 			vraylib.end_drawing()
 		}
 	}

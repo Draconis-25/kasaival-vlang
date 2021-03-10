@@ -84,9 +84,9 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	dy *= self.speed
 	eye_bound := lyra.game_width / 5
 	if (self.x + dx < eye.cx + eye_bound &&
-		eye.cx > lyra.start_x) || (self.x + dx >
+		eye.cx > eye.start_x) || (self.x + dx >
 		eye.cx + lyra.game_width - eye_bound &&
-		eye.cx < eye.gw + lyra.start_x - lyra.game_width) {
+		eye.cx < eye.gw + eye.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
 	w := self.texture.width * self.scale * .5

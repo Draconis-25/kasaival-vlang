@@ -30,7 +30,7 @@ mut:
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
-	x := vraylib.get_random_value(lyra.start_x, int(lyra.start_x + eye.gw))
+	x := vraylib.get_random_value(eye.start_x, int(eye.start_x + eye.gw))
 	y := vraylib.get_random_value(lyra.start_y, lyra.game_height)
 	return x, y
 }
@@ -48,7 +48,7 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	props := stages.get_props(self.current_stage)
 	width := props[0].add_width
 	cs := props[0].color_scheme
-	self.background.load()
+	self.background.load(eye)
 	self.ground.load(mut eye, width, cs)
 	self.player.load()
 	for _ in 0 .. 10 {
@@ -68,7 +68,7 @@ fn check_collision(a []f32, b []f32) bool {
 
 pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	vraylib.update_music_stream(self.music)
-	self.background.update()
+	self.background.update(eye)
 	self.ground.update()
 	self.entity_order = []Z_Order{}
 	for i, mut plant in self.plants {
@@ -90,7 +90,7 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 	self.ground.draw(eye)
 	for obj in self.entity_order {
 		match obj.entity {
-			.plant { self.plants[obj.i].draw() }
+			.plant { self.plants[obj.i].draw(eye) }
 			.player { self.player.draw() }
 		}
 	}

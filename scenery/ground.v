@@ -36,18 +36,18 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	w := gh / self.rows
 	h := w
 	self.tile_size = h
-	start_x := lyra.start_x - w
-	end_x := lyra.start_x + width + w
-	eye.gw = start_x + end_x
+	eye.gw = width
+	eye.start_x = int( - f32(eye.gw) * .5)
+	end_x := eye.start_x + eye.gw + w
 	self.grid = [][]Tile{len: self.rows, init: []Tile{}}
 	for i in 0 .. self.rows {
 		self.pos_y << y
-		mut x := start_x
+		mut x := eye.start_x
 		for x < end_x {
-			mut c := get_color(cs, x, start_x, end_x)
+			mut c := get_color(cs, x, eye.start_x,int(end_x))
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
-			c = get_color(cs, x, start_x, end_x)
+			c = get_color(cs, x, eye.start_x, int(end_x))
 			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				w, y + h}, c, c}
 			x += w
@@ -88,11 +88,11 @@ fn (mut tile Tile) burn(power f32) {
 
 fn (tile &Tile) get_lr(i int) (f32, f32) {
 	mut l := f32(-1)
-			if i % 2 == 0 {
-				l = tile.p1.x
-			} else {
-				l = tile.p2.x
-			}
+	if i % 2 == 0 {
+		l = tile.p1.x
+	} else {
+		l = tile.p2.x
+	}
 	return l, tile.p3.x
 }
 
@@ -119,7 +119,7 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 pub fn (self &Ground) draw(eye &lyra.Eye) {
 	for row in self.grid {
 		for i, tile in row {
-			l,r := tile.get_lr(i)
+			l, r := tile.get_lr(i)
 			w := r - l
 			if l + w > eye.cx && r < eye.cx + lyra.game_width + w {
 				vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)

@@ -24,6 +24,8 @@ pub struct Core {
 	element        string = 'plant'
 pub mut:
 	y              f32
+	left_x f32
+	right_x f32
 mut:
 	cs             []int = [90, 130, 170, 202, 60, 100]
 	grid           [][]Branch
@@ -142,7 +144,7 @@ pub fn (self &Core) get_hitbox() []f32 {
 	return [b.x1, b.x2, b.y2, b.y1]
 }
 
-pub fn (self &Core) draw() {
+pub fn (self &Core) draw(eye &lyra.Eye) {
 	for i, row in self.grid {
 		for branch in row {
 			x1, y1 := branch.x1, branch.y1
@@ -154,7 +156,9 @@ pub fn (self &Core) draw() {
 				x2 = get_next_pos(self, x1, x2)
 				y2 = get_next_pos(self, y1, y2)
 			}
-			vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, branch.color)
+			if (x1 > eye.cx || x2 > eye.cx) && (x1 < eye.cx + lyra.game_width || x2 < eye.cx + lyra.game_width) {
+				vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, branch.color)
+			}
 		}
 	}
 }
