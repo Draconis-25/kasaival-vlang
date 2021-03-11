@@ -20,6 +20,7 @@ mut:
 	color C.Color
 }
 
+
 pub struct Core {
 	element        string = 'plant'
 pub mut:
@@ -27,7 +28,12 @@ pub mut:
 	left_x f32
 	right_x f32
 mut:
+	w int
+	h int
 	cs             []int = [90, 130, 170, 202, 60, 100]
+	cs_branch []int
+	cs_leaf []int
+	change_color []int
 	grid           [][]Branch
 	max_row        int = 8
 	current_row    int
@@ -39,50 +45,17 @@ mut:
 	burn_intensity f32
 }
 
-enum PlantName {
-	oak
-	@none
-}
 
-pub fn (mut self Core) load(plant PlantName, x int, y int, w int, h int) {
-	match plant {
-		.oak { self.oak() }
-		.@none {}
-	}
+pub fn (mut self Core) load(x int, y int) {
 	self.y = y
 	self.grow_timer = vraylib.get_random_value(0, self.grow_time)
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
-	self.grid[0] << Branch{-90, x, y, x, y - h, w, h, lyra.get_color(self.cs)}
+	self.grid[0] << Branch{-90, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs)}
 	// grow to current size
 	grow_to_row := vraylib.get_random_value(1, self.max_row)
 	for _ in 1 .. grow_to_row {
 		self.grow()
-	}
-}
-
-pub fn (mut self Core) update() {
-	if self.burning > 0 {
-		for row in self.grid {
-			for mut branch in row {
-				branch.burn_color(self)
-			}
-		}
-		if self.current_row >= 0 {
-			if self.grow_timer >= self.grow_time {
-				self.shrink()
-				self.grow_timer = 0
-			}
-			self.grow_timer += int(self.burn_intensity)
-		}
-	} else {
-		if self.current_row < self.max_row - 1 {
-			if self.grow_timer <= 0 {
-				self.grow()
-				self.grow_timer = self.grow_time
-			}
-			self.grow_timer--
-		}
 	}
 }
 
@@ -142,6 +115,32 @@ pub fn (mut self Core) collided(element string, dp f32) {
 pub fn (self &Core) get_hitbox() []f32 {
 	b := self.grid[0][0]
 	return [b.x1, b.x2, b.y2, b.y1]
+}
+
+
+pub fn (mut self Core) update() {
+	if self.burning > 0 {
+		for row in self.grid {
+			for mut branch in row {
+				branch.burn_color(self)
+			}
+		}
+		if self.current_row >= 0 {
+			if self.grow_timer >= self.grow_time {
+				self.shrink()
+				self.grow_timer = 0
+			}
+			self.grow_timer += int(self.burn_intensity)
+		}
+	} else {
+		if self.current_row < self.max_row - 1{
+			self.grow_timer--
+			if self.grow_timer < 0 {
+				self.grow()
+				self.grow_timer = self.grow_time
+			}
+		}
+	}
 }
 
 pub fn (self &Core) draw(eye &lyra.Eye) {

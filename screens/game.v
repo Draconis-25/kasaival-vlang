@@ -38,11 +38,9 @@ fn get_spawn_pos(eye &lyra.Eye) (int, int) {
 }
 
 fn (mut self Game) add_plant(eye &lyra.Eye) {
-	mut plant := plants.Core{}
+	mut plant := plants.saguaro()
 	x, y := get_spawn_pos(eye)
-	w := vraylib.get_random_value(20, 25)
-	h := vraylib.get_random_value(38, 42)
-	plant.load(.oak, x, y, w, h)
+	plant.load(x, y)
 	self.plants << plant
 }
 
@@ -58,6 +56,7 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	}
 	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
+	self.mute = true
 }
 
 fn check_collision(a []f32, b []f32) bool {
