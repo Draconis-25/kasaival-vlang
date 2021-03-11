@@ -42,8 +42,8 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	self.grid = [][]Tile{len: self.rows, init: []Tile{}}
 	for i in 0 .. self.rows {
 		self.pos_y << y
-		mut x := eye.start_x
-		for x < end_x {
+		mut x := eye.start_x - int(f32(w) * .5)
+		for x < end_x + int(f32(w) * .5) {
 			mut c := get_color(cs, x, eye.start_x,int(end_x))
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
