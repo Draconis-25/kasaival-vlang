@@ -107,7 +107,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 
 pub fn (self &Core) get_hitbox() []f32 {
 	w, h := self.texture.width * self.scale, self.texture.height * self.scale
-	return [self.x - w * .5, self.x + w * .5, self.y - h * .5, self.y]
+	return [self.x - w * .5, self.x + w * .5, self.y - h * .8, self.y]
 }
 
 [live]

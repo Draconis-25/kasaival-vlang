@@ -20,6 +20,7 @@ fn main() {
 	mut eye := lyra.Eye{}
 	eye.update_camera()
 	screen.load(.game, mut eye)
+	mut key_timeout := 0
 	// loop
 	for {
 		if vraylib.window_should_close() {
@@ -27,8 +28,14 @@ fn main() {
 		}
 		{
 			// update
+			if key_timeout > 0 {
+				key_timeout--
+			}
 			if vraylib.is_key_down(vraylib.key_f) {
-				vraylib.toggle_fullscreen()
+				if key_timeout == 0 {
+					vraylib.toggle_fullscreen()
+				}
+				key_timeout = 2
 			}
 			screen.update(mut eye)
 			eye.update_camera()

@@ -27,6 +27,8 @@ mut:
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName = .desert
 	music         C.Music
+	mute bool
+	key_timeout int
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
@@ -66,8 +68,24 @@ fn check_collision(a []f32, b []f32) bool {
 	}
 }
 
+fn toggle(v bool) bool {
+	if v {return false
+	} else { return  true}
+}
+
 pub fn (mut self Game) update(mut eye lyra.Eye) Next {
-	vraylib.update_music_stream(self.music)
+	if self.key_timeout > 0 {
+		self.key_timeout--
+	}
+	if vraylib.is_key_down(vraylib.key_m) {
+		if self.key_timeout == 0 {
+			self.mute = toggle(self.mute)
+		}
+		self.key_timeout = 2
+	}
+	if !self.mute {
+		vraylib.update_music_stream(self.music)
+	}
 	self.background.update(eye)
 	self.ground.update()
 	self.entity_order = []Z_Order{}
