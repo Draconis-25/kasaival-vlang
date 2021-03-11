@@ -18,11 +18,11 @@ pub fn get_color(cs []int) C.Color {
 
 pub struct Eye {
 pub mut:
-	camera C.Camera2D = C.Camera2D{}
-	start_x int    = -100
-	cx     f32
-	gw     f32 = 1000
-	gh     f32 = 400
+	camera  C.Camera2D = C.Camera2D{}
+	start_x int = -100
+	cx      f32
+	gw      f32 = 1000
+	gh      f32 = 400
 }
 
 pub fn get_game_scale() (f32, C.Vector2) {

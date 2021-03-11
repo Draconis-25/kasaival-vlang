@@ -13,8 +13,8 @@ enum Entity {
 }
 
 struct Z_Order {
-	y      f32
 	entity Entity
+	y      f32
 	i      int
 }
 
@@ -27,8 +27,9 @@ mut:
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName = .desert
 	music         C.Music
-	mute bool
-	key_timeout int
+	mute          bool
+	key_timeout   int
+	spawners      []stages.Spawner
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
@@ -37,23 +38,29 @@ fn get_spawn_pos(eye &lyra.Eye) (int, int) {
 	return x, y
 }
 
-fn (mut self Game) add_plant(eye &lyra.Eye) {
-	mut plant := plants.saguaro()
+fn (mut self Game) add_plant(name plants.Names, eye &lyra.Eye) {
+	mut plant := plants.Core{}
 	x, y := get_spawn_pos(eye)
-	plant.load(x, y)
+	plant.load(name, x, y)
 	self.plants << plant
 }
 
-pub fn (mut self Game) load(mut eye lyra.Eye) {
-	props := stages.get_props(self.current_stage)
-	width := props[0].add_width
-	cs := props[0].color_scheme
-	self.background.load(eye)
-	self.ground.load(mut eye, width, cs)
-	self.player.load()
-	for _ in 0 .. 10 {
-		self.add_plant(eye)
+fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
+	for mut spawner in scene.spawners {
+		spawner.timer = vraylib.get_random_value(0, spawner.interval)
+		self.spawners << spawner
 	}
+	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)
+	self.player.load()
+}
+
+pub fn (mut self Game) load(mut eye lyra.Eye) {
+	// load current scene
+	scenes := stages.get_props(self.current_stage)
+	self.load_scene(scenes[0], mut eye)
+	// load bacground
+	self.background.load(eye)
+	// load music
 	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
 	self.mute = true
@@ -68,11 +75,21 @@ fn check_collision(a []f32, b []f32) bool {
 }
 
 fn toggle(v bool) bool {
-	if v {return false
-	} else { return  true}
+	if v {
+		return false
+	} else {
+		return true
+	}
 }
 
 pub fn (mut self Game) update(mut eye lyra.Eye) Next {
+	for mut spawner in self.spawners {
+		spawner.timer++
+		if spawner.timer > spawner.interval {
+			self.add_plant(spawner.name, eye)
+			spawner.timer = 0
+		}
+	}
 	if self.key_timeout > 0 {
 		self.key_timeout--
 	}
@@ -90,14 +107,14 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.entity_order = []Z_Order{}
 	for i, mut plant in self.plants {
 		plant.update()
-		self.entity_order << Z_Order{plant.y, .plant, i}
+		self.entity_order << Z_Order{.plant, plant.y, i}
 		if check_collision(self.player.get_hitbox(), plant.get_hitbox()) {
 			plant.collided(self.player.element, self.player.dp)
 		}
 	}
 	self.player.update(mut eye)
 	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
-	self.entity_order << Z_Order{self.player.y, .player, -1}
+	self.entity_order << Z_Order{.player, self.player.y, -1}
 	self.entity_order.sort(a.y < b.y)
 	return .@none
 }

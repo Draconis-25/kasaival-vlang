@@ -9,19 +9,18 @@ const (
 )
 
 struct Layer {
-	mut:
-	img C.Texture2D
-	y int
+mut:
+	img      C.Texture2D
+	y        int
 	offset_x []int
-	layer int
+	layer    int
 }
-
 
 pub struct Background {
 mut:
-	y int
-	sx    f32
-	scale f32
+	y      int
+	sx     f32
+	scale  f32
 	layers []Layer
 }
 
@@ -45,12 +44,12 @@ pub fn (mut self Background) load(eye &lyra.Eye) {
 pub fn (mut self Background) update(eye &lyra.Eye) {
 	for i, mut layer in self.layers {
 		w := int(layer.img.width * self.scale)
-		for j in 0..3 {
-			x := int(eye.cx * .5 + eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) + layer.offset_x[j]
+		for j in 0 .. 3 {
+			x := int(eye.cx * .5 +
+				eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) + layer.offset_x[j]
 			if x > eye.cx + w * 3 - lyra.game_width {
 				layer.offset_x[j] -= w * 3
-			}
-			else if x < eye.cx - w * 3 + lyra.game_width {
+			} else if x < eye.cx - w * 3 + lyra.game_width {
 				layer.offset_x[j] += w * 3
 			}
 		}
@@ -61,9 +60,9 @@ pub fn (mut self Background) update(eye &lyra.Eye) {
 pub fn (self Background) draw(eye &lyra.Eye) {
 	for i, layer in self.layers {
 		w := int(layer.img.width * self.scale)
-		for j in 0..3 {
-			x := int(eye.cx * .5 + eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) + layer.offset_x[j]
-
+		for j in 0 .. 3 {
+			x := int(eye.cx * .5 +
+				eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) + layer.offset_x[j]
 			vraylib.draw_texture_ex(layer.img, C.Vector2{x, layer.y}, 0, self.scale, vraylib.white)
 		}
 	}

@@ -8,6 +8,11 @@ const (
 	deg_to_rad = math.pi / 180
 )
 
+enum Names {
+	oak
+	saguaro
+}
+
 struct Branch {
 	deg   int
 	x1    f32
@@ -20,20 +25,19 @@ mut:
 	color C.Color
 }
 
-
 pub struct Core {
 	element        string = 'plant'
 pub mut:
 	y              f32
-	left_x f32
-	right_x f32
+	left_x         f32
+	right_x        f32
 mut:
-	w int
-	h int
+	w              int
+	h              int
 	cs             []int = [90, 130, 170, 202, 60, 100]
-	cs_branch []int
-	cs_leaf []int
-	change_color []int
+	cs_branch      []int
+	cs_leaf        []int
+	change_color   []int
 	grid           [][]Branch
 	max_row        int = 8
 	current_row    int
@@ -45,18 +49,23 @@ mut:
 	burn_intensity f32
 }
 
-
-pub fn (mut self Core) load(x int, y int) {
+pub fn (mut self Core) load(name Names, x int, y int) {
+	match name {
+		.saguaro {
+			saguaro(mut self)
+		}
+		.oak {}
+	}
 	self.y = y
 	self.grow_timer = vraylib.get_random_value(0, self.grow_time)
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
 	self.grid[0] << Branch{-90, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs)}
 	// grow to current size
-	grow_to_row := vraylib.get_random_value(1, self.max_row)
+	/*grow_to_row := vraylib.get_random_value(1, self.max_row)
 	for _ in 1 .. grow_to_row {
 		self.grow()
-	}
+	}*/
 }
 
 fn (mut self Core) shrink() {
@@ -117,7 +126,6 @@ pub fn (self &Core) get_hitbox() []f32 {
 	return [b.x1, b.x2, b.y2, b.y1]
 }
 
-
 pub fn (mut self Core) update() {
 	if self.burning > 0 {
 		for row in self.grid {
@@ -133,7 +141,7 @@ pub fn (mut self Core) update() {
 			self.grow_timer += int(self.burn_intensity)
 		}
 	} else {
-		if self.current_row < self.max_row - 1{
+		if self.current_row < self.max_row - 1 {
 			self.grow_timer--
 			if self.grow_timer < 0 {
 				self.grow()
@@ -155,7 +163,8 @@ pub fn (self &Core) draw(eye &lyra.Eye) {
 				x2 = get_next_pos(self, x1, x2)
 				y2 = get_next_pos(self, y1, y2)
 			}
-			if (x1 > eye.cx || x2 > eye.cx) && (x1 < eye.cx + lyra.game_width || x2 < eye.cx + lyra.game_width) {
+			if (x1 > eye.cx || x2 > eye.cx) &&
+				(x1 < eye.cx + lyra.game_width || x2 < eye.cx + lyra.game_width) {
 				vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, branch.color)
 			}
 		}

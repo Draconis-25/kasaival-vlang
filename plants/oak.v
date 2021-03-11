@@ -1,6 +1,6 @@
 module plants
 
-pub fn  oak() Core {
+pub fn oak() Core {
 	mut plant := Core{}
 	plant.cs = [40, 70, 170, 202, 60, 100]
 	plant.max_row = 8
