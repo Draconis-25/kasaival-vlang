@@ -37,7 +37,7 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	h := w
 	self.tile_size = h
 	eye.gw = width
-	eye.start_x = int( - f32(eye.gw) * .5)
+	eye.start_x = int( - f32(eye.gw) * .5 + lyra.game_width * .5)
 	end_x := eye.start_x + eye.gw + w
 	self.grid = [][]Tile{len: self.rows, init: []Tile{}}
 	for i in 0 .. self.rows {

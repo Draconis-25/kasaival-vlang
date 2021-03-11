@@ -8,19 +8,21 @@ const (
 	ext  = '.png'
 )
 
-struct Item {
+struct Layer {
 	mut:
 	img C.Texture2D
-	x int
 	y int
+	offset_x []int
+	layer int
 }
+
 
 pub struct Background {
 mut:
 	y int
-	items []Item
 	sx    f32
 	scale f32
+	layers []Layer
 }
 
 pub fn (mut self Background) load(eye &lyra.Eye) {
@@ -28,43 +30,47 @@ pub fn (mut self Background) load(eye &lyra.Eye) {
 	self.scale = .4
 	len := 6
 	for i in 0 .. len {
-		mut item := Item{}
-		item.img = vraylib.load_texture(path + (i + 1).str() + ext)
-		item.y = self.y - self.y * (len - i) / len
-		w := int(item.img.width * self.scale)
-		item.x = int(eye.cx * .5 + eye.cx * (len - i) / len * .5 - w)
-		self.items << item
-		item.x += w
-		self.items << item
-		item.x += w
-		self.items << item
+		mut layer := Layer{}
+		layer.img = vraylib.load_texture(path + (i + 1).str() + ext)
+		layer.y = self.y - self.y * (len - i) / len
+		w := int(layer.img.width * self.scale)
+		layer.offset_x << -w
+		layer.offset_x << 0
+		layer.offset_x << w
+		self.layers << layer
 	}
 }
 
 [live]
 pub fn (mut self Background) update(eye &lyra.Eye) {
-	for i, mut item in self.items {
-		w := int(item.img.width * self.scale)
-
-		if item.x > eye.cx + w * 3 - lyra.game_width {
-			item.x -= w * 3
-		}
-		else if item.x < eye.cx - w * 3 + lyra.game_width {
-			item.x += w * 3
+	for i, mut layer in self.layers {
+		w := int(layer.img.width * self.scale)
+		for j in 0..3 {
+			x := int(eye.cx * .5 + eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) + layer.offset_x[j]
+			if x > eye.cx + w * 3 - lyra.game_width {
+				layer.offset_x[j] -= w * 3
+			}
+			else if x < eye.cx - w * 3 + lyra.game_width {
+				layer.offset_x[j] += w * 3
+			}
 		}
 	}
 }
 
 [live]
 pub fn (self Background) draw(eye &lyra.Eye) {
-	for i, item in self.items {
-		vraylib.draw_texture_ex(item.img, C.Vector2{item.x, item.y}, 0, self.scale, vraylib.white)
+	for i, layer in self.layers {
+		w := int(layer.img.width * self.scale)
+		for j in 0..3 {
+			x := int(eye.cx * .5 + eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) + layer.offset_x[j]
 
+			vraylib.draw_texture_ex(layer.img, C.Vector2{x, layer.y}, 0, self.scale, vraylib.white)
+		}
 	}
 }
 
 pub fn (self &Background) unload() {
-	for item in self.items {
-		vraylib.unload_texture(item.img)
+	for layer in self.layers {
+		vraylib.unload_texture(layer.img)
 	}
 }

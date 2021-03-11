@@ -64,9 +64,7 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	if is_key_down(key_down) {
 		dy = 1
 	}
-	if dx != 0 && dy != 0 {
-		dx, dy = angle(dx, dy)
-	}
+
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
 		diff_x, diff_y := int(pos.x - self.x + eye.cx), int(pos.y - self.y)
