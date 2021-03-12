@@ -6,6 +6,7 @@ import player
 import scenery
 import stages
 import vraylib
+import mobs
 
 enum Entity {
 	player
@@ -30,6 +31,7 @@ mut:
 	mute          bool
 	key_timeout   int
 	spawners      []stages.Spawner
+	dog           mobs.Dog
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
@@ -63,7 +65,9 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	// load music
 	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
-	self.mute = true
+	self.mute = false
+	self.dog = mobs.Dog{}
+	self.dog.load()
 }
 
 fn check_collision(a []f32, b []f32) bool {
@@ -116,6 +120,8 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
 	self.entity_order << Z_Order{.player, self.player.y, -1}
 	self.entity_order.sort(a.y < b.y)
+
+	self.dog.update()
 	return .@none
 }
 
@@ -128,6 +134,7 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 			.player { self.player.draw() }
 		}
 	}
+  self.dog.draw()
 }
 
 pub fn (self &Game) unload() {
@@ -135,4 +142,5 @@ pub fn (self &Game) unload() {
 	self.background.unload()
 	self.ground.unload()
 	self.player.unload()
+	self.dog.unload()
 }
