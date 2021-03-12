@@ -11,6 +11,7 @@ const (
 enum Names {
 	oak
 	saguaro
+	kali
 }
 
 struct Branch {
@@ -34,7 +35,6 @@ pub mut:
 mut:
 	w              int
 	h              int
-	cs             []int = [90, 130, 170, 202, 60, 100]
 	cs_branch      []int
 	cs_leaf        []int
 	change_color   []int
@@ -47,25 +47,34 @@ mut:
 	grow_time      int = 200
 	burning        int
 	burn_intensity f32
+	two_start_branches bool
+	grow_to_random_row bool
 }
 
-pub fn (mut self Core) load(name Names, x int, y int) {
-	match name {
-		.saguaro {
-			saguaro(mut self)
-		}
-		.oak {}
-	}
+pub fn (mut self Core) load(name Names, start_x int, y int) {
+	self.load_props(name)
 	self.y = y
 	self.grow_timer = vraylib.get_random_value(0, self.grow_time)
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
-	self.grid[0] << Branch{-90, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs)}
+	mut start_angle := -90
+	mut x := start_x
+	if self.two_start_branches {
+		x += vraylib.get_random_value(5, 10)
+		self.grid[0] << Branch{start_angle + 10, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs_branch)}
+		start_angle -= 10
+
+		x -= vraylib.get_random_value(10, 20)
+	}
+	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs_branch)}
+
 	// grow to current size
-	/*grow_to_row := vraylib.get_random_value(1, self.max_row)
-	for _ in 1 .. grow_to_row {
-		self.grow()
-	}*/
+	if self.grow_to_random_row {
+		grow_to_row := vraylib.get_random_value(1, self.max_row)
+		for _ in 1 .. grow_to_row {
+			self.grow()
+		}
+	}
 }
 
 fn (mut self Core) shrink() {
@@ -95,7 +104,7 @@ fn (mut self Core) grow() {
 		for deg in degs {
 			nx := int(px + math.cos(f32(deg) * deg_to_rad) * h)
 			ny := int(py + math.sin(f32(deg) * deg_to_rad) * h)
-			c := lyra.get_color(self.cs)
+			c := lyra.get_color(self.cs_branch)
 			self.grid[self.current_row + 1] << Branch{deg, px, py, nx, ny, w, h, c}
 		}
 	}
@@ -128,7 +137,7 @@ pub fn (self &Core) get_hitbox() []f32 {
 
 pub fn (mut self Core) update() {
 	if self.burning > 0 {
-		for row in self.grid {
+		for mut row in self.grid {
 			for mut branch in row {
 				branch.burn_color(self)
 			}
@@ -151,6 +160,11 @@ pub fn (mut self Core) update() {
 	}
 }
 
+fn (self &Core) get_color(color C.Color) C.Color {
+	mut new_color := color
+	return new_color
+}
+
 pub fn (self &Core) draw(eye &lyra.Eye) {
 	for i, row in self.grid {
 		for branch in row {
@@ -165,7 +179,7 @@ pub fn (self &Core) draw(eye &lyra.Eye) {
 			}
 			if (x1 > eye.cx || x2 > eye.cx) &&
 				(x1 < eye.cx + lyra.game_width || x2 < eye.cx + lyra.game_width) {
-				vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, branch.color)
+				vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, self.get_color(branch.color))
 			}
 		}
 	}

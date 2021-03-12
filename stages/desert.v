@@ -11,7 +11,7 @@ fn desert() []Scene {
 		[220, 230, 105, 122, 54, 80]
 	]
 	// add saguaro spawner to spawners
-	scene.spawners << get_spawner(.saguaro, 100)
+	scene.spawners << get_spawner(.kali, 100)
 	// return all scenes
 	return [scene]
 }

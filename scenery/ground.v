@@ -70,7 +70,7 @@ fn (mut tile Tile) heal() {
 
 [live]
 pub fn (mut self Ground) update() {
-	for row in self.grid {
+	for mut row in self.grid {
 		for mut tile in row {
 			tile.heal()
 		}
