@@ -37,13 +37,13 @@ fn (mut self Core) saguaro()  {
 
 
 fn (mut self Core) kali()  {
-    self.cs_branch = [102, 128, 153, 179, 25, 50]
-    self.change_color =[-50, -50, -10]
+    self.cs_branch = [110, 140, 153, 179, 25, 50]
+    self.change_color =[-50, -70, -10]
     self.grow_time = 20
     self.max_row = 5
     self.w = 22
 		self.h = 22
-    self.split_chance = 0
+    self.split_chance = 100
     self.split_angle = [40, 60]
 		self.two_start_branches = true
 }
