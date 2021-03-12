@@ -27,7 +27,7 @@ fn (mut self Core) oak() Core {
 fn (mut self Core) saguaro()  {
 	self.cs_branch = [125, 178, 122, 160, 76, 90]
 	self.cs_leaf = [150, 204, 190, 230, 159, 178]
-	self.change_color = C.Color{-25, -64, -50, 0}
+	self.change_color =[-25, -64, -50, 0]
 	self.grow_time = 20
 	self.max_row = 7
 	self.w = 14
@@ -38,7 +38,7 @@ fn (mut self Core) saguaro()  {
 
 fn (mut self Core) kali()  {
     self.cs_branch = [102, 128, 153, 179, 25, 50]
-    self.change_color = C.Color{-25, -76, -50, 0}
+    self.change_color =[-50, -50, -10]
     self.grow_time = 20
     self.max_row = 5
     self.w = 22

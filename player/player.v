@@ -16,7 +16,7 @@ mut:
 	hp      f32 = 100
 	xp      f32
 	lvl     int
-	speed   int = 10
+	speed   int = 20
 	texture C.Texture2D
 }
 
@@ -27,13 +27,13 @@ pub fn (mut self Core) load() {
 }
 
 fn is_key_down(keys []int) bool {
-	mut rtn := false
+	mut pressed := false
 	for key in keys {
 		if vraylib.is_key_down(key) {
-			rtn = true
+			pressed = true
 		}
 	}
-	return rtn
+	return pressed
 }
 
 const (
@@ -67,7 +67,8 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
 		diff_x, diff_y := int(pos.x - self.x + eye.cx), int(pos.y - self.y)
-		if diff_x > 4 || diff_x < -4 || diff_y > 4 || diff_y < -4 {
+		offset := f32(self.speed) * .5
+		if diff_x > offset || diff_x < -offset|| diff_y > offset || diff_y < -offset {
 			dx, dy = angle(diff_x, diff_y)
 		}
 	}

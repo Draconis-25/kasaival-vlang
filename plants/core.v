@@ -37,7 +37,7 @@ mut:
 	h              int
 	cs_branch      []int
 	cs_leaf        []int
-	change_color   C.Color
+	change_color   []int
 	grid           [][]Branch
 	max_row        int = 8
 	current_row    int
@@ -160,9 +160,13 @@ pub fn (mut self Core) update() {
 	}
 }
 
-fn (self &Core) get_color(color C.Color) C.Color {
-	mut new_color := color
-	return new_color
+
+fn (self &Core) get_color(c C.Color) C.Color {
+	growth := f32(self.current_row + 1 - f32(self.grow_timer) / self.grow_time) / self.grid.len
+	r := byte(c.r + self.change_color[0] * growth)
+	g := byte(c.g + self.change_color[1] * growth)
+	b := byte(c.b + self.change_color[2] * growth)
+	return C.Color{r, g, b, c.a}
 }
 
 pub fn (self &Core) draw(eye &lyra.Eye) {
