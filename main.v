@@ -12,13 +12,13 @@ const (
 
 fn main() {
 	// init
+	vraylib.set_config_flags(vraylib.flag_window_resizable)
 	vraylib.init_window(screen_width, screen_height, 'Kasaival')
 	vraylib.set_target_fps(30)
-	vraylib.set_window_state(vraylib.flag_window_resizable)
 	vraylib.init_audio_device()
 	mut screen := screens.Core{}
 	mut eye := lyra.Eye{}
-	eye.update_camera()
+	eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
 	screen.load(.game, mut eye)
 	mut key_timeout := 0
 	// loop
@@ -38,7 +38,10 @@ fn main() {
 				key_timeout = 2
 			}
 			screen.update(mut eye)
-			eye.update_camera()
+			if vraylib.is_window_resized() {
+				eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
+			}
+			eye.camera.target = C.Vector2{eye.cx, 0}
 			// draw
 			vraylib.begin_drawing()
 			vraylib.begin_mode_2d(eye.camera)

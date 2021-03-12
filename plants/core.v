@@ -37,7 +37,7 @@ mut:
 	h              int
 	cs_branch      []int
 	cs_leaf        []int
-	change_color   []int
+	change_color   C.Color
 	grid           [][]Branch
 	max_row        int = 8
 	current_row    int
