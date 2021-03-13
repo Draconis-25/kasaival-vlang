@@ -2,6 +2,7 @@ module scenery
 
 import vraylib
 import lyra
+import rand
 
 struct Tile {
 	p1        C.Vector2
@@ -25,7 +26,7 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	get_color := fn (cs [][]int, x int, start_x int, end_x int) C.Color {
 		mut id := f32(cs.len * (x - start_x)) / f32((end_x - start_x))
 		r := id - int(id)
-		id = vraylib.get_random_value(int(r * 10), 10) / 10 + id
+		id = rand.int_in_range(int(r * 10), 10) / 10 + id
 		if id > cs.len - 1 {
 			id = cs.len - 1
 		}
@@ -68,7 +69,7 @@ fn (mut tile Tile) heal() {
 	tile.color = C.Color{r, g, b, 255}
 }
 
-[live]
+
 pub fn (mut self Ground) update() {
 	for mut row in self.grid {
 		for mut tile in row {
@@ -115,7 +116,7 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 	}
 }
 
-[live]
+
 pub fn (self &Ground) draw(eye &lyra.Eye) {
 	for row in self.grid {
 		for i, tile in row {
@@ -128,6 +129,6 @@ pub fn (self &Ground) draw(eye &lyra.Eye) {
 	}
 }
 
-[live]
+
 pub fn (self &Ground) unload() {
 }

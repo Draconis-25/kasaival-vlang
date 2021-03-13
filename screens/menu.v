@@ -7,12 +7,12 @@ mut:
 	background C.Texture2D
 }
 
-[live]
+
 pub fn (mut self Menu) load() {
 	self.background = vraylib.load_texture('resources/menu.jpg')
 }
 
-[live]
+
 pub fn (self &Menu) update() Next {
 	if vraylib.is_mouse_button_pressed(vraylib.mouse_left_button) || vraylib.get_key_pressed() > 0 {
 		return .game
@@ -20,7 +20,7 @@ pub fn (self &Menu) update() Next {
 	return .@none
 }
 
-[live]
+
 pub fn (self &Menu) draw() {
 	vraylib.draw_texture_ex(self.background, C.Vector2{0, 0}, 0, 1, vraylib.white)
 	vraylib.draw_text('KASAIVAL', 480, 160, 200, vraylib.maroon)

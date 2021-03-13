@@ -1,6 +1,7 @@
 module lyra
 
 import vraylib
+import rand
 
 pub const (
 	game_width  = 1920
@@ -9,7 +10,7 @@ pub const (
 )
 
 pub fn get_color(cs []int) C.Color {
-	grv := vraylib.get_random_value
+	grv := rand.int_in_range
 	r := grv(cs[0], cs[1])
 	g := grv(cs[2], cs[3])
 	b := grv(cs[4], cs[5])

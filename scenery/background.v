@@ -40,7 +40,7 @@ pub fn (mut self Background) load(eye &lyra.Eye) {
 	}
 }
 
-[live]
+
 pub fn (mut self Background) update(eye &lyra.Eye) {
 	for i, mut layer in self.layers {
 		w := int(layer.img.width * self.scale)
@@ -56,7 +56,7 @@ pub fn (mut self Background) update(eye &lyra.Eye) {
 	}
 }
 
-[live]
+
 pub fn (self Background) draw(eye &lyra.Eye) {
 	for i, layer in self.layers {
 		w := int(layer.img.width * self.scale)

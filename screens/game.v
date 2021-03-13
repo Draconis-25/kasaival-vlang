@@ -6,6 +6,7 @@ import player
 import scenery
 import stages
 import vraylib
+import rand
 
 enum Entity {
 	player
@@ -33,8 +34,8 @@ mut:
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
-	x := vraylib.get_random_value(eye.start_x, int(eye.start_x + eye.gw))
-	y := vraylib.get_random_value(lyra.start_y, lyra.game_height)
+	x := rand.int_in_range(eye.start_x, int(eye.start_x + eye.gw))
+	y := rand.int_in_range(lyra.start_y, lyra.game_height)
 	return x, y
 }
 
@@ -47,7 +48,7 @@ fn (mut self Game) add_plant(name plants.Names, eye &lyra.Eye) {
 
 fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	for mut spawner in scene.spawners {
-		spawner.timer = vraylib.get_random_value(0, spawner.interval)
+		spawner.timer = rand.int_in_range(0, spawner.interval)
 		self.spawners << spawner
 	}
 	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)

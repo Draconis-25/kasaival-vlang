@@ -3,6 +3,7 @@ module plants
 import vraylib
 import math
 import lyra
+import rand
 
 const (
 	deg_to_rad = math.pi / 180
@@ -54,23 +55,23 @@ mut:
 pub fn (mut self Core) load(name Names, start_x int, y int) {
 	self.load_props(name)
 	self.y = y
-	self.grow_timer = vraylib.get_random_value(0, self.grow_time)
+	self.grow_timer = rand.intn(self.grow_time)
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
 	mut start_angle := -90
 	mut x := start_x
 	if self.two_start_branches {
-		x += vraylib.get_random_value(5, 10)
+		x += rand.int_in_range(5, 10)
 		self.grid[0] << Branch{start_angle + 10, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs_branch)}
 		start_angle -= 10
 
-		x -= vraylib.get_random_value(10, 20)
+		x -= rand.int_in_range(10, 20)
 	}
 	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs_branch)}
 
 	// grow to current size
 	if self.grow_to_random_row {
-		grow_to_row := vraylib.get_random_value(1, self.max_row)
+		grow_to_row := rand.int_in_range(1, self.max_row)
 		for _ in 1 .. grow_to_row {
 			self.grow()
 		}
@@ -88,13 +89,13 @@ fn (mut self Core) grow() {
 	// previous row
 	prev_row := self.grid[self.current_row]
 	for prev_branch in prev_row {
-		split := vraylib.get_random_value(0, 100)
+		split := rand.int_in_range(0, 100)
 		px, py := prev_branch.x2, prev_branch.y2
 		w, h := prev_branch.w * .9, prev_branch.h * .95
 		mut degs := []int{}
 		if self.split_chance > split {
 			get_angle := fn (self &Core) int {
-				return vraylib.get_random_value(self.split_angle[0], self.split_angle[1])
+				return rand.int_in_range(self.split_angle[0], self.split_angle[1])
 			}
 			degs << prev_branch.deg - get_angle(self)
 			degs << prev_branch.deg + get_angle(self)

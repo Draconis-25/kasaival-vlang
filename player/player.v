@@ -3,6 +3,7 @@ module player
 import vraylib
 import lyra
 import math
+import particles
 
 pub struct Core {
 pub:
@@ -17,13 +18,18 @@ mut:
 	xp      f32
 	lvl     int
 	speed   int = 20
-	texture C.Texture2D
+	sprite particles.Fire
+	w f32
+	h f32
 }
 
 pub fn (mut self Core) load() {
-	self.texture = vraylib.load_texture('resources/spark_flame.png')
-	self.x = lyra.game_width * .5 - f32(self.texture.width) * .5
+	self.sprite = particles.Fire{}
+	self.sprite.load()
+	self.x = lyra.game_width * .5 - self.w * .5
 	self.y = lyra.game_height * .8
+	self.w = 32
+	self.h = 32
 }
 
 fn is_key_down(keys []int) bool {
@@ -75,7 +81,7 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	return f32(dx), f32(dy)
 }
 
-[live]
+
 pub fn (mut self Core) update(mut eye lyra.Eye) {
 	mut dx, mut dy := get_direction(self, eye)
 	dx *= self.speed
@@ -87,7 +93,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 		eye.cx < eye.gw + eye.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
-	w := self.texture.width * self.scale * .5
+	w := self.w
 	if self.x + dx < eye.cx + w && dx < 0 {
 		self.x = eye.cx + w
 	} else if self.x + dx > eye.cx + lyra.game_width - w {
@@ -95,7 +101,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	} else {
 		self.x += dx
 	}
-	h := self.texture.height * self.scale
+	h := self.h
 	if self.y + dy > lyra.game_height && dy > 0 {
 		self.y = lyra.game_height
 	} else if self.y + dy < lyra.start_y + h * .1 && dy < 0 {
@@ -103,21 +109,20 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	} else {
 		self.y += dy
 	}
+
+	self.sprite.update(self.x - w * .5, self.y - h)
 }
 
 pub fn (self &Core) get_hitbox() []f32 {
-	w, h := self.texture.width * self.scale, self.texture.height * self.scale
-	return [self.x - w * .5, self.x + w * .5, self.y - h * .8, self.y]
+	return [self.x - self.w * .5, self.x + self.w * .5, self.y - self.h * .8, self.y]
 }
 
-[live]
+
 pub fn (self &Core) draw() {
-	w, h := self.texture.width * self.scale, self.texture.height * self.scale
-	vraylib.draw_texture_ex(self.texture, C.Vector2{self.x - w * .5, self.y - h}, 0, 1,
-		vraylib.white)
+	self.sprite.draw()
 }
 
-[live]
+
 pub fn (self &Core) unload() {
-	vraylib.unload_texture(self.texture)
+	self.sprite.unload()
 }
