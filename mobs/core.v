@@ -4,20 +4,15 @@ import vraylib
 import math
 import lyra
 
-enum MobName {
+pub enum MobName {
 	dog
+	frog
+	fox
 	@none
 }
 
 
-struct Sprite {
-	texture     C.Texture2D
-	frame_size  C.Vector2
-	max_frame   int
-	frames_wide int
-	origin      C.Vector2
-	frame       int
-}
+
 
 
 
@@ -25,6 +20,8 @@ struct Sprite {
 pub struct Core {
 	
 	mut: dog Dog
+	     frog Frog
+		 fox  Fox
 	     tipe MobName
 
 }
@@ -33,12 +30,20 @@ pub struct Core {
 
 
 
-pub fn (mut self Core) load(mob MobName) {
+pub fn (mut self Core) load(mob MobName, x int y int) {
 	self.tipe = mob
 	match mob {
 		.dog {
 			self.dog = Dog{}
 			self.dog.load()
+		}
+		.frog {
+			self.frog = Frog{}
+			self.frog.load()
+		}
+		.fox {
+			self.fox = Fox{}
+			self.fox.load()
 		}
 		.@none {}
 	}
@@ -51,6 +56,12 @@ pub fn (mut self Core) update() {
 		.dog {
 			self.dog.update()
 		}
+		.frog{
+			self.frog.update()
+		}
+		.fox {
+			self.fox.update()
+		}
 		.@none {}
 	}
 
@@ -62,6 +73,12 @@ pub fn (self &Core) draw() {
 		.dog {
 			self.dog.draw()
 		}
+		.frog{
+			self.frog.draw()
+		}
+		.fox {
+			self.fox.draw()
+		}
 		.@none {}
 	}
 
@@ -72,6 +89,12 @@ pub fn ( self &Core) unload() {
 	match self.tipe {
 		.dog {
 			self.dog.unload()
+		}
+		.frog{
+			self.frog.unload()
+		}
+		.fox {
+			self.fox.unload()
 		}
 		.@none {}
 	}

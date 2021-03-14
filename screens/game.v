@@ -11,6 +11,7 @@ import mobs
 enum Entity {
 	player
 	plant
+	mob
 }
 
 struct Z_Order {
@@ -21,6 +22,7 @@ struct Z_Order {
 
 pub struct Game {
 mut:
+	mobs          []mobs.Core
 	plants        []plants.Core
 	entity_order  []Z_Order
 	player        player.Core = player.Core{}
@@ -31,7 +33,6 @@ mut:
 	mute          bool
 	key_timeout   int
 	spawners      []stages.Spawner
-	dog           mobs.Dog
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
@@ -44,6 +45,13 @@ fn (mut self Game) add_plant(name plants.Names, eye &lyra.Eye) {
 	mut plant := plants.Core{}
 	x, y := get_spawn_pos(eye)
 	plant.load(name, x, y)
+	self.plants << plant
+}
+
+fn (mut self Game) add_mob(name mobs.MobName, eye &lyra.Eye) {
+	mut mob := mobs.Core{}
+	x, y := get_spawn_pos(eye)
+	mob.load(name, x, y)
 	self.plants << plant
 }
 
@@ -66,8 +74,6 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
 	self.mute = false
-	self.dog = mobs.Dog{}
-	self.dog.load()
 }
 
 fn check_collision(a []f32, b []f32) bool {
@@ -121,7 +127,6 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.entity_order << Z_Order{.player, self.player.y, -1}
 	self.entity_order.sort(a.y < b.y)
 
-	self.dog.update()
 	return .@none
 }
 
@@ -134,7 +139,6 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 			.player { self.player.draw() }
 		}
 	}
-  self.dog.draw()
 }
 
 pub fn (self &Game) unload() {
@@ -142,5 +146,4 @@ pub fn (self &Game) unload() {
 	self.background.unload()
 	self.ground.unload()
 	self.player.unload()
-	self.dog.unload()
 }
