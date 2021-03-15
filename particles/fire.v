@@ -4,9 +4,11 @@ import vraylib
 import rand
 
 struct Particle {
+	pub mut:
+	position C.Vector2
+
 	mut:
 	lifetime int
-	position C.Vector2
 	vel_start C.Vector2
 	vel_end C.Vector2
 	color C.Color
@@ -15,26 +17,27 @@ struct Particle {
 }
 
 pub struct Fire {
-	p_time int = 35
-	amount int = 34
+	p_time int = 22
+	pub:
+		amount int = 100
+
 	mut:
 		position C.Vector2
-		particles []Particle
 	pub mut:
 		texture C.Texture2D
+		particles []Particle
 }
 
 fn (self &Fire) get_particle() Particle {
 	mut p := Particle{}
-	p.lifetime = self.p_time
-	p.position = C.Vector2{rand.int_in_range(-5, 5), rand.int_in_range(-5, 5)}
-	vel_x := rand.int_in_range(-2, 2)
-	p.vel_start = C.Vector2{vel_x, -3}
+	p.lifetime = self.p_time + rand.intn(2)
+	p.position = self.position
+	vel_x := rand.int_in_range(-3, 3)
+	p.vel_start = C.Vector2{vel_x, -5}
 	p.vel_end = C.Vector2{f32(rand.int_in_range(-vel_x - 2, -vel_x + 2))* 1.2, -3}
-	p.color_start = C.Color{200, 30, 20, 200}
+	p.color_start = C.Color{180, 30, 40, 200}
 	p.color_end = C.Color{0, 30, 20, 0}
 	p.color = p.color_start
-
 	return p
 }
 
@@ -56,6 +59,7 @@ pub fn (mut self Fire) update(x f32, y f32) {
 			pp := f32(p.lifetime) / self.p_time
 			p.position.x += p.vel_start.x * pp + p.vel_end.x * (1 - pp)
 			p.position.y += p.vel_start.y * pp + p.vel_end.y * (1 - pp)
+
 			p.color.r = byte(p.color_start.r * pp + p.color_end.r * (1 - pp))
 			p.color.g = byte(p.color_start.g * pp + p.color_end.g * (1 - pp))
 			p.color.b = byte(p.color_start.b * pp + p.color_end.b * (1 - pp))
@@ -65,12 +69,9 @@ pub fn (mut self Fire) update(x f32, y f32) {
 }
 
 
-pub fn (self &Fire) draw() {
-	for p in self.particles {
-		x := self.position.x + p.position.x
-		y := self.position.y + p.position.y
-		vraylib.draw_texture_ex(self.texture, C.Vector2{x, y}, 0, .3, p.color)
-	}
+pub fn (self &Fire) draw(i int) {
+	p := self.particles[i]
+	vraylib.draw_texture_ex(self.texture,  p.position, 0, .4, p.color)
 }
 
 pub fn (self &Fire) unload() {

@@ -11,14 +11,14 @@ pub:
 pub mut:
 	y       f32
 	dp      f32 = 5
+	sprite particles.Fire
 mut:
 	x       f32
 	scale   f32 = 1
 	hp      f32 = 100
 	xp      f32
 	lvl     int
-	speed   int = 20
-	sprite particles.Fire
+	speed   int = 10
 	w f32
 	h f32
 }
@@ -46,7 +46,7 @@ const (
 	key_right = [vraylib.key_right, vraylib.key_d]
 	key_left  = [vraylib.key_left, vraylib.key_a]
 	key_up    = [vraylib.key_up, vraylib.key_w]
-	key_down  = [vraylib.key_down, vraylib.key_o]
+	key_down  = [vraylib.key_down, vraylib.key_s]
 )
 
 fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
@@ -118,8 +118,8 @@ pub fn (self &Core) get_hitbox() []f32 {
 }
 
 
-pub fn (self &Core) draw() {
-	self.sprite.draw()
+pub fn (self &Core) draw(i int) {
+	self.sprite.draw(i)
 }
 
 

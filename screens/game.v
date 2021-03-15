@@ -115,7 +115,9 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	}
 	self.player.update(mut eye)
 	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
-	self.entity_order << Z_Order{.player, self.player.y, -1}
+	for i, p in self.player.sprite.particles {
+		self.entity_order << Z_Order{.player, p.position.y + i - f32(self.player.sprite.amount) * .5, i}
+	}
 	self.entity_order.sort(a.y < b.y)
 	return .@none
 }
@@ -126,7 +128,7 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 	for obj in self.entity_order {
 		match obj.entity {
 			.plant { self.plants[obj.i].draw(eye) }
-			.player { self.player.draw() }
+			.player { self.player.draw(obj.i) }
 		}
 	}
 }
