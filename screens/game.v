@@ -116,7 +116,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	self.player.update(mut eye)
 	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
 	for i, p in self.player.sprite.particles {
-		self.entity_order << Z_Order{.player, p.position.y + i - f32(self.player.sprite.amount) * .5, i}
+		self.entity_order << Z_Order{.player, p.y, i}
 	}
 	self.entity_order.sort(a.y < b.y)
 	return .@none

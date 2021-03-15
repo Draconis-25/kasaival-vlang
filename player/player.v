@@ -28,8 +28,6 @@ pub fn (mut self Core) load() {
 	self.sprite.load()
 	self.x = lyra.game_width * .5 - self.w * .5
 	self.y = lyra.game_height * .8
-	self.w = 32
-	self.h = 32
 }
 
 fn is_key_down(keys []int) bool {
@@ -83,6 +81,7 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 
 
 pub fn (mut self Core) update(mut eye lyra.Eye) {
+	self.w, self.h = self.sprite.texture.width * self.sprite.scale, self.sprite.texture.height * self.sprite.scale
 	mut dx, mut dy := get_direction(self, eye)
 	dx *= self.speed
 	dy *= self.speed
@@ -114,7 +113,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 }
 
 pub fn (self &Core) get_hitbox() []f32 {
-	return [self.x - self.w * .5, self.x + self.w * .5, self.y - self.h * .8, self.y]
+	return [self.x - self.w, self.x, self.y - self.h, self.y - self.h * .5]
 }
 
 
