@@ -30,20 +30,20 @@ pub struct Core {
 
 
 
-pub fn (mut self Core) load(mob MobName, x int y int) {
+pub fn (mut self Core) load(mob MobName, x int, y int) {
 	self.tipe = mob
 	match mob {
 		.dog {
 			self.dog = Dog{}
-			self.dog.load()
+			self.dog.load(x,y)
 		}
 		.frog {
 			self.frog = Frog{}
-			self.frog.load()
+			self.frog.load(x, y)
 		}
 		.fox {
 			self.fox = Fox{}
-			self.fox.load()
+			self.fox.load(x ,y)
 		}
 		.@none {}
 	}
@@ -51,16 +51,16 @@ pub fn (mut self Core) load(mob MobName, x int y int) {
 
 
 
-pub fn (mut self Core) update() {
+pub fn (mut self Core) update(collided bool) {
 	match self.tipe {
 		.dog {
-			self.dog.update()
+			self.dog.update(collided)
 		}
 		.frog{
-			self.frog.update()
+			self.frog.update(collided)
 		}
 		.fox {
-			self.fox.update()
+			self.fox.update(collided)
 		}
 		.@none {}
 	}

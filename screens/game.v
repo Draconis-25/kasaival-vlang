@@ -7,11 +7,11 @@ import scenery
 import stages
 import vraylib
 import mobs
+import rand
 
 enum Entity {
 	player
 	plant
-	mob
 }
 
 struct Z_Order {
@@ -48,11 +48,10 @@ fn (mut self Game) add_plant(name plants.Names, eye &lyra.Eye) {
 	self.plants << plant
 }
 
-fn (mut self Game) add_mob(name mobs.MobName, eye &lyra.Eye) {
+fn (mut self Game) add_mob(name mobs.MobName, x int, y int ) {
 	mut mob := mobs.Core{}
-	x, y := get_spawn_pos(eye)
 	mob.load(name, x, y)
-	self.plants << plant
+	self.mobs << mob
 }
 
 fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
@@ -62,6 +61,11 @@ fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	}
 	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)
 	self.player.load()
+	for i:= 0; i<2; i++
+	{self.add_mob(.dog,200+rand.intn(2000), 600+rand.intn(400))
+	self.add_mob(.fox,200+rand.intn(2000), 600+rand.intn(400))
+	self.add_mob(.frog,200+rand.intn(2000), 600+rand.intn(400))
+	}
 }
 
 pub fn (mut self Game) load(mut eye lyra.Eye) {
@@ -100,6 +104,8 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 			spawner.timer = 0
 		}
 	}
+	
+
 	if self.key_timeout > 0 {
 		self.key_timeout--
 	}
@@ -122,6 +128,10 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 			plant.collided(self.player.element, self.player.dp)
 		}
 	}
+	for i, mut mob in self.mobs{
+		mob.update(false)
+	}
+	
 	self.player.update(mut eye)
 	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
 	self.entity_order << Z_Order{.player, self.player.y, -1}
@@ -139,6 +149,10 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 			.player { self.player.draw() }
 		}
 	}
+
+	for mob in self.mobs{
+		mob.draw()
+	}
 }
 
 pub fn (self &Game) unload() {
@@ -146,4 +160,7 @@ pub fn (self &Game) unload() {
 	self.background.unload()
 	self.ground.unload()
 	self.player.unload()
+	for i, mob in self.mobs{
+		mob.unload()
+	}
 }

@@ -14,17 +14,18 @@ animation Animation
 
 
 
-pub fn (mut self Frog) load() {
-	number_rectangle_x = 4
-	number_rectangle_y = 2
-    animation = Animation {}
-	self.animation.load(Frog, 200, 700, number_rectangle_x, number_rectangle_y )
+pub fn (mut self Frog) load(x int, y int ) {
+	number_rectangle_x := 4
+	number_rectangle_y := 2
+	unburnfactor := 0
+    self.animation = Animation {}
+	self.animation.load("Frog", x, y, number_rectangle_x, number_rectangle_y, 12, unburnfactor)
 }
 
 
 
-pub fn (mut self. Frog)update(){
-self.animation.update()
+pub fn (mut self Frog)update(collided bool){
+self.animation.update(collided)
 }
 
 pub fn (self &Frog) draw() {
