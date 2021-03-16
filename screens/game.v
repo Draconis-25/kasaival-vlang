@@ -8,7 +8,6 @@ import stages
 import vraylib
 import rand
 import mobs
-import rand
 
 enum Entity {
 	player
@@ -105,7 +104,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 			spawner.timer = 0
 		}
 	}
-	
+
 
 	if self.key_timeout > 0 {
 		self.key_timeout--
@@ -132,7 +131,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	for i, mut mob in self.mobs{
 		mob.update(false)
 	}
-	
+
 	self.player.update(mut eye)
 	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
 	for i, p in self.player.sprite.particles {
