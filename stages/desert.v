@@ -12,6 +12,8 @@ fn desert() []Scene {
 	]
 	// add saguaro spawner to spawners
 	scene.spawners << get_spawner(.kali, 100)
+	//add mob spawner
+	
 	// return all scenes
 	return [scene]
 }

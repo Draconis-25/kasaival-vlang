@@ -11,37 +11,60 @@ pub struct Animation {
 		  frame_rec C.Rectangle
 		  position C.Vector2
 		  frames_speed int
+		  number_rectangle_x int
+		  number_rectangle_y int
+		  unburnfactor int 
 }
 
 
 
 
-pub fn (mut self Animation) load(mob string, x int, y int,number_rectangle_x int, number_rectangle_y int) {
-	self.frames_speed = 8
+pub fn (mut self Animation) load(mob string, x int, y int, number_rectangle_x int, number_rectangle_y int, speed int, unburnfactor int) {
+	self.frames_speed = speed
 	self.texture = vraylib.load_texture('resources/mobs/'+mob+'.png')
     self.position = C.Vector2{x, y}
     self.frame_rec =C.Rectangle {0, 0, f32(self.texture.width)/f32(number_rectangle_x), f32(self.texture.height)/f32(number_rectangle_y)}
+    self.number_rectangle_x = number_rectangle_x 
+	self.number_rectangle_y = number_rectangle_y 
+	self.current_frame_x = 0
+	self.current_frame_y = 0
+	self.unburnfactor = unburnfactor
+
 }
 
 
 
-pub fn (mut self Animation) update(number_rectangle_x int, number_rectangle_y int) {
+pub fn (mut self Animation) update(collided bool) {
+
 	self.frames_counter++
+	
 
 	if self.frames_counter>= 60/self.frames_speed
 	{
 	self.frames_counter = 0
 	self.current_frame_x++
 
-	if self.current_frame_x >(f32(number_rectangle_x)-1)
+
+	
+
+	if self.current_frame_x >(f32(self.number_rectangle_x)-1)
 	 {self.current_frame_x = 0 
-	 self.current_frame_y++}
+	 self.current_frame_y++
+	 
+	 }
 
-    if self.current_frame_y >(f32(number_rectangle_y)-1)
-	{self.current_frame_y = 0}
-	self.frame_rec.y = f32(self.current_frame_y)*f32(self.texture.height)/f32(number_rectangle_x)
+    if self.current_frame_y >(f32(self.number_rectangle_y)-1-f32(self.unburnfactor))
+	{self.current_frame_y = 0
+	if collided {
+		self.unburnfactor = 0
+	 self.current_frame_y=self.current_frame_y+2}}
 
-	self.frame_rec.x = f32(self.current_frame_x)*f32(self.texture.width)/f32(number_rectangle_y)
+	 
+
+
+	self.frame_rec.y = f32(self.current_frame_y)*f32(self.texture.height)/f32(self.number_rectangle_y)
+	
+	self.frame_rec.x = f32(self.current_frame_x)*f32(self.texture.width)/f32(self.number_rectangle_x)
 	}
 
 }

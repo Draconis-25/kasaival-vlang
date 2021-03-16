@@ -5,8 +5,6 @@ module mobs
 
 struct Fox {
 	pub mut:
-number_rectangle_x int
-number_rectangle_y int
 animation Animation
 
 }
@@ -14,17 +12,18 @@ animation Animation
 
 
 
-pub fn (mut self Fox) load() {
-	number_rectangle_x = 6
-	number_rectangle_y = 2
-    animation = Animation {}
-	self.animation.load(Fox, 200, 700, number_rectangle_x, number_rectangle_y )
+pub fn (mut self Fox) load(x int, y int) {
+	number_rectangle_x := 6
+	number_rectangle_y := 2
+	unburnfactor := 0
+    self.animation = Animation {}
+	self.animation.load('Fox', x, y, number_rectangle_x, number_rectangle_y, 20, unburnfactor)
 }
 
 
 
-pub fn (mut self. Fox)update(){
-self.animation.update()
+pub fn (mut self Fox)update(collided bool){
+self.animation.update(collided)
 }
 
 pub fn (self &Fox) draw() {
