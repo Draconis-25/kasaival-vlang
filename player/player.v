@@ -95,16 +95,16 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	w := self.w
 	if self.x + dx < eye.cx + w && dx < 0 {
 		self.x = eye.cx + w
-	} else if self.x + dx > eye.cx + lyra.game_width - w {
-		self.x = eye.cx + lyra.game_width - w
+	} else if self.x + dx > eye.cx + lyra.game_width {
+		self.x = eye.cx + lyra.game_width
 	} else {
 		self.x += dx
 	}
 	h := self.h
-	if self.y + dy > lyra.game_height && dy > 0 {
-		self.y = lyra.game_height
-	} else if self.y + dy < lyra.start_y + h * .1 && dy < 0 {
-		self.y = lyra.start_y + h * .1
+	if self.y + dy > lyra.game_height + h * .6 && dy > 0 {
+		self.y = lyra.game_height + h * .6
+	} else if self.y + dy < lyra.start_y + h * .8 && dy < 0 {
+		self.y = lyra.start_y + h * .8
 	} else {
 		self.y += dy
 	}

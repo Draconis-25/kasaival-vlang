@@ -7,10 +7,12 @@ import scenery
 import stages
 import vraylib
 import rand
+import mobs
 
 enum Entity {
 	player
 	plant
+	mob
 }
 
 struct Z_Order {
@@ -21,6 +23,7 @@ struct Z_Order {
 
 pub struct Game {
 mut:
+	mobs          []mobs.Core
 	plants        []plants.Core
 	entity_order  []Z_Order
 	player        player.Core = player.Core{}
@@ -46,6 +49,13 @@ fn (mut self Game) add_plant(name plants.Names, eye &lyra.Eye) {
 	self.plants << plant
 }
 
+fn (mut self Game) add_mob(name mobs.MobName, eye &lyra.Eye) {
+	mut mob := mobs.Core{}
+	x, y := get_spawn_pos(eye)
+	mob.load(name, x, y)
+	self.plants << plant
+}
+
 fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	for mut spawner in scene.spawners {
 		spawner.timer = rand.int_in_range(0, spawner.interval)
@@ -64,7 +74,7 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	// load music
 	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
-	self.mute = true
+	self.mute = false
 }
 
 fn check_collision(a []f32, b []f32) bool {
@@ -119,6 +129,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 		self.entity_order << Z_Order{.player, p.y, i}
 	}
 	self.entity_order.sort(a.y < b.y)
+
 	return .@none
 }
 

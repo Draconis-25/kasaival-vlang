@@ -37,8 +37,8 @@ fn (mut self Core) saguaro()  {
 
 
 fn (mut self Core) kali()  {
-    self.cs_branch = [110, 140, 153, 179, 25, 50]
-    self.change_color =[-50, -70, -10]
+    self.cs_branch = [140, 170, 160, 190, 25, 50]
+    self.change_color =[-70, -100, -10]
     self.grow_time = 20
     self.max_row = 5
     self.w = 22
