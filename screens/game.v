@@ -96,7 +96,7 @@ fn toggle(v bool) bool {
 	}
 }
 
-pub fn (mut self Game) update(mut eye lyra.Eye) Next {
+pub fn (mut self Game) update(mut eye lyra.Eye)  {
 	for mut spawner in self.spawners {
 		spawner.timer++
 		if spawner.timer > spawner.interval {
@@ -139,7 +139,6 @@ pub fn (mut self Game) update(mut eye lyra.Eye) Next {
 	}
 	self.entity_order.sort(a.y < b.y)
 
-	return .@none
 }
 
 pub fn (self &Game) draw(eye &lyra.Eye) {

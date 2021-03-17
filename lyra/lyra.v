@@ -17,8 +17,14 @@ pub fn get_color(cs []int) C.Color {
 	return C.Color{byte(r), byte(g), byte(b), 255}
 }
 
+enum State {
+	menu
+	game
+}
+
 pub struct Eye {
 pub mut:
+	state State
 	camera  C.Camera2D = C.Camera2D{}
 	start_x int = -100
 	cx      f32

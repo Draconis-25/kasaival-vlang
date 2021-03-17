@@ -1,26 +1,51 @@
 module main
 
-import screens
 import lyra
 import vraylib
+import screens
 
 // the initiale window screen size
 const (
 	screen_width  = 800
 	screen_height = 450
+	target_fps = 30
+	window_title = "Kasaival"
 )
+
+type Screens = screens.Game | screens.Menu
+
+interface Screen {
+	load(&lyra.Eye)
+	update(&lyra.Eye)
+	draw(&lyra.Eye)
+	unload()
+}
+
 
 fn main() {
 	// init
+	// vraylib setup
 	vraylib.set_config_flags(vraylib.flag_window_resizable)
-	vraylib.init_window(screen_width, screen_height, 'Kasaival')
-	vraylib.set_target_fps(30)
+	vraylib.init_window(screen_width, screen_height, window_title)
+	vraylib.set_target_fps(target_fps)
 	vraylib.init_audio_device()
-	mut screen := screens.Core{}
+
+
 	mut eye := lyra.Eye{}
 	eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
-	screen.load(.game, mut eye)
+	eye.state = .menu
+	mut current := eye.state
+
+	mut scrs := []Screen{}
+
+	mut menu := screens.Menu{}
+	scrs << menu
+	scrs[0].load(eye)
+
+
+	//screen.load(.game, mut eye)
 	mut key_timeout := 0
+
 	// loop
 	for {
 		if vraylib.window_should_close() {
@@ -37,7 +62,26 @@ fn main() {
 				}
 				key_timeout = 2
 			}
-			screen.update(mut eye)
+
+			if current != eye.state {
+				scrs[0].unload()
+				match eye.state {
+						.game {
+							game := screens.Game{}
+							scrs[0] = game
+							scrs[0].load(eye)
+						}
+						.menu {
+							menu = screens.Menu{}
+							scrs[0] = menu
+							scrs[0].load(eye)
+						}
+					}
+					current = eye.state
+			}
+			scrs[0].update(eye)
+
+
 			if vraylib.is_window_resized() {
 				eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
 			}
@@ -46,7 +90,7 @@ fn main() {
 			vraylib.begin_drawing()
 			vraylib.begin_mode_2d(eye.camera)
 			vraylib.clear_background(vraylib.black)
-			screen.draw(eye)
+			scrs[0].draw(eye)
 			vraylib.end_mode_2d()
 			// make the rest of the screen black (outside of game)
 			w := int(eye.camera.offset.x)
@@ -57,7 +101,10 @@ fn main() {
 			vraylib.end_drawing()
 		}
 	}
-	screen.unload()
+
+	// exit
+	scrs[0].unload()
+
 	vraylib.close_audio_device()
 	vraylib.close_window()
 }
