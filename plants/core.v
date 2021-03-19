@@ -16,38 +16,38 @@ enum Names {
 }
 
 struct Branch {
-	deg   int
-	x1    f32
-	y1    f32
-	x2    f32
-	y2    f32
-	w     f32
-	h     f32
+	deg int
+	x1  f32
+	y1  f32
+	x2  f32
+	y2  f32
+	w   f32
+	h   f32
 mut:
 	color C.Color
 }
 
 pub struct Core {
-	element        string = 'plant'
+	element string = 'plant'
 pub mut:
-	y              f32
-	left_x         f32
-	right_x        f32
+	y       f32
+	left_x  f32
+	right_x f32
 mut:
-	w              int
-	h              int
-	cs_branch      []int
-	cs_leaf        []int
-	change_color   []int
-	grid           [][]Branch
-	max_row        int = 8
-	current_row    int
-	split_chance   int = 50
-	split_angle    []int = [20, 30]
-	grow_timer     int
-	grow_time      int = 200
-	burning        int
-	burn_intensity f32
+	w                  int
+	h                  int
+	cs_branch          []int
+	cs_leaf            []int
+	change_color       []int
+	grid               [][]Branch
+	max_row            int = 8
+	current_row        int
+	split_chance       int   = 50
+	split_angle        []int = [20, 30]
+	grow_timer         int
+	grow_time          int = 200
+	burning            int
+	burn_intensity     f32
 	two_start_branches bool
 	grow_to_random_row bool
 }
@@ -68,7 +68,6 @@ pub fn (mut self Core) load(name Names, start_x int, y int) {
 		x -= rand.int_in_range(10, 20)
 	}
 	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs_branch)}
-
 	// grow to current size
 	if self.grow_to_random_row {
 		grow_to_row := rand.int_in_range(1, self.max_row)
@@ -103,8 +102,8 @@ fn (mut self Core) grow() {
 			degs << prev_branch.deg
 		}
 		for deg in degs {
-			nx := int(px + math.cos(f32(deg) * deg_to_rad) * h)
-			ny := int(py + math.sin(f32(deg) * deg_to_rad) * h)
+			nx := int(px + math.cos(f32(deg) * plants.deg_to_rad) * h)
+			ny := int(py + math.sin(f32(deg) * plants.deg_to_rad) * h)
 			c := lyra.get_color(self.cs_branch)
 			self.grid[self.current_row + 1] << Branch{deg, px, py, nx, ny, w, h, c}
 		}
@@ -161,7 +160,6 @@ pub fn (mut self Core) update() {
 	}
 }
 
-
 fn (self &Core) get_color(c C.Color) C.Color {
 	growth := f32(self.current_row + 1 - f32(self.grow_timer) / self.grow_time) / self.grid.len
 	r := byte(c.r + self.change_color[0] * growth)
@@ -182,8 +180,8 @@ pub fn (self &Core) draw(eye &lyra.Eye) {
 				x2 = get_next_pos(self, x1, x2)
 				y2 = get_next_pos(self, y1, y2)
 			}
-			if (x1 > eye.cx || x2 > eye.cx) &&
-				(x1 < eye.cx + lyra.game_width || x2 < eye.cx + lyra.game_width) {
+			if (x1 > eye.cx || x2 > eye.cx)
+				&& (x1 < eye.cx + lyra.game_width || x2 < eye.cx + lyra.game_width) {
 				vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, self.get_color(branch.color))
 			}
 		}

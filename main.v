@@ -8,11 +8,9 @@ import screens
 const (
 	screen_width  = 800
 	screen_height = 450
-	target_fps = 30
-	window_title = "Kasaival"
+	target_fps    = 30
+	window_title  = 'Kasaival'
 )
-
-type Screens = screens.Game | screens.Menu
 
 interface Screen {
 	load(&lyra.Eye)
@@ -20,7 +18,6 @@ interface Screen {
 	draw(&lyra.Eye)
 	unload()
 }
-
 
 fn main() {
 	// init
@@ -30,20 +27,14 @@ fn main() {
 	vraylib.set_target_fps(target_fps)
 	vraylib.init_audio_device()
 
-
 	mut eye := lyra.Eye{}
 	eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
-	eye.state = .menu
+	eye.state = .game
 	mut current := eye.state
-
 	mut scrs := []Screen{}
-
-	mut menu := screens.Menu{}
-	scrs << menu
+	scrs << screens.Game{}
 	scrs[0].load(eye)
-
-
-	//screen.load(.game, mut eye)
+	// screen.load(.game, mut eye)
 	mut key_timeout := 0
 
 	// loop
@@ -62,25 +53,21 @@ fn main() {
 				}
 				key_timeout = 2
 			}
-
 			if current != eye.state {
 				scrs[0].unload()
 				match eye.state {
-						.game {
-							game := screens.Game{}
-							scrs[0] = game
-							scrs[0].load(eye)
-						}
-						.menu {
-							menu = screens.Menu{}
-							scrs[0] = menu
-							scrs[0].load(eye)
-						}
+					.game {
+						scrs[0] = screens.Game{}
 					}
-					current = eye.state
+					.menu {
+						scrs[0] = screens.Menu{}
+					}
+				}
+				scrs[0].load(eye)
+
+				current = eye.state
 			}
 			scrs[0].update(eye)
-
 
 			if vraylib.is_window_resized() {
 				eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()

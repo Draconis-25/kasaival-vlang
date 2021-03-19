@@ -1,35 +1,30 @@
 module mobs
 
+import lyra
 
-
-
-struct Dog {
-	pub mut:
-animation Animation
-
+pub struct Dog {
+pub mut:
+	y int
+mut:
+	x       int
+	texture C.Texture2D
+	anime   lyra.Animation
 }
-
-
-
 
 pub fn (mut self Dog) load(x int, y int) {
-	number_rectangle_x := 3
-	number_rectangle_y := 4
-	unburnfactor:= 2
-    self.animation = Animation {}
-	self.animation.load("Dog", x, y, number_rectangle_x, number_rectangle_y, 7, unburnfactor)
+	self.x, self.y = x, y
+	self.anime = lyra.Animation{}
+	self.anime.load('Dog', 7, 12, 46, 27, 7)
 }
 
-
-
-pub fn (mut self Dog)update(collided bool){
-self.animation.update(collided)
+pub fn (mut self Dog) update() {
+	self.anime.update(self.x, self.y)
 }
 
 pub fn (self &Dog) draw() {
-	self.animation.draw()
+	self.anime.draw()
 }
 
 pub fn (self &Dog) unload() {
-	self.animation.unload()
+	self.anime.unload()
 }

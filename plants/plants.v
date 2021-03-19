@@ -24,10 +24,10 @@ fn (mut self Core) oak() Core {
 	return plant
 }
 
-fn (mut self Core) saguaro()  {
+fn (mut self Core) saguaro() {
 	self.cs_branch = [125, 178, 122, 160, 76, 90]
 	self.cs_leaf = [150, 204, 190, 230, 159, 178]
-	self.change_color =[-25, -64, -50, 0]
+	self.change_color = [-25, -64, -50, 0]
 	self.grow_time = 20
 	self.max_row = 7
 	self.w = 14
@@ -35,15 +35,14 @@ fn (mut self Core) saguaro()  {
 	self.split_chance = 40
 }
 
-
-fn (mut self Core) kali()  {
-    self.cs_branch = [140, 170, 160, 190, 25, 50]
-    self.change_color =[-70, -100, -10]
-    self.grow_time = 20
-    self.max_row = 5
-    self.w = 22
-		self.h = 22
-    self.split_chance = 100
-    self.split_angle = [40, 60]
-		self.two_start_branches = true
+fn (mut self Core) kali() {
+	self.cs_branch = [140, 170, 160, 190, 25, 50]
+	self.change_color = [-70, -100, -10]
+	self.grow_time = 20
+	self.max_row = 5
+	self.w = 22
+	self.h = 22
+	self.split_chance = 100
+	self.split_angle = [40, 60]
+	self.two_start_branches = true
 }

@@ -1,37 +1,30 @@
 module mobs
 
+import lyra
 
-
-
-struct Frog {
-	pub mut:
-number_rectangle_x int
-number_rectangle_y int
-animation Animation
-
+pub struct Frog {
+pub mut:
+	y int
+mut:
+	x       int
+	texture C.Texture2D
+	anime   lyra.Animation
 }
 
-
-
-
-pub fn (mut self Frog) load(x int, y int ) {
-	number_rectangle_x := 4
-	number_rectangle_y := 2
-	unburnfactor := 0
-    self.animation = Animation {}
-	self.animation.load("Frog", x, y, number_rectangle_x, number_rectangle_y, 12, unburnfactor)
+pub fn (mut self Frog) load(x int, y int) {
+	self.x, self.y = x, y
+	self.anime = lyra.Animation{}
+	self.anime.load('Frog', 12, 8, 64, 64, 0)
 }
 
-
-
-pub fn (mut self Frog)update(collided bool){
-self.animation.update(collided)
+pub fn (mut self Frog) update() {
+	self.anime.update(self.x, self.y)
 }
 
 pub fn (self &Frog) draw() {
-	self.animation.draw()
+	self.anime.draw()
 }
 
 pub fn (self &Frog) unload() {
-	self.animation.unload()
+	self.anime.unload()
 }

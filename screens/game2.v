@@ -1,5 +1,5 @@
-module screens
-
+ module screens
+/*
 import lyra
 import plants
 import player
@@ -66,13 +66,13 @@ fn (mut self Game) add_plant(name plants.Names, eye &lyra.Eye) {
 fn new_mob(name Mobs) Mob {
 	match name {
 		.dog {
-			return &mobs.Dog{}
+			return mobs.Dog{}
 		}
 		.frog {
-			return &mobs.Frog{}
+			return mobs.Dog{}
 		}
 		.fox {
-			return &mobs.Fox{}
+			return mobs.Dog{}
 		}
 	}
 }
@@ -91,7 +91,7 @@ fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	}
 	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)
 	self.player.load()
-	self.add_mob(eye)
+	self.add_mob()
 
 }
 
@@ -174,7 +174,7 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 		match obj.entity {
 			.plant { self.plants[obj.i].draw(eye) }
 			.player { self.player.draw(obj.i) }
-		.mob {  self.mobs[obj.i].draw() }
+		.mob { /* self.mobs[obj.i].draw() */ }
 		}
 	}
 }
@@ -187,4 +187,4 @@ pub fn (self &Game) unload() {
 	for mob in self.mobs {
 		mob.unload()
 	}
-}
+}*/

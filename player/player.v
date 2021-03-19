@@ -9,18 +9,18 @@ pub struct Core {
 pub:
 	element string = 'fire'
 pub mut:
-	y       f32
-	dp      f32 = 5
+	y      f32
+	dp     f32 = 5
 	sprite particles.Fire
 mut:
-	x       f32
-	scale   f32 = 1
-	hp      f32 = 100
-	xp      f32
-	lvl     int
-	speed   int = 10
-	w f32
-	h f32
+	x     f32
+	scale f32 = 1
+	hp    f32 = 100
+	xp    f32
+	lvl   int
+	speed int = 10
+	w     f32
+	h     f32
 }
 
 pub fn (mut self Core) load() {
@@ -56,29 +56,28 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 		return math.sin(angle), math.cos(angle)
 	}
 	mut dx, mut dy := 0.0, 0.0
-	if is_key_down(key_right) {
+	if is_key_down(player.key_right) {
 		dx = 1
 	}
-	if is_key_down(key_left) {
+	if is_key_down(player.key_left) {
 		dx = -1
 	}
-	if is_key_down(key_up) {
+	if is_key_down(player.key_up) {
 		dy = -1
 	}
-	if is_key_down(key_down) {
+	if is_key_down(player.key_down) {
 		dy = 1
 	}
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
 		diff_x, diff_y := int(pos.x - self.x + eye.cx), int(pos.y - self.y)
 		offset := f32(self.speed) * .5
-		if diff_x > offset || diff_x < -offset|| diff_y > offset || diff_y < -offset {
+		if diff_x > offset || diff_x < -offset || diff_y > offset || diff_y < -offset {
 			dx, dy = angle(diff_x, diff_y)
 		}
 	}
 	return f32(dx), f32(dy)
 }
-
 
 pub fn (mut self Core) update(mut eye lyra.Eye) {
 	self.w, self.h = self.sprite.texture.width * self.sprite.scale, self.sprite.texture.height * self.sprite.scale
@@ -86,10 +85,9 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	dx *= self.speed
 	dy *= self.speed
 	eye_bound := lyra.game_width / 5
-	if (self.x + dx < eye.cx + eye_bound &&
-		eye.cx > eye.start_x) || (self.x + dx >
-		eye.cx + lyra.game_width - eye_bound &&
-		eye.cx < eye.gw + eye.start_x - lyra.game_width) {
+	if (self.x + dx < eye.cx + eye_bound && eye.cx > eye.start_x)
+		|| (self.x + dx > eye.cx + lyra.game_width - eye_bound
+		&& eye.cx < eye.gw + eye.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
 	w := self.w
@@ -116,11 +114,9 @@ pub fn (self &Core) get_hitbox() []f32 {
 	return [self.x - self.w, self.x, self.y - self.h, self.y - self.h * .5]
 }
 
-
 pub fn (self &Core) draw(i int) {
 	self.sprite.draw(i)
 }
-
 
 pub fn (self &Core) unload() {
 	self.sprite.unload()

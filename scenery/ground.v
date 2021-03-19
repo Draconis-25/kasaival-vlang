@@ -10,7 +10,7 @@ struct Tile {
 	p3        C.Vector2
 	org_color C.Color
 mut:
-	color     C.Color
+	color C.Color
 }
 
 pub struct Ground {
@@ -49,8 +49,8 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
 			c = get_color(cs, x, eye.start_x, int(end_x))
-			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
-				w, y + h}, c, c}
+			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, 
+				y + h}, c, c}
 			x += w
 		}
 		y += h
@@ -68,7 +68,6 @@ fn (mut tile Tile) heal() {
 	}
 	tile.color = C.Color{r, g, b, 255}
 }
-
 
 pub fn (mut self Ground) update() {
 	for mut row in self.grid {
@@ -116,7 +115,6 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 	}
 }
 
-
 pub fn (self &Ground) draw(eye &lyra.Eye) {
 	for row in self.grid {
 		for i, tile in row {
@@ -128,7 +126,6 @@ pub fn (self &Ground) draw(eye &lyra.Eye) {
 		}
 	}
 }
-
 
 pub fn (self &Ground) unload() {
 }
