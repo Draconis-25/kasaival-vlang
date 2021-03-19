@@ -11,7 +11,7 @@ pub:
 pub mut:
 	y      f32
 	dp     f32 = 5
-	sprite particles.Fire
+	flame particles.Fire
 mut:
 	x     f32
 	scale f32 = 1
@@ -19,14 +19,12 @@ mut:
 	xp    f32
 	lvl   int
 	speed int = 10
-	w     f32
-	h     f32
 }
 
 pub fn (mut self Core) load() {
-	self.sprite = particles.Fire{}
-	self.sprite.load()
-	self.x = lyra.game_width * .5 - self.w * .5
+	self.flame = particles.Fire{}
+	self.flame.load()
+	self.x = lyra.game_width * .5
 	self.y = lyra.game_height * .8
 }
 
@@ -80,17 +78,20 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 }
 
 pub fn (mut self Core) update(mut eye lyra.Eye) {
-	self.w, self.h = self.sprite.texture.width * self.sprite.scale, self.sprite.texture.height * self.sprite.scale
+	w, h := self.flame.get_dimensions()
 	mut dx, mut dy := get_direction(self, eye)
 	dx *= self.speed
 	dy *= self.speed
 	eye_bound := lyra.game_width / 5
+
+	// if in eye bounds move the screen
 	if (self.x + dx < eye.cx + eye_bound && eye.cx > eye.start_x)
 		|| (self.x + dx > eye.cx + lyra.game_width - eye_bound
 		&& eye.cx < eye.gw + eye.start_x - lyra.game_width) {
 		eye.cx = eye.cx + dx
 	}
-	w := self.w
+
+	// otherwise move self.x and self.y
 	if self.x + dx < eye.cx + w && dx < 0 {
 		self.x = eye.cx + w
 	} else if self.x + dx > eye.cx + lyra.game_width {
@@ -98,26 +99,27 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	} else {
 		self.x += dx
 	}
-	h := self.h
+
 	if self.y + dy > lyra.game_height + h * .6 && dy > 0 {
 		self.y = lyra.game_height + h * .6
-	} else if self.y + dy < lyra.start_y + h * .8 && dy < 0 {
-		self.y = lyra.start_y + h * .8
+	} else if self.y + dy < lyra.start_y + h * .2 && dy < 0 {
+		self.y = lyra.start_y + h * .2
 	} else {
 		self.y += dy
 	}
 
-	self.sprite.update(self.x - w * .5, self.y - h)
+	self.flame.update(self.x - w * .5, self.y - h )
 }
 
 pub fn (self &Core) get_hitbox() []f32 {
-	return [self.x - self.w, self.x, self.y - self.h, self.y - self.h * .5]
+	w, h := self.flame.get_dimensions()
+	return [self.x - w, self.x, self.y - h * .8, self.y - h * .2]
 }
 
 pub fn (self &Core) draw(i int) {
-	self.sprite.draw(i)
+	self.flame.draw(i)
 }
 
 pub fn (self &Core) unload() {
-	self.sprite.unload()
+	self.flame.unload()
 }

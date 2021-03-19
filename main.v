@@ -29,11 +29,11 @@ fn main() {
 
 	mut eye := lyra.Eye{}
 	eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
-	eye.state = .game
+	eye.state = .menu
 	mut current := eye.state
-	mut scrs := []Screen{}
-	scrs << screens.Game{}
-	scrs[0].load(eye)
+	mut screen := Screen(screens.Menu{})
+	screen.load(eye)
+
 	// screen.load(.game, mut eye)
 	mut key_timeout := 0
 
@@ -54,20 +54,20 @@ fn main() {
 				key_timeout = 2
 			}
 			if current != eye.state {
-				scrs[0].unload()
+				screen.unload()
 				match eye.state {
 					.game {
-						scrs[0] = screens.Game{}
+						screen = screens.Game{}
 					}
 					.menu {
-						scrs[0] = screens.Menu{}
+						screen = screens.Menu{}
 					}
 				}
-				scrs[0].load(eye)
+				screen.load(eye)
 
 				current = eye.state
 			}
-			scrs[0].update(eye)
+			screen.update(eye)
 
 			if vraylib.is_window_resized() {
 				eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
@@ -77,7 +77,7 @@ fn main() {
 			vraylib.begin_drawing()
 			vraylib.begin_mode_2d(eye.camera)
 			vraylib.clear_background(vraylib.black)
-			scrs[0].draw(eye)
+			screen.draw(eye)
 			vraylib.end_mode_2d()
 			// make the rest of the screen black (outside of game)
 			w := int(eye.camera.offset.x)
@@ -90,7 +90,7 @@ fn main() {
 	}
 
 	// exit
-	scrs[0].unload()
+	screen.unload()
 
 	vraylib.close_audio_device()
 	vraylib.close_window()

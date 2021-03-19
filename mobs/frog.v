@@ -1,6 +1,6 @@
 module mobs
 
-import lyra
+import utils
 
 pub struct Frog {
 pub mut:
@@ -8,12 +8,12 @@ pub mut:
 mut:
 	x       int
 	texture C.Texture2D
-	anime   lyra.Animation
+	anime   utils.Animation
 }
 
 pub fn (mut self Frog) load(x int, y int) {
 	self.x, self.y = x, y
-	self.anime = lyra.Animation{}
+	self.anime = utils.Animation{}
 	self.anime.load('Frog', 12, 8, 64, 64, 0)
 }
 

@@ -2,6 +2,7 @@ module plants
 
 import vraylib
 import math
+import utils
 import lyra
 import rand
 
@@ -62,12 +63,12 @@ pub fn (mut self Core) load(name Names, start_x int, y int) {
 	mut x := start_x
 	if self.two_start_branches {
 		x += rand.int_in_range(5, 10)
-		self.grid[0] << Branch{start_angle + 10, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs_branch)}
+		self.grid[0] << Branch{start_angle + 10, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch)}
 		start_angle -= 10
 
 		x -= rand.int_in_range(10, 20)
 	}
-	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, lyra.get_color(self.cs_branch)}
+	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch)}
 	// grow to current size
 	if self.grow_to_random_row {
 		grow_to_row := rand.int_in_range(1, self.max_row)
@@ -104,7 +105,7 @@ fn (mut self Core) grow() {
 		for deg in degs {
 			nx := int(px + math.cos(f32(deg) * plants.deg_to_rad) * h)
 			ny := int(py + math.sin(f32(deg) * plants.deg_to_rad) * h)
-			c := lyra.get_color(self.cs_branch)
+			c := utils.get_color(self.cs_branch)
 			self.grid[self.current_row + 1] << Branch{deg, px, py, nx, ny, w, h, c}
 		}
 	}

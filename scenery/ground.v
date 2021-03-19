@@ -2,6 +2,7 @@ module scenery
 
 import vraylib
 import lyra
+import utils
 import rand
 
 struct Tile {
@@ -30,7 +31,7 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 		if id > cs.len - 1 {
 			id = cs.len - 1
 		}
-		return lyra.get_color(cs[int(id)])
+		return utils.get_color(cs[int(id)])
 	}
 	mut y := lyra.start_y
 	gh := lyra.game_height - y
@@ -49,7 +50,7 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
 			c = get_color(cs, x, eye.start_x, int(end_x))
-			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, 
+			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w,
 				y + h}, c, c}
 			x += w
 		}

@@ -92,7 +92,6 @@ fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)
 	self.player.load()
 	self.add_mob(eye)
-
 }
 
 pub fn (mut self Game) load(mut eye lyra.Eye) {
@@ -150,6 +149,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 	for i, mut plant in self.plants {
 		plant.update()
 		self.entity_order << Z_Order{.plant, plant.y, i}
+
 		if check_collision(self.player.get_hitbox(), plant.get_hitbox()) {
 			plant.collided(self.player.element, self.player.dp)
 		}
@@ -161,7 +161,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 
 	self.player.update(mut eye)
 	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
-	for i, p in self.player.sprite.particles {
+	for i, p in self.player.flame.particles {
 		self.entity_order << Z_Order{.player, p.y, i}
 	}
 	self.entity_order.sort(a.y < b.y)
@@ -174,7 +174,7 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 		match obj.entity {
 			.plant { self.plants[obj.i].draw(eye) }
 			.player { self.player.draw(obj.i) }
-		.mob {  self.mobs[obj.i].draw() }
+			.mob { self.mobs[obj.i].draw() }
 		}
 	}
 }
