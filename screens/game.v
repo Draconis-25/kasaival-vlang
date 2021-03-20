@@ -1,44 +1,30 @@
 module screens
 
 import lyra
-import plants
 import player
 import scenery
 import stages
 import vraylib
 import rand
-import mobs
+import ecs
 
-interface Mob {
-	y int
-	load(int, int)
-	update()
-	draw()
-	unload()
-}
 
-enum Mobs {
-	dog
-	frog
-	fox
-}
 
-enum Entity {
+
+enum ToOrder {
 	player
-	plant
-	mob
+	entity
 }
 
 struct Z_Order {
-	entity Entity
+	entity ToOrder
 	y      f32
 	i      int
 }
 
 pub struct Game {
 mut:
-	mobs          []Mob
-	plants        []plants.Core
+	entities []ecs.Entity
 	entity_order  []Z_Order
 	player        player.Core        = player.Core{}
 	ground        scenery.Ground     = scenery.Ground{}
@@ -56,33 +42,13 @@ fn get_spawn_pos(eye &lyra.Eye) (int, int) {
 	return x, y
 }
 
-fn (mut self Game) add_plant(name plants.Names, eye &lyra.Eye) {
-	mut plant := plants.Core{}
+fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
+	entity := ecs.new_entity(name)
 	x, y := get_spawn_pos(eye)
-	plant.load(name, x, y)
-	self.plants << plant
+	entity.load(x, y)
+	self.entities << entity
 }
 
-fn new_mob(name Mobs) Mob {
-	match name {
-		.dog {
-			return &mobs.Dog{}
-		}
-		.frog {
-			return &mobs.Frog{}
-		}
-		.fox {
-			return &mobs.Fox{}
-		}
-	}
-}
-
-fn (mut self Game) add_mob(eye lyra.Eye) {
-	mob := new_mob(.dog)
-	x, y := get_spawn_pos(eye)
-	mob.load(x, y)
-	self.mobs << mob
-}
 
 fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	for mut spawner in scene.spawners {
@@ -91,7 +57,7 @@ fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	}
 	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)
 	self.player.load()
-	self.add_mob(eye)
+	self.add_entity(.dog, eye)
 }
 
 pub fn (mut self Game) load(mut eye lyra.Eye) {
@@ -126,7 +92,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 	for mut spawner in self.spawners {
 		spawner.timer++
 		if spawner.timer > spawner.interval {
-			self.add_plant(spawner.name, eye)
+			self.add_entity(spawner.name, eye)
 			spawner.timer = 0
 		}
 	}
@@ -145,18 +111,17 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 	}
 	self.background.update(eye)
 	self.ground.update()
-	self.entity_order = []Z_Order{}
-	for i, mut plant in self.plants {
-		plant.update()
-		self.entity_order << Z_Order{.plant, plant.y, i}
 
-		if check_collision(self.player.get_hitbox(), plant.get_hitbox()) {
-			plant.collided(self.player.element, self.player.dp)
+	self.entity_order = []Z_Order{}
+
+	for i, mut entity in self.entities {
+		entity.update()
+
+		self.entity_order << Z_Order{.entity, entity.y, i}
+
+		if check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
+			entity.collided(self.player.element, self.player.dp)
 		}
-	}
-	for i, mut mob in self.mobs {
-		mob.update()
-		self.entity_order << Z_Order{.mob, mob.y, i}
 	}
 
 	self.player.update(mut eye)
@@ -170,11 +135,11 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 pub fn (self &Game) draw(eye &lyra.Eye) {
 	self.background.draw(eye)
 	self.ground.draw(eye)
+
 	for obj in self.entity_order {
 		match obj.entity {
-			.plant { self.plants[obj.i].draw(eye) }
 			.player { self.player.draw(obj.i) }
-			.mob { self.mobs[obj.i].draw() }
+			.entity { self.entities[obj.i].draw(eye) }
 		}
 	}
 }
@@ -184,7 +149,7 @@ pub fn (self &Game) unload() {
 	self.background.unload()
 	self.ground.unload()
 	self.player.unload()
-	for mob in self.mobs {
-		mob.unload()
+	for entity in self.entities {
+		entity.unload()
 	}
 }

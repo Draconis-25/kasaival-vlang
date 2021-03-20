@@ -4,8 +4,8 @@ import vraylib
 
 pub struct Animation {
 mut:
-	x int
-	y int
+	x f32
+	y f32
 	w int
 	h int
 	counter    int
@@ -39,7 +39,7 @@ pub fn (mut self Animation) load(mob string, speed int, total_frames int, frame_
 	}
 }
 
-pub fn (mut self Animation) update(x int, y int) {
+pub fn (mut self Animation) update(x f32, y f32) {
 	mut rm_frames := 0
 	if !self.burning {
 		rm_frames = self.burn_frame

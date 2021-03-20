@@ -29,9 +29,9 @@ fn main() {
 
 	mut eye := lyra.Eye{}
 	eye.camera.zoom, eye.camera.offset = lyra.get_game_scale()
-	eye.state = .menu
+	eye.state = .game
 	mut current := eye.state
-	mut screen := Screen(screens.Menu{})
+	mut screen := Screen(screens.Game{})
 	screen.load(eye)
 
 	// screen.load(.game, mut eye)

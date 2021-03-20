@@ -1,6 +1,6 @@
 module stages
 
-import plants
+import ecs
 
 enum StageName {
 	@none
@@ -16,7 +16,7 @@ pub mut:
 
 struct Spawner {
 pub mut:
-	name     plants.Names
+	name     ecs.EntityName
 	interval int
 	timer    int
 }
@@ -27,7 +27,7 @@ pub mut:
 	spawners []Spawner
 }
 
-fn get_spawner(name plants.Names, interval int) Spawner {
+fn get_spawner(name ecs.EntityName, interval int) Spawner {
 	mut spawner := Spawner{}
 	spawner.interval = interval
 	spawner.name = name
