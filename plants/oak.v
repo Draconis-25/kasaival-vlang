@@ -6,6 +6,7 @@ pub struct Oak {
 mut:
 	algo Algo
 	y    f32
+	dead bool
 }
 
 pub fn (mut self Oak) load(x int, y int) {

@@ -53,7 +53,9 @@ fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	}
 	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)
 	self.player.load()
-	self.add_entity(.dog, eye)
+	for _ in 0 .. 10 {
+		self.add_entity(.dog, eye)
+	}
 }
 
 pub fn (mut self Game) load(mut eye lyra.Eye) {
@@ -111,13 +113,17 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 	self.entity_order = []Z_Order{}
 
 	for i, mut entity in self.entities {
-		entity.update()
+		if !entity.dead {
 
-		self.entity_order << Z_Order{.entity, entity.y, i}
+			entity.update()
 
-		if check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
-			entity.collided(self.player.element, self.player.dp)
+			self.entity_order << Z_Order{.entity, entity.y, i}
+
+			if check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
+				entity.collided(self.player.element, self.player.dp)
+			}
 		}
+
 	}
 
 	self.player.update(mut eye)

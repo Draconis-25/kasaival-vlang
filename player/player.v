@@ -19,6 +19,7 @@ mut:
 	xp    f32
 	lvl   int
 	speed int = 10
+	dead bool
 }
 
 pub fn (mut self Core) load() {

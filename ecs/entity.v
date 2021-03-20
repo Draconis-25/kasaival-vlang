@@ -6,9 +6,10 @@ import lyra
 
 interface Entity {
 	y f32
+	dead bool
 	load(int, int)
-	unload()
 	update()
+	unload()
 	draw(lyra &lyra.Eye)
 	collided(string, f32)
 	get_hitbox() []f32

@@ -7,6 +7,7 @@ pub const (
 	game_width  = 1920
 	game_height = 1080
 	start_y     = 540
+	fps = 30
 )
 
 pub fn get_color(cs []int) C.Color {

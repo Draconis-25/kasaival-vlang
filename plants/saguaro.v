@@ -6,6 +6,7 @@ pub struct Saguaro {
 mut:
 	algo Algo
 	y    f32
+	dead bool
 }
 
 pub fn (mut self Saguaro) load(x int, y int) {

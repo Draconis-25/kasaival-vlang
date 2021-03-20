@@ -8,7 +8,6 @@ import screens
 const (
 	screen_width  = 800
 	screen_height = 450
-	target_fps    = 30
 	window_title  = 'Kasaival'
 )
 
@@ -24,7 +23,7 @@ fn main() {
 	// vraylib setup
 	vraylib.set_config_flags(vraylib.flag_window_resizable)
 	vraylib.init_window(screen_width, screen_height, window_title)
-	vraylib.set_target_fps(target_fps)
+	vraylib.set_target_fps(lyra.fps)
 	vraylib.init_audio_device()
 
 	mut eye := lyra.Eye{}

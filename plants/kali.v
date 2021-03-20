@@ -6,6 +6,7 @@ pub struct Kali {
 mut:
 	algo Algo
 	y    f32
+	dead bool
 }
 
 pub fn (mut self Kali) load(x int, y int) {
@@ -31,13 +32,13 @@ pub fn (self &Kali) draw(eye &lyra.Eye) {
 	self.algo.draw(eye)
 }
 
-pub fn (self &Kali) unload() {
-}
-
 pub fn (mut self Kali) collided(element string, dp f32) {
 	self.algo.collided(element, dp)
 }
 
 pub fn (self &Kali) get_hitbox() []f32 {
 	return self.algo.get_hitbox()
+}
+
+pub fn (self &Kali) unload() {
 }
