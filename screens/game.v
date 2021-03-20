@@ -135,7 +135,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 		self.entity_order << Z_Order{.player, p.y, i}
 	}
 	self.entity_order.sort(a.y < b.y)
-	self.hud.update()
+	self.hud.update(eye)
 }
 
 pub fn (self &Game) draw(eye &lyra.Eye) {

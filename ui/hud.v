@@ -49,9 +49,21 @@ pub fn (mut self HUD) load() {
 	}
 }
 
-pub fn (mut self HUD) update() {
-
-
+pub fn (mut self HUD) update(eye lyra.Eye) {
+	mut hover := false
+	mouse_pos := lyra.get_game_pos(vraylib.get_mouse_position())
+	mx, my := mouse_pos.x, mouse_pos.y
+	for icon in self.icons {
+		if mx > icon.x && mx < icon.x + icon_w && my > icon.y && my < icon.y + icon_h {
+			hover = true
+		}
+	}
+	if hover {
+		vraylib.set_mouse_cursor(vraylib.mouse_cursor_hand)
+	}
+	else {
+		vraylib.set_mouse_cursor(vraylib.mouse_cursor_default)
+	}
 
 }
 
@@ -60,7 +72,6 @@ pub fn (self &HUD) draw(eye lyra.Eye) {
 		img := icon.states[icon.state]
 		vraylib.draw_texture_ex(img, C.Vector2{icon.x + eye.cx, icon.y}, 0, 1, vraylib.white)
 	}
-	vraylib.set_mouse_cursor(vraylib.mouse_cursor_pointing_hand)
 }
 
 pub fn (self &HUD) unload() {
