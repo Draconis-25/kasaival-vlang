@@ -11,6 +11,7 @@ mut:
 	texture C.Texture2D
 	anime   utils.Animation
 	dead    bool
+	points int = 30
 }
 
 pub fn (mut self Fox) load(x int, y int) {

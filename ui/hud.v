@@ -20,6 +20,7 @@ const icon_w = 128
 const icon_h = 128
 const start_x = 64
 const start_y = 64
+const icon_scale = .7
 
 // state of button
 struct State {
@@ -137,7 +138,7 @@ pub fn (mut self HUD) update(mut eye lyra.Eye) {
 	mouse_pos := lyra.get_game_pos(vraylib.get_mouse_position())
 	mx, my := mouse_pos.x, mouse_pos.y
 	for mut icon in self.icons {
-		if mx > icon.x && mx < icon.x + icon_w && my > icon.y && my < icon.y + icon_h {
+		if mx > icon.x && mx < icon.x + f32(icon_w) * icon_scale && my > icon.y && my < icon.y + f32(icon_h) * icon_scale {
 			hover = true
 			if pressed {
 				update_state(mut icon, mut eye)
@@ -149,12 +150,22 @@ pub fn (mut self HUD) update(mut eye lyra.Eye) {
 	}
 }
 
+fn draw_score(eye &lyra.Eye) {
+	text := "Score: $eye.score"
+	font_size := 64
+	x := int(f32(lyra.game_width) * .5 - f32(vraylib.measure_text(text, font_size)) * .5)
+	vraylib.draw_text(text, x + int(eye.cx), 60, font_size, vraylib.pink)
+
+}
+
 // draw hud
-pub fn (self &HUD) draw(eye lyra.Eye) {
+pub fn (self &HUD) draw(eye &lyra.Eye) {
 	for icon in self.icons {
 		img := icon.states[icon.state].texture
-		vraylib.draw_texture_ex(img, C.Vector2{icon.x + eye.cx, icon.y}, 0, 1, vraylib.white)
+		vraylib.draw_texture_ex(img, C.Vector2{icon.x + eye.cx, icon.y}, 0, icon_scale, vraylib.white)
 	}
+
+	draw_score(eye)
 }
 
 

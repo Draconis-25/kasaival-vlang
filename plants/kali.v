@@ -7,6 +7,7 @@ mut:
 	algo Algo
 	y    f32
 	dead bool
+	points int = 10
 }
 
 pub fn (mut self Kali) load(x int, y int) {

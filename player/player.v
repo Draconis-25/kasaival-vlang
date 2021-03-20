@@ -103,18 +103,18 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 
 	if self.y + dy > lyra.game_height && dy > 0 {
 		self.y = lyra.game_height
-	} else if self.y + dy < lyra.start_y + h * .2 && dy < 0 {
-		self.y = lyra.start_y + h * .2
+	} else if self.y + dy < lyra.start_y + h * .3 && dy < 0 {
+		self.y = lyra.start_y + h * .3
 	} else {
 		self.y += dy
 	}
 
-	self.flame.update(self.x - w * .5, self.y - h)
+	self.flame.update(self.x, self.y - h)
 }
 
 pub fn (self &Core) get_hitbox() []f32 {
 	w, h := self.flame.get_dimensions()
-	return [self.x - w * .5, self.x + w * .5, self.y - h * .8, self.y - h * .2]
+	return [self.x - w * .5, self.x + w * .5, self.y - h * .7, self.y - h * .1]
 }
 
 pub fn (self &Core) draw(i int) {

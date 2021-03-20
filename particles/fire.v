@@ -8,7 +8,6 @@ pub mut:
 	y f32
 mut:
 	position C.Vector2
-
 	lifetime      int
 	vel_start     C.Vector2
 	vel_end       C.Vector2
@@ -86,7 +85,8 @@ pub fn (mut self Fire) update(x f32, y f32) {
 
 pub fn (self &Fire) draw(i int) {
 	p := self.particles[i]
-	vraylib.draw_texture_ex(self.texture, p.position, 0, p.scale, p.color)
+	x := p.position.x - self.texture.width * p.scale * .5
+	vraylib.draw_texture_ex(self.texture, C.Vector2{x, p.position.y}, 0, p.scale, p.color)
 }
 
 pub fn (self &Fire) unload() {

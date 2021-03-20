@@ -7,6 +7,7 @@ mut:
 	algo Algo
 	y    f32
 	dead bool
+	points int = 30
 }
 
 pub fn (mut self Saguaro) load(x int, y int) {

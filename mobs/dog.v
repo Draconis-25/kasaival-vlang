@@ -13,13 +13,14 @@ mut:
 	x         f32
 	texture   C.Texture2D
 	anime     utils.Animation
-	walk_time int
-	pee_time  int
-	burn_time int
+	walk_time f32
+	pee_time  f32
+	burn_time f32
 	burning   bool
 	dead      bool
 	w         int = 100
 	h         int = 64
+	points int = 30
 }
 
 pub fn (mut self Dog) load(x int, y int) {
@@ -32,11 +33,11 @@ pub fn (mut self Dog) load(x int, y int) {
 	self.anime.load('dog', states, 6, self.w, self.h, 7)
 	self.walk_time = 5
 	self.pee_time = 3
-	self.burn_time = 3
-	self.counter = rand.int_in_range(0, self.walk_time * lyra.fps)
+	self.burn_time = .4
+	self.counter = rand.int_in_range(0, int(self.walk_time * lyra.fps))
 }
 
-pub fn (mut self Dog) update(eye &lyra.Eye) {
+pub fn (mut self Dog) update(mut eye lyra.Eye) {
 	self.counter++
 	if !self.burning {
 		if self.counter > self.walk_time * lyra.fps {

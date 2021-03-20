@@ -7,6 +7,7 @@ mut:
 	algo Algo
 	y    f32
 	dead bool
+	points int = 40
 }
 
 pub fn (mut self Oak) load(x int, y int) {

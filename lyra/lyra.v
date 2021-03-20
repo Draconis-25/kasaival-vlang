@@ -33,6 +33,7 @@ pub mut:
 	cx      f32
 	gw      f32 = 1000
 	gh      f32 = 400
+	score int
 }
 
 pub fn get_game_scale() (f32, C.Vector2) {

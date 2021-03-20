@@ -31,14 +31,30 @@ mut:
 	music         C.Music
 	spawners      []stages.Spawner
 	hud 					ui.HUD
+	elapsed int
 }
 
 
 fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
-	entity := ecs.new_entity(name)
+	new_entity := ecs.new_entity(name)
 	x, y := ecs.get_spawn_pos(eye)
-	entity.load(x, y)
-	self.entities << entity
+	new_entity.load(x, y)
+
+	mut found_blank := false
+
+	for i, entity in self.entities {
+		match entity {
+			ecs.Blank {
+				self.entities[i] = new_entity
+				found_blank = true
+				return
+			}
+			else {}
+		}
+	}
+	if !found_blank {
+		self.entities << new_entity
+	}
 }
 
 fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
@@ -65,9 +81,16 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	// load hud
 	self.hud = ui.HUD{}
 	self.hud.load()
+
+	eye.mute = true
 }
 
 pub fn (mut self Game) update(mut eye lyra.Eye) {
+	// game time elapsed
+	self.elapsed++
+	if self.elapsed % (4 * lyra.fps) == 0 {
+		eye.score++
+	}
 	// music
 	if !eye.mute {
 		vraylib.update_music_stream(self.music)
@@ -86,7 +109,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 		self.ground.update()
 
 		self.entity_order = []Z_Order{}
-
+		println(self.entities.len)
 		for i, mut entity in self.entities {
 			if !entity.dead {
 				entity.update(eye)
@@ -96,6 +119,9 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 				if ecs.check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
 					entity.collided(self.player.element, self.player.dp)
 				}
+			} else {
+				eye.score += entity.points
+				self.entities[i] = &ecs.Blank{}
 			}
 		}
 

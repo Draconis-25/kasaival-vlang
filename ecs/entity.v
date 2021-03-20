@@ -8,6 +8,7 @@ import rand
 interface Entity {
 	y f32
 	dead bool
+	points int
 	load(int, int)
 	update(lyra &lyra.Eye)
 	unload()
