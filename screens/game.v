@@ -7,6 +7,7 @@ import stages
 import vraylib
 import rand
 import ecs
+import ui
 
 enum ToOrder {
 	player
@@ -31,6 +32,7 @@ mut:
 	mute          bool
 	key_timeout   int
 	spawners      []stages.Spawner
+	hud 					ui.HUD
 }
 
 fn get_spawn_pos(eye &lyra.Eye) (int, int) {
@@ -68,6 +70,9 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
 	self.mute = true
+	// load hud
+	self.hud = ui.HUD{}
+	self.hud.load()
 }
 
 fn check_collision(a []f32, b []f32) bool {
@@ -130,6 +135,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 		self.entity_order << Z_Order{.player, p.y, i}
 	}
 	self.entity_order.sort(a.y < b.y)
+	self.hud.update()
 }
 
 pub fn (self &Game) draw(eye &lyra.Eye) {
@@ -142,6 +148,7 @@ pub fn (self &Game) draw(eye &lyra.Eye) {
 			.entity { self.entities[obj.i].draw(eye) }
 		}
 	}
+	self.hud.draw(eye)
 }
 
 pub fn (self &Game) unload() {
@@ -152,4 +159,6 @@ pub fn (self &Game) unload() {
 	for entity in self.entities {
 		entity.unload()
 	}
+	self.hud.unload()
+
 }
