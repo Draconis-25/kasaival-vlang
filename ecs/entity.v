@@ -14,7 +14,6 @@ interface Entity {
 	get_hitbox() []f32
 }
 
-
 enum EntityName {
 	// mobs
 	dog
@@ -25,7 +24,6 @@ enum EntityName {
 	kali
 	oak
 }
-
 
 pub fn new_entity(name EntityName) Entity {
 	match name {
@@ -39,7 +37,6 @@ pub fn new_entity(name EntityName) Entity {
 		.fox {
 			return &mobs.Fox{}
 		}
-
 		// plants
 		.saguaro {
 			return &plants.Saguaro{}

@@ -12,7 +12,6 @@ mut:
 	anime   utils.Animation
 }
 
-
 pub fn (mut self Fox) load(x int, y int) {
 	self.x, self.y = x, y
 	self.anime.load('Fox', 20, 12, 153, 139, 0)
@@ -30,12 +29,10 @@ pub fn (self &Fox) unload() {
 	self.anime.unload()
 }
 
-
 pub fn (mut self Fox) collided(element string, dp f32) {
 	if element == 'fire' {
 	}
 }
-
 
 pub fn (self &Fox) get_hitbox() []f32 {
 	return [self.x, self.x, self.y, self.y]

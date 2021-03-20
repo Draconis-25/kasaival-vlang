@@ -3,11 +3,10 @@ module plants
 import lyra
 
 pub struct Oak {
-	mut:
+mut:
 	algo Algo
-	y f32
+	y    f32
 }
-
 
 pub fn (mut self Oak) load(x int, y int) {
 	self.y = y
@@ -31,12 +30,10 @@ pub fn (self &Oak) draw(eye &lyra.Eye) {
 pub fn (self &Oak) unload() {
 }
 
-
 pub fn (mut self Oak) collided(element string, dp f32) {
 	self.algo.collided(element, dp)
 }
 
-
 pub fn (self &Oak) get_hitbox() []f32 {
-	return 	self.algo.get_hitbox()
+	return self.algo.get_hitbox()
 }

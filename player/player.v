@@ -9,8 +9,8 @@ pub struct Core {
 pub:
 	element string = 'fire'
 pub mut:
-	y      f32
-	dp     f32 = 5
+	y     f32
+	dp    f32 = 5
 	flame particles.Fire
 mut:
 	x     f32
@@ -108,7 +108,7 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 		self.y += dy
 	}
 
-	self.flame.update(self.x - w * .5, self.y - h )
+	self.flame.update(self.x - w * .5, self.y - h)
 }
 
 pub fn (self &Core) get_hitbox() []f32 {

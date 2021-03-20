@@ -3,11 +3,10 @@ module plants
 import lyra
 
 pub struct Saguaro {
-	mut:
+mut:
 	algo Algo
-	y f32
+	y    f32
 }
-
 
 pub fn (mut self Saguaro) load(x int, y int) {
 	self.y = y
@@ -34,12 +33,10 @@ pub fn (self &Saguaro) draw(eye &lyra.Eye) {
 pub fn (self &Saguaro) unload() {
 }
 
-
 pub fn (mut self Saguaro) collided(element string, dp f32) {
 	self.algo.collided(element, dp)
 }
 
-
 pub fn (self &Saguaro) get_hitbox() []f32 {
-	return 	self.algo.get_hitbox()
+	return self.algo.get_hitbox()
 }

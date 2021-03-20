@@ -3,11 +3,10 @@ module plants
 import lyra
 
 pub struct Kali {
-	mut:
+mut:
 	algo Algo
-	y f32
+	y    f32
 }
-
 
 pub fn (mut self Kali) load(x int, y int) {
 	self.y = y
@@ -35,12 +34,10 @@ pub fn (self &Kali) draw(eye &lyra.Eye) {
 pub fn (self &Kali) unload() {
 }
 
-
 pub fn (mut self Kali) collided(element string, dp f32) {
 	self.algo.collided(element, dp)
 }
 
-
 pub fn (self &Kali) get_hitbox() []f32 {
-	return 	self.algo.get_hitbox()
+	return self.algo.get_hitbox()
 }

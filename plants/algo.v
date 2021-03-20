@@ -10,7 +10,6 @@ const (
 	deg_to_rad = math.pi / 180
 )
 
-
 struct Branch {
 	deg int
 	x1  f32
@@ -182,5 +181,4 @@ fn (self &Algo) draw(eye &lyra.Eye) {
 }
 
 fn (self &Algo) unload() {
-
 }

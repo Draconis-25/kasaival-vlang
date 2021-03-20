@@ -8,9 +8,6 @@ import vraylib
 import rand
 import ecs
 
-
-
-
 enum ToOrder {
 	player
 	entity
@@ -24,7 +21,7 @@ struct Z_Order {
 
 pub struct Game {
 mut:
-	entities []ecs.Entity
+	entities      []ecs.Entity
 	entity_order  []Z_Order
 	player        player.Core        = player.Core{}
 	ground        scenery.Ground     = scenery.Ground{}
@@ -48,7 +45,6 @@ fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
 	entity.load(x, y)
 	self.entities << entity
 }
-
 
 fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
 	for mut spawner in scene.spawners {

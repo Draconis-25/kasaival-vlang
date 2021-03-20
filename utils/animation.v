@@ -4,10 +4,10 @@ import vraylib
 
 pub struct Animation {
 mut:
-	x f32
-	y f32
-	w int
-	h int
+	x          f32
+	y          f32
+	w          int
+	h          int
 	counter    int
 	texture    C.Texture2D
 	frame      int
@@ -62,11 +62,10 @@ fn (self &Animation) get_rect() C.Rectangle {
 }
 
 fn (self &Animation) get_pos() C.Vector2 {
-		return C.Vector2{self.x + f32(self.w) * .5, self.y - self.h}
+	return C.Vector2{self.x + f32(self.w) * .5, self.y - self.h}
 }
 
 pub fn (self &Animation) draw() {
-
 	vraylib.draw_texture_rec(self.texture, self.get_rect(), self.get_pos(), vraylib.white)
 }
 
