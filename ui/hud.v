@@ -60,6 +60,7 @@ pub fn (self &HUD) draw(eye lyra.Eye) {
 		img := icon.states[icon.state]
 		vraylib.draw_texture_ex(img, C.Vector2{icon.x + eye.cx, icon.y}, 0, 1, vraylib.white)
 	}
+	vraylib.set_mouse_cursor(vraylib.mouse_cursor_pointing_hand)
 }
 
 pub fn (self &HUD) unload() {
