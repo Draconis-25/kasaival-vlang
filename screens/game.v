@@ -40,8 +40,9 @@ fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
 	x, y := ecs.get_spawn_pos(eye)
 	new_entity.load(x, y)
 
+	// if found blank entity (such as an entity that has died)
+	// then replace it with the new entity
 	mut found_blank := false
-
 	for i, entity in self.entities {
 		match entity {
 			ecs.Blank {
