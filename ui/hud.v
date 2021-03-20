@@ -3,21 +3,31 @@ module ui
 import lyra
 import vraylib
 
+const (
+	exit_button = 0
+	pause_button = 1
+	music_button = 2
+	)
+
 const asset_path = "resources/ui/"
 const asset_ext = ".png"
 const	top_left = [["exit"], ["pause", "resume"]]
 const	top_right = [["music", "no_music"]]
 
+
+// icon x, y, w, h
 const icon_w = 128
 const icon_h = 128
 const start_x = 64
 const start_y = 64
 
+// state of button
 struct State {
 	texture C.Texture2D
 	execute fn(&lyra.Eye)
 }
 
+// the icon / button
 struct Icon {
 	mut:
 	states []State
@@ -26,11 +36,14 @@ struct Icon {
 	y int
 }
 
+// the head over display
 pub struct HUD {
 	mut:
+	key_timeout   int
 	icons []Icon
 }
 
+// get the function to provoke if button activated
 fn get_fn(state string) fn(&lyra.Eye) {
 	match state {
 		"exit" {
@@ -64,6 +77,7 @@ fn get_fn(state string) fn(&lyra.Eye) {
 	}
 }
 
+// add an icon button
 fn (mut self HUD) add_icon(states []string, x int, y int) {
 	mut icon := Icon{}
 	icon.x, icon.y = x, y
@@ -73,12 +87,15 @@ fn (mut self HUD) add_icon(states []string, x int, y int) {
 	self.icons << icon
 }
 
+// load hud
 pub fn (mut self HUD) load() {
+	// top left row of icons
 	for i, states in top_left {
 		x := start_x + i * icon_w
 		y := start_y
 		self.add_icon(states, x, y)
 	}
+	// top right row of icons
 	for i, states in top_right {
 		x := lyra.game_width - start_x - (i + 1) * icon_w
 		y := start_y
@@ -86,7 +103,35 @@ pub fn (mut self HUD) load() {
 	}
 }
 
+
+// update hud
 pub fn (mut self HUD) update(mut eye lyra.Eye) {
+	// change icon state
+	update_state := fn (mut icon Icon, mut eye lyra.Eye) {
+		// updates button state
+		if icon.states.len > 1 {
+			icon.state++
+			if icon.state > icon.states.len - 1 {
+				icon.state = 0
+			}
+		}
+		// execute the function
+		icon.states[icon.state].execute(eye)
+	}
+
+	// key pressed
+	if self.key_timeout > 0 {
+		self.key_timeout--
+	}
+	if vraylib.is_key_down(vraylib.key_m) {
+		if self.key_timeout == 0 {
+			update_state(mut self.icons[music_button], mut eye)
+		}
+		self.key_timeout = 2
+	}
+
+
+	// icons
 	pressed := vraylib.is_mouse_button_pressed(vraylib.mouse_left_button)
 	mut hover := false
 	mouse_pos := lyra.get_game_pos(vraylib.get_mouse_position())
@@ -95,22 +140,16 @@ pub fn (mut self HUD) update(mut eye lyra.Eye) {
 		if mx > icon.x && mx < icon.x + icon_w && my > icon.y && my < icon.y + icon_h {
 			hover = true
 			if pressed {
-				if icon.states.len > 1 {
-					icon.state++
-					if icon.state > icon.states.len - 1 {
-						icon.state = 0
-					}
-				}
-				icon.states[icon.state].execute(eye)
+				update_state(mut icon, mut eye)
 			}
 		}
 	}
 	if hover {
 		vraylib.set_mouse_cursor(vraylib.mouse_cursor_hand)
 	}
-
 }
 
+// draw hud
 pub fn (self &HUD) draw(eye lyra.Eye) {
 	for icon in self.icons {
 		img := icon.states[icon.state].texture
@@ -118,6 +157,8 @@ pub fn (self &HUD) draw(eye lyra.Eye) {
 	}
 }
 
+
+// unload hud
 pub fn (self &HUD) unload() {
 	for icon in self.icons {
 		for state in icon.states {

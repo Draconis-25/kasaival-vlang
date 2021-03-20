@@ -29,7 +29,6 @@ mut:
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName   = .desert
 	music         C.Music
-	key_timeout   int
 	spawners      []stages.Spawner
 	hud 					ui.HUD
 }
@@ -81,29 +80,11 @@ fn check_collision(a []f32, b []f32) bool {
 	}
 }
 
-fn toggle(v bool) bool {
-	if v {
-		return false
-	} else {
-		return true
-	}
-}
-
 pub fn (mut self Game) update(mut eye lyra.Eye) {
-	// system managment
-	if self.key_timeout > 0 {
-		self.key_timeout--
-	}
-	if vraylib.is_key_down(vraylib.key_m) {
-		if self.key_timeout == 0 {
-			eye.mute = toggle(eye.mute)
-		}
-		self.key_timeout = 2
-	}
+	// music
 	if !eye.mute {
 		vraylib.update_music_stream(self.music)
 	}
-
 	// mobs, plants. entities, player, ground, sky, scenery
 	if !eye.pause {
 		for mut spawner in self.spawners {
