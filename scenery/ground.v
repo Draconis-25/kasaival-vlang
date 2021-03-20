@@ -25,9 +25,9 @@ mut:
 
 pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 	get_color := fn (cs [][]int, x int, start_x int, end_x int) C.Color {
-		mut id := f32(cs.len * (x - start_x)) / f32((end_x - start_x))
+		mut id := f32(cs.len * (x - start_x)) / (end_x - start_x)
 		r := id - int(id)
-		id = rand.int_in_range(int(r * 10), 10) / 10 + id
+		id = rand.f32_in_range(r, 1) + id
 		if id > cs.len - 1 {
 			id = cs.len - 1
 		}
@@ -50,7 +50,7 @@ pub fn (mut self Ground) load(mut eye lyra.Eye, width int, cs [][]int) {
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
 			c = get_color(cs, x, eye.start_x, int(end_x))
-			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, 
+			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w,
 				y + h}, c, c}
 			x += w
 		}
