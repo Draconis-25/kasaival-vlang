@@ -61,6 +61,7 @@ pub fn (self &Fire) get_dimensions() (f32, f32) {
 }
 
 pub fn (mut self Fire) update(x f32, y f32) {
+	self.position.x, self.position.y = x, y
 	if self.particles.len < self.amount {
 		self.particles << self.get_particle()
 	}
@@ -81,7 +82,6 @@ pub fn (mut self Fire) update(x f32, y f32) {
 
 		p.scale *= p.shrink_factor
 	}
-	self.position.x, self.position.y = x, y
 }
 
 pub fn (self &Fire) draw(i int) {

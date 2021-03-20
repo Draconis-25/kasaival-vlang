@@ -22,10 +22,11 @@ mut:
 }
 
 pub fn (mut self Core) load() {
-	self.flame = particles.Fire{}
-	self.flame.load()
+
 	self.x = lyra.game_width * .5
 	self.y = lyra.game_height * .8
+	self.flame = particles.Fire{}
+	self.flame.load()
 }
 
 fn is_key_down(keys []int) bool {
