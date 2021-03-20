@@ -101,8 +101,8 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 		self.x += dx
 	}
 
-	if self.y + dy > lyra.game_height + h * .6 && dy > 0 {
-		self.y = lyra.game_height + h * .6
+	if self.y + dy > lyra.game_height && dy > 0 {
+		self.y = lyra.game_height
 	} else if self.y + dy < lyra.start_y + h * .2 && dy < 0 {
 		self.y = lyra.start_y + h * .2
 	} else {
