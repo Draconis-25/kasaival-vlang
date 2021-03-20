@@ -19,11 +19,10 @@ mut:
 	xp    f32
 	lvl   int
 	speed int = 10
-	dead bool
+	dead  bool
 }
 
 pub fn (mut self Core) load() {
-
 	self.x = lyra.game_width * .5
 	self.y = lyra.game_height * .8
 	self.flame = particles.Fire{}

@@ -12,7 +12,8 @@ mut:
 pub fn (mut self Saguaro) load(x int, y int) {
 	self.y = y
 	self.algo = Algo{
-		w: 14	h: 42
+		w: 14
+		h: 42
 		max_row: 7
 		cs_branch: [125, 178, 122, 160, 76, 90]
 		cs_leaf: [150, 204, 190, 230, 159, 178]
@@ -23,7 +24,7 @@ pub fn (mut self Saguaro) load(x int, y int) {
 	self.algo.load(x, y)
 }
 
-pub fn (mut self Saguaro) update() {
+pub fn (mut self Saguaro) update(eye &lyra.Eye) {
 	self.algo.update()
 }
 

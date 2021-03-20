@@ -21,7 +21,7 @@ pub fn (mut self Oak) load(x int, y int) {
 	self.algo.load(x, y)
 }
 
-pub fn (mut self Oak) update() {
+pub fn (mut self Oak) update(eye &lyra.Eye) {
 	self.algo.update()
 }
 

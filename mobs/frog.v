@@ -10,15 +10,15 @@ mut:
 	x       f32
 	texture C.Texture2D
 	anime   utils.Animation
-	dead bool
+	dead    bool
 }
 
 pub fn (mut self Frog) load(x int, y int) {
 	self.x, self.y = x, y
-	//self.anime.load('Frog', 12, 8, 64, 64, 0)
+	// self.anime.load('Frog', 12, 8, 64, 64, 0)
 }
 
-pub fn (mut self Frog) update() {
+pub fn (mut self Frog) update(eye &lyra.Eye) {
 	self.anime.update(self.x, self.y)
 }
 

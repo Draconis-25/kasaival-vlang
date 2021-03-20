@@ -2,25 +2,24 @@ module utils
 
 import vraylib
 
-
 pub struct Animation {
-	pub mut:
+pub mut:
 	state string
+	direction int
 
 mut:
-	x          f32
-	y          f32
-	w          int
-	h          int
-	counter    int
-	texture    C.Texture2D
-	frame      int
-	frames     [][]int
-	speed      int
-	pos        C.Vector2
-	burning    bool
-	direction int
-	states map[string]int
+	x         f32
+	y         f32
+	w         int
+	h         int
+	counter   int
+	texture   C.Texture2D
+	frame     int
+	frames    [][]int
+	speed     int
+	pos       C.Vector2
+	burning   bool
+	states    map[string]int
 }
 
 pub fn (mut self Animation) load(mob string, states map[string]int, speed int, frame_w int, frame_h int, burn_frame int) {

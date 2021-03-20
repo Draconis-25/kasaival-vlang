@@ -12,7 +12,8 @@ mut:
 pub fn (mut self Kali) load(x int, y int) {
 	self.y = y
 	self.algo = Algo{
-		w: 22 h: 22
+		w: 22
+		h: 22
 		max_row: 5
 		grow_time: 20
 		cs_branch: [140, 170, 160, 190, 25, 50]
@@ -24,7 +25,7 @@ pub fn (mut self Kali) load(x int, y int) {
 	self.algo.load(x, y)
 }
 
-pub fn (mut self Kali) update() {
+pub fn (mut self Kali) update(eye &lyra.Eye) {
 	self.algo.update()
 }
 

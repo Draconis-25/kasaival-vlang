@@ -114,8 +114,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 
 	for i, mut entity in self.entities {
 		if !entity.dead {
-
-			entity.update()
+			entity.update(eye)
 
 			self.entity_order << Z_Order{.entity, entity.y, i}
 
@@ -123,7 +122,6 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 				entity.collided(self.player.element, self.player.dp)
 			}
 		}
-
 	}
 
 	self.player.update(mut eye)

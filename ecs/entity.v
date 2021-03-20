@@ -8,7 +8,7 @@ interface Entity {
 	y f32
 	dead bool
 	load(int, int)
-	update()
+	update(lyra &lyra.Eye)
 	unload()
 	draw(lyra &lyra.Eye)
 	collided(string, f32)
