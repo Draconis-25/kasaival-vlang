@@ -33,15 +33,10 @@ mut:
 	hud 					ui.HUD
 }
 
-fn get_spawn_pos(eye &lyra.Eye) (int, int) {
-	x := rand.int_in_range(eye.start_x, int(eye.start_x + eye.gw))
-	y := rand.int_in_range(lyra.start_y, lyra.game_height)
-	return x, y
-}
 
 fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
 	entity := ecs.new_entity(name)
-	x, y := get_spawn_pos(eye)
+	x, y := ecs.get_spawn_pos(eye)
 	entity.load(x, y)
 	self.entities << entity
 }
@@ -72,14 +67,6 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	self.hud.load()
 }
 
-fn check_collision(a []f32, b []f32) bool {
-	if a[0] < b[1] && a[1] > b[0] && a[2] < b[3] && a[3] > b[2] {
-		return true
-	} else {
-		return false
-	}
-}
-
 pub fn (mut self Game) update(mut eye lyra.Eye) {
 	// music
 	if !eye.mute {
@@ -106,7 +93,7 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 
 				self.entity_order << Z_Order{.entity, entity.y, i}
 
-				if check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
+				if ecs.check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
 					entity.collided(self.player.element, self.player.dp)
 				}
 			}
