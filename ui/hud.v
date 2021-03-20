@@ -13,9 +13,14 @@ const icon_h = 128
 const start_x = 64
 const start_y = 64
 
+struct State {
+	texture C.Texture2D
+	execute fn(&lyra.Eye)
+}
+
 struct Icon {
 	mut:
-	states []C.Texture2D
+	states []State
 	state int
 	x int
 	y int
@@ -26,12 +31,44 @@ pub struct HUD {
 	icons []Icon
 }
 
+fn get_fn(state string) fn(&lyra.Eye) {
+	match state {
+		"exit" {
+			return fn(mut eye lyra.Eye) {
+				eye.state = .menu
+			}
+		}
+		"pause" {
+			return fn(mut eye lyra.Eye) {
+				eye.pause = false
+			}
+		}
+		"resume" {
+			return fn(mut eye lyra.Eye) {
+				eye.pause = true
+			}
+		}
+		"music" {
+			return fn(mut eye lyra.Eye) {
+				eye.mute = false
+			}
+		}
+		"no_music" {
+			return fn(mut eye lyra.Eye) {
+				eye.mute = true
+			}
+		}
+		else {
+			return fn(mut eye lyra.Eye) {}
+		}
+	}
+}
 
 fn (mut self HUD) add_icon(states []string, x int, y int) {
 	mut icon := Icon{}
 	icon.x, icon.y = x, y
 	for state in states {
-		icon.states << vraylib.load_texture(asset_path + state + asset_ext)
+		icon.states << State{vraylib.load_texture(asset_path + state + asset_ext), get_fn(state)}
 	}
 	self.icons << icon
 }
@@ -49,7 +86,7 @@ pub fn (mut self HUD) load() {
 	}
 }
 
-pub fn (mut self HUD) update(eye lyra.Eye) {
+pub fn (mut self HUD) update(mut eye lyra.Eye) {
 	pressed := vraylib.is_mouse_button_pressed(vraylib.mouse_left_button)
 	mut hover := false
 	mouse_pos := lyra.get_game_pos(vraylib.get_mouse_position())
@@ -60,33 +97,31 @@ pub fn (mut self HUD) update(eye lyra.Eye) {
 			if pressed {
 				if icon.states.len > 1 {
 					icon.state++
-					if icon.state > icon.states.len - 1{
+					if icon.state > icon.states.len - 1 {
 						icon.state = 0
 					}
 				}
+				icon.states[icon.state].execute(eye)
 			}
 		}
 	}
 	if hover {
 		vraylib.set_mouse_cursor(vraylib.mouse_cursor_hand)
 	}
-	else {
-		vraylib.set_mouse_cursor(vraylib.mouse_cursor_default)
-	}
 
 }
 
 pub fn (self &HUD) draw(eye lyra.Eye) {
 	for icon in self.icons {
-		img := icon.states[icon.state]
+		img := icon.states[icon.state].texture
 		vraylib.draw_texture_ex(img, C.Vector2{icon.x + eye.cx, icon.y}, 0, 1, vraylib.white)
 	}
 }
 
 pub fn (self &HUD) unload() {
 	for icon in self.icons {
-		for img in icon.states {
-			vraylib.unload_texture(img)
+		for state in icon.states {
+			vraylib.unload_texture(state.texture)
 		}
 	}
 

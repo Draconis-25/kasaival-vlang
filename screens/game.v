@@ -29,7 +29,6 @@ mut:
 	background    scenery.Background = scenery.Background{}
 	current_stage stages.StageName   = .desert
 	music         C.Music
-	mute          bool
 	key_timeout   int
 	spawners      []stages.Spawner
 	hud 					ui.HUD
@@ -69,7 +68,6 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	// load music
 	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
 	vraylib.play_music_stream(self.music)
-	self.mute = true
 	// load hud
 	self.hud = ui.HUD{}
 	self.hud.load()
@@ -92,50 +90,57 @@ fn toggle(v bool) bool {
 }
 
 pub fn (mut self Game) update(mut eye lyra.Eye) {
-	for mut spawner in self.spawners {
-		spawner.timer++
-		if spawner.timer > spawner.interval {
-			self.add_entity(spawner.name, eye)
-			spawner.timer = 0
-		}
-	}
-
+	// system managment
 	if self.key_timeout > 0 {
 		self.key_timeout--
 	}
 	if vraylib.is_key_down(vraylib.key_m) {
 		if self.key_timeout == 0 {
-			self.mute = toggle(self.mute)
+			eye.mute = toggle(eye.mute)
 		}
 		self.key_timeout = 2
 	}
-	if !self.mute {
+	if !eye.mute {
 		vraylib.update_music_stream(self.music)
 	}
-	self.background.update(eye)
-	self.ground.update()
 
-	self.entity_order = []Z_Order{}
-
-	for i, mut entity in self.entities {
-		if !entity.dead {
-			entity.update(eye)
-
-			self.entity_order << Z_Order{.entity, entity.y, i}
-
-			if check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
-				entity.collided(self.player.element, self.player.dp)
+	// mobs, plants. entities, player, ground, sky, scenery
+	if !eye.pause {
+		for mut spawner in self.spawners {
+			spawner.timer++
+			if spawner.timer > spawner.interval {
+				self.add_entity(spawner.name, eye)
+				spawner.timer = 0
 			}
 		}
+
+		self.background.update(eye)
+		self.ground.update()
+
+		self.entity_order = []Z_Order{}
+
+		for i, mut entity in self.entities {
+			if !entity.dead {
+				entity.update(eye)
+
+				self.entity_order << Z_Order{.entity, entity.y, i}
+
+				if check_collision(self.player.get_hitbox(), entity.get_hitbox()) {
+					entity.collided(self.player.element, self.player.dp)
+				}
+			}
+		}
+
+		self.player.update(mut eye)
+		self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
+		for i, p in self.player.flame.particles {
+			self.entity_order << Z_Order{.player, p.y, i}
+		}
+		self.entity_order.sort(a.y < b.y)
 	}
 
-	self.player.update(mut eye)
-	self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
-	for i, p in self.player.flame.particles {
-		self.entity_order << Z_Order{.player, p.y, i}
-	}
-	self.entity_order.sort(a.y < b.y)
-	self.hud.update(eye)
+	// update interface
+	self.hud.update(mut eye)
 }
 
 pub fn (self &Game) draw(eye &lyra.Eye) {

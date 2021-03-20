@@ -85,6 +85,8 @@ fn main() {
 			x := vraylib.get_screen_width()
 			vraylib.draw_rectangle(x - w, 0, w, h, vraylib.black)
 			vraylib.end_drawing()
+			// reset cursor
+			vraylib.set_mouse_cursor(vraylib.mouse_cursor_default)
 		}
 	}
 

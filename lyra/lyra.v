@@ -26,6 +26,8 @@ enum State {
 pub struct Eye {
 pub mut:
 	state   State
+	mute bool
+	pause bool
 	camera  C.Camera2D = C.Camera2D{}
 	start_x int        = -100
 	cx      f32
