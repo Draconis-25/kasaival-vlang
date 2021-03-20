@@ -10,12 +10,13 @@ mut:
 
 pub fn (mut self Oak) load(x int, y int) {
 	self.y = y
-	self.algo = Algo{}
-	self.algo.cs_branch = [40, 70, 170, 202, 60, 100]
-	self.algo.max_row = 8
-	self.algo.split_chance = 70
-	self.algo.split_angle = [20, 30]
-	self.algo.grow_time = 20
+	self.algo = Algo{
+		cs_branch: [40, 70, 170, 202, 60, 100]
+		max_row: 8
+		split_chance: 70
+		split_angle: [20, 30]
+		grow_time: 20
+	}
 	self.algo.load(x, y)
 }
 

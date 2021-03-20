@@ -10,15 +10,15 @@ mut:
 
 pub fn (mut self Saguaro) load(x int, y int) {
 	self.y = y
-	self.algo = Algo{}
-	self.algo.cs_branch = [125, 178, 122, 160, 76, 90]
-	self.algo.cs_leaf = [150, 204, 190, 230, 159, 178]
-	self.algo.change_color = [-25, -64, -50, 0]
-	self.algo.grow_time = 20
-	self.algo.max_row = 7
-	self.algo.w = 14
-	self.algo.h = 42
-	self.algo.split_chance = 40
+	self.algo = Algo{
+		w: 14	h: 42
+		max_row: 7
+		cs_branch: [125, 178, 122, 160, 76, 90]
+		cs_leaf: [150, 204, 190, 230, 159, 178]
+		change_color: [-25, -64, -50, 0]
+		grow_time: 20
+		split_chance: 40
+	}
 	self.algo.load(x, y)
 }
 
