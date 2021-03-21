@@ -30,3 +30,6 @@ Music: Simple Desert
 ## Author: Insydnis
 Music: The Desert of Dreams
 
+# License: CC BY-NC 3.0
+## Author: Damon Boucher
+Music: Desert Sun

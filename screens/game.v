@@ -77,13 +77,11 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	// load bacground
 	self.background.load(eye)
 	// load music
-	self.music = vraylib.load_music_stream('resources/music/spring/simple_desert.ogg')
+	self.music = vraylib.load_music_stream('resources/music/damon_boucher/desert_sun.mp3')
 	vraylib.play_music_stream(self.music)
 	// load hud
 	self.hud = ui.HUD{}
 	self.hud.load()
-
-	eye.mute = true
 }
 
 pub fn (mut self Game) update(mut eye lyra.Eye) {
@@ -110,7 +108,6 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 		self.ground.update()
 
 		self.entity_order = []Z_Order{}
-		println(self.entities.len)
 		for i, mut entity in self.entities {
 			if !entity.dead {
 				entity.update(eye)
