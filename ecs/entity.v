@@ -58,13 +58,13 @@ pub fn new_entity(name EntityName) Entity {
 		}
 		// plants
 		.saguaro {
-			return &plants.Saguaro{}
+			return &plants.saguaro
 		}
 		.kali {
-			return &plants.Kali{}
+			return &plants.kali
 		}
 		.oak {
-			return &plants.Oak{}
+			return &plants.oak
 		}
 	}
 }

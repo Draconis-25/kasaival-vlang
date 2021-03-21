@@ -22,12 +22,15 @@ mut:
 	color C.Color
 }
 
-pub struct Algo {
+pub struct Plant {
 	element string = 'plant'
 pub mut:
 	left_x  f32
 	right_x f32
+	y f32
+
 mut:
+	points int
 	w                  int
 	h                  int
 	cs_branch          []int
@@ -44,9 +47,11 @@ mut:
 	burn_intensity     f32
 	two_start_branches bool
 	grow_to_random_row bool
+	dead bool
 }
 
-fn (mut self Algo) load(start_x int, y int) {
+fn (mut self Plant) load(start_x int, y int) {
+	self.y = y
 	self.grow_timer = rand.intn(self.grow_time)
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
@@ -69,14 +74,17 @@ fn (mut self Algo) load(start_x int, y int) {
 	}
 }
 
-fn (mut self Algo) shrink() {
+fn (mut self Plant) shrink() {
 	for i in 0 .. self.grid[self.current_row].len {
 		self.grid[self.current_row][i] = Branch{}
 	}
 	self.current_row--
+	if self.current_row == 0 {
+		self.dead = true
+	}
 }
 
-fn (mut self Algo) grow() {
+fn (mut self Plant) grow() {
 	// previous row
 	prev_row := self.grid[self.current_row]
 	for prev_branch in prev_row {
@@ -85,7 +93,7 @@ fn (mut self Algo) grow() {
 		w, h := prev_branch.w * .9, prev_branch.h * .95
 		mut degs := []int{}
 		if self.split_chance > split {
-			get_angle := fn (self &Algo) int {
+			get_angle := fn (self &Plant) int {
 				return rand.int_in_range(self.split_angle[0], self.split_angle[1])
 			}
 			degs << prev_branch.deg - get_angle(self)
@@ -103,7 +111,7 @@ fn (mut self Algo) grow() {
 	self.current_row++
 }
 
-fn (mut branch Branch) burn_color(self &Algo) {
+fn (mut branch Branch) burn_color(self &Plant) {
 	mut r, mut g, mut b := branch.color.r, branch.color.g, branch.color.b
 	b = 0
 	if r < 200 {
@@ -115,19 +123,19 @@ fn (mut branch Branch) burn_color(self &Algo) {
 	branch.color = C.Color{r, g, b, 255}
 }
 
-fn (mut self Algo) collided(element string, dp f32) {
+fn (mut self Plant) collided(element string, dp f32) {
 	if element == 'fire' {
 		self.burning = 100
 		self.burn_intensity = dp
 	}
 }
 
-fn (self &Algo) get_hitbox() []f32 {
+fn (self &Plant) get_hitbox() []f32 {
 	b := self.grid[0][0]
 	return [b.x1, b.x2, b.y2, b.y1]
 }
 
-fn (mut self Algo) update() {
+fn (mut self Plant) update(lyra &lyra.Eye) {
 	if self.burning > 0 {
 		for mut row in self.grid {
 			for mut branch in row {
@@ -152,7 +160,7 @@ fn (mut self Algo) update() {
 	}
 }
 
-fn (self &Algo) get_color(c C.Color) C.Color {
+fn (self &Plant) get_color(c C.Color) C.Color {
 	growth := f32(self.current_row + 1 - f32(self.grow_timer) / self.grow_time) / self.grid.len
 	r := byte(c.r + self.change_color[0] * growth)
 	g := byte(c.g + self.change_color[1] * growth)
@@ -160,13 +168,13 @@ fn (self &Algo) get_color(c C.Color) C.Color {
 	return C.Color{r, g, b, c.a}
 }
 
-fn (self &Algo) draw(eye &lyra.Eye) {
+fn (self &Plant) draw(eye &lyra.Eye) {
 	for i, row in self.grid {
 		for branch in row {
 			x1, y1 := branch.x1, branch.y1
 			mut x2, mut y2 := branch.x2, branch.y2
 			if i == self.current_row && self.grow_timer > 0 {
-				get_next_pos := fn (self &Algo, a f32, b f32) f32 {
+				get_next_pos := fn (self &Plant, a f32, b f32) f32 {
 					return b + (a - b) * self.grow_timer / self.grow_time
 				}
 				x2 = get_next_pos(self, x1, x2)
@@ -180,5 +188,5 @@ fn (self &Algo) draw(eye &lyra.Eye) {
 	}
 }
 
-fn (self &Algo) unload() {
+fn (self &Plant) unload() {
 }
