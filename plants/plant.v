@@ -30,7 +30,7 @@ pub mut:
 	y f32
 
 mut:
-	points int
+	points int = 10
 	w                  int
 	h                  int
 	cs_branch          []int

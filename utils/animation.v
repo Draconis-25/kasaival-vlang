@@ -67,17 +67,12 @@ pub fn (mut self Animation) update(x f32, y f32) {
 	self.x, self.y = x, y
 }
 
-fn (self &Animation) get_rect() C.Rectangle {
-	frame := self.frames[self.frame]
-	return C.Rectangle{frame[0], frame[1], self.w * self.direction, self.h}
-}
-
-fn (self &Animation) get_pos() C.Vector2 {
-	return C.Vector2{self.x, self.y - self.h}
-}
-
 pub fn (self &Animation) draw() {
-	vraylib.draw_texture_rec(self.texture, self.get_rect(), self.get_pos(), vraylib.white)
+	frame := self.frames[self.frame]
+	rect := C.Rectangle{frame[0], frame[1], self.w * self.direction, self.h}
+	pos := C.Vector2{self.x, self.y - self.h}
+
+	vraylib.draw_texture_rec(self.texture, rect, pos, vraylib.white)
 }
 
 pub fn (self &Animation) unload() {
