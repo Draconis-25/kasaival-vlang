@@ -10,6 +10,7 @@ pub mut:
 mut:
 	counter   int
 	speed     int = 2
+	speed_y f32 = 1.5
 	x         f32
 	texture   C.Texture2D
 	anime     utils.Animation
@@ -21,6 +22,7 @@ mut:
 	w         int = 100
 	h         int = 64
 	points int = 30
+	direction_y f32
 }
 
 pub fn (mut self Dog) load(x int, y int) {
@@ -35,6 +37,8 @@ pub fn (mut self Dog) load(x int, y int) {
 	self.pee_time = 3
 	self.burn_time = .4
 	self.counter = rand.int_in_range(0, int(self.walk_time * lyra.fps))
+	self.direction_y = rand.f32_in_range(-1, 1)
+	self.anime.direction = 1 - rand.intn(2) * 2
 }
 
 pub fn (mut self Dog) update(mut eye lyra.Eye) {
@@ -45,6 +49,7 @@ pub fn (mut self Dog) update(mut eye lyra.Eye) {
 			if self.counter > self.walk_time * lyra.fps + self.pee_time * lyra.fps {
 				self.counter = 0
 			}
+			self.direction_y = rand.f32_in_range(-1, 1)
 		} else {
 			if self.x > eye.start_x && self.anime.direction > 0 {
 				self.x -= self.speed
@@ -52,6 +57,11 @@ pub fn (mut self Dog) update(mut eye lyra.Eye) {
 				self.x += self.speed
 			} else {
 				self.anime.direction *= -1
+			}
+
+			change_y := self.speed_y * self.direction_y
+			if self.y > lyra.start_y - change_y && self.y < lyra.game_height - change_y {
+				self.y += change_y
 			}
 			self.anime.state = 'walk'
 		}
