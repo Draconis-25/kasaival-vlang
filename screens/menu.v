@@ -9,6 +9,7 @@ mut:
 }
 
 pub fn (mut self Menu) load(mut eye lyra.Eye) {
+	eye.cx = 0
 	self.background = vraylib.load_texture('resources/menu.jpg')
 }
 
