@@ -76,7 +76,7 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	// load bacground
 	self.background.load(eye)
 	// load music
-	self.music = vraylib.load_music_stream('resources/music/damon_boucher/desert_sun.mp3')
+	self.music = vraylib.load_music_stream('resources/music/spring/maintheme.ogg')
 	vraylib.play_music_stream(self.music)
 	// load hud
 	self.hud = ui.HUD{}
