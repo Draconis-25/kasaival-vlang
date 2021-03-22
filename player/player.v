@@ -93,10 +93,10 @@ pub fn (mut self Core) update(mut eye lyra.Eye) {
 	}
 
 	// otherwise move self.x and self.y
-	if self.x + dx < eye.cx + w && dx < 0 {
-		self.x = eye.cx + w
-	} else if self.x + dx > eye.cx + lyra.game_width {
-		self.x = eye.cx + lyra.game_width
+	if self.x + dx < eye.cx + w * .5 && dx < 0 {
+		self.x = eye.cx + w * .5
+	} else if self.x + dx > eye.cx + lyra.game_width - w * .5 {
+		self.x = eye.cx + lyra.game_width - w * .5
 	} else {
 		self.x += dx
 	}
