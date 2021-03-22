@@ -3,8 +3,8 @@ module ecs
 import lyra
 
 pub struct Blank {
-	y f32
-	dead bool
+	y      f32
+	dead   bool
 	points int
 }
 

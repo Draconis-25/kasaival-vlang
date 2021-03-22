@@ -26,14 +26,14 @@ enum State {
 pub struct Eye {
 pub mut:
 	state   State
-	mute bool
-	pause bool
+	mute    bool
+	pause   bool
 	camera  C.Camera2D = C.Camera2D{}
 	start_x int        = -100
 	cx      f32
 	gw      f32 = 1000
 	gh      f32 = 400
-	score int
+	score   int
 }
 
 pub fn get_game_scale() (f32, C.Vector2) {

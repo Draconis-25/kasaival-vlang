@@ -11,7 +11,7 @@ mut:
 	texture C.Texture2D
 	anime   utils.Animation
 	dead    bool
-	points int = 40
+	points  int = 40
 }
 
 pub fn (mut self Frog) load(x int, y int) {

@@ -30,10 +30,9 @@ mut:
 	current_stage stages.StageName   = .desert
 	music         C.Music
 	spawners      []stages.Spawner
-	hud 					ui.HUD
-	elapsed int
+	hud           ui.HUD
+	elapsed       int
 }
-
 
 fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
 	new_entity := ecs.new_entity(name)
@@ -157,5 +156,4 @@ pub fn (self &Game) unload() {
 		entity.unload()
 	}
 	self.hud.unload()
-
 }

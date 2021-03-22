@@ -7,7 +7,7 @@ struct Particle {
 pub mut:
 	y f32
 mut:
-	position C.Vector2
+	position      C.Vector2
 	lifetime      int
 	vel_start     C.Vector2
 	vel_end       C.Vector2

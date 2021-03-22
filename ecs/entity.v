@@ -28,7 +28,6 @@ enum EntityName {
 	oak
 }
 
-
 pub fn get_spawn_pos(eye &lyra.Eye) (int, int) {
 	x := rand.int_in_range(eye.start_x, int(eye.start_x + eye.gw))
 	y := rand.int_in_range(lyra.start_y, lyra.game_height)
@@ -42,7 +41,6 @@ pub fn check_collision(a []f32, b []f32) bool {
 		return false
 	}
 }
-
 
 pub fn new_entity(name EntityName) Entity {
 	match name {

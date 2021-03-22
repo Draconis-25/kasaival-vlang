@@ -27,10 +27,9 @@ pub struct Plant {
 pub mut:
 	left_x  f32
 	right_x f32
-	y f32
-
+	y       f32
 mut:
-	points int = 10
+	points             int = 10
 	w                  int
 	h                  int
 	cs_branch          []int
@@ -47,7 +46,7 @@ mut:
 	burn_intensity     f32
 	two_start_branches bool
 	grow_to_random_row bool
-	dead bool
+	dead               bool
 }
 
 fn (mut self Plant) load(start_x int, y int) {
