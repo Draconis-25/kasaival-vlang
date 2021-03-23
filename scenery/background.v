@@ -2,6 +2,7 @@ module scenery
 
 import vraylib
 import lyra
+import state
 
 const (
 	path = 'resources/scenery/desert/'
@@ -24,7 +25,7 @@ mut:
 	layers []Layer
 }
 
-pub fn (mut self Background) load(eye &lyra.Eye) {
+pub fn (mut self Background) load(state &state.State) {
 	self.y = 200
 	self.scale = .4
 	len := 6
@@ -40,26 +41,26 @@ pub fn (mut self Background) load(eye &lyra.Eye) {
 	}
 }
 
-pub fn (mut self Background) update(eye &lyra.Eye) {
+pub fn (mut self Background) update(state &state.State) {
 	for i, mut layer in self.layers {
 		w := int(layer.img.width * self.scale)
 		for j in 0 .. 3 {
-			x := int(eye.cx * .5 + eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) +
+			x := int(state.cx * .5 + state.cx * (self.layers.len - i) / self.layers.len * .5 - w) +
 				layer.offset_x[j]
-			if x > eye.cx + w * 3 - lyra.game_width {
+			if x > state.cx + w * 3 - lyra.game_width {
 				layer.offset_x[j] -= w * 3
-			} else if x < eye.cx - w * 3 + lyra.game_width {
+			} else if x < state.cx - w * 3 + lyra.game_width {
 				layer.offset_x[j] += w * 3
 			}
 		}
 	}
 }
 
-pub fn (self Background) draw(eye &lyra.Eye) {
+pub fn (self Background) draw(state &state.State) {
 	for i, layer in self.layers {
 		w := int(layer.img.width * self.scale)
 		for j in 0 .. 3 {
-			x := int(eye.cx * .5 + eye.cx * (self.layers.len - i) / self.layers.len * .5 - w) +
+			x := int(state.cx * .5 + state.cx * (self.layers.len - i) / self.layers.len * .5 - w) +
 				layer.offset_x[j]
 			vraylib.draw_texture_ex(layer.img, C.Vector2{x, layer.y}, 0, self.scale, vraylib.white)
 		}

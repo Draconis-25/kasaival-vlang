@@ -8,6 +8,7 @@ import vraylib
 import rand
 import ecs
 import ui
+import state
 
 enum ToOrder {
 	player
@@ -34,9 +35,9 @@ mut:
 	elapsed       int
 }
 
-fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
+fn (mut self Game) add_entity(name ecs.EntityName, state &state.State) {
 	new_entity := ecs.new_entity(name)
-	x, y := ecs.get_spawn_pos(eye)
+	x, y := ecs.get_spawn_pos(state)
 	new_entity.load(x, y)
 
 	// if found blank entity (such as an entity that has died)
@@ -57,24 +58,24 @@ fn (mut self Game) add_entity(name ecs.EntityName, eye lyra.Eye) {
 	}
 }
 
-fn (mut self Game) load_scene(scene stages.Scene, mut eye lyra.Eye) {
+fn (mut self Game) load_scene(scene stages.Scene, mut state state.State) {
 	for mut spawner in scene.spawners {
 		spawner.timer = rand.int_in_range(0, spawner.interval)
 		self.spawners << spawner
 	}
-	self.ground.load(mut eye, scene.ground.width, scene.ground.cs)
+	self.ground.load(mut state, scene.ground.width, scene.ground.cs)
 	self.player.load()
 	for _ in 0 .. 10 {
-		self.add_entity(.dog, eye)
+		self.add_entity(.dog, state)
 	}
 }
 
-pub fn (mut self Game) load(mut eye lyra.Eye) {
+pub fn (mut self Game) load(mut state state.State) {
 	// load current scene
 	scenes := stages.get_props(self.current_stage)
-	self.load_scene(scenes[0], mut eye)
+	self.load_scene(scenes[0], mut state)
 	// load bacground
-	self.background.load(eye)
+	self.background.load(state)
 	// load music
 	self.music = vraylib.load_music_stream('resources/music/spring/maintheme.ogg')
 	vraylib.play_music_stream(self.music)
@@ -83,33 +84,36 @@ pub fn (mut self Game) load(mut eye lyra.Eye) {
 	self.hud.load()
 }
 
-pub fn (mut self Game) update(mut eye lyra.Eye) {
+pub fn (mut self Game) update(mut state state.State) {
+	if vraylib.is_key_pressed(vraylib.key_escape) {
+		println("ae")
+	}
 	// game time elapsed
 	self.elapsed++
 	if self.elapsed % (4 * lyra.fps) == 0 {
-		eye.score++
+		state.score++
 	}
 	// music
-	if !eye.mute {
+	if !state.mute {
 		vraylib.update_music_stream(self.music)
 	}
 	// mobs, plants. entities, player, ground, sky, scenery
-	if !eye.pause {
+	if !state.pause {
 		for mut spawner in self.spawners {
 			spawner.timer++
 			if spawner.timer > spawner.interval {
-				self.add_entity(spawner.name, eye)
+				self.add_entity(spawner.name, state)
 				spawner.timer = 0
 			}
 		}
 
-		self.background.update(eye)
+		self.background.update(state)
 		self.ground.update()
 
 		self.entity_order = []Z_Order{}
 		for i, mut entity in self.entities {
 			if !entity.dead {
-				entity.update(eye)
+				entity.update(state)
 
 				self.entity_order << Z_Order{.entity, entity.y, i}
 
@@ -117,12 +121,12 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 					entity.collided(self.player.element, self.player.dp)
 				}
 			} else {
-				eye.score += entity.points
+				state.score += entity.points
 				self.entities[i] = &ecs.Blank{}
 			}
 		}
 
-		self.player.update(mut eye)
+		self.player.update(mut state)
 		self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
 		for i, p in self.player.flame.particles {
 			self.entity_order << Z_Order{.player, p.y, i}
@@ -131,20 +135,20 @@ pub fn (mut self Game) update(mut eye lyra.Eye) {
 	}
 
 	// update interface
-	self.hud.update(mut eye)
+	self.hud.update(mut state)
 }
 
-pub fn (self &Game) draw(eye &lyra.Eye) {
-	self.background.draw(eye)
-	self.ground.draw(eye)
+pub fn (self &Game) draw(state &state.State) {
+	self.background.draw(state)
+	self.ground.draw(state)
 
 	for obj in self.entity_order {
 		match obj.entity {
 			.player { self.player.draw(obj.i) }
-			.entity { self.entities[obj.i].draw(eye) }
+			.entity { self.entities[obj.i].draw(state) }
 		}
 	}
-	self.hud.draw(eye)
+	self.hud.draw(state)
 }
 
 pub fn (self &Game) unload() {

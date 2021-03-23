@@ -1,8 +1,9 @@
 module mobs
 
-import lyra
 import utils
 import rand
+import state
+import lyra
 
 pub struct Dog {
 pub mut:
@@ -41,7 +42,7 @@ pub fn (mut self Dog) load(x int, y int) {
 	self.anime.direction = 1 - rand.intn(2) * 2
 }
 
-pub fn (mut self Dog) update(mut eye lyra.Eye) {
+pub fn (mut self Dog) update(mut state state.State) {
 	// aliases
 	wt := self.walk_time * lyra.fps
 	pt := self.pee_time * lyra.fps
@@ -65,9 +66,9 @@ pub fn (mut self Dog) update(mut eye lyra.Eye) {
 
 	// set anime state
 	if self.counter < wt {
-		if self.x > eye.start_x && self.anime.direction > 0 {
+		if self.x > state.start_x && self.anime.direction > 0 {
 			self.x -= self.speed
-		} else if self.x < eye.start_x + eye.gw && self.anime.direction < 0 {
+		} else if self.x < state.start_x + state.gw && self.anime.direction < 0 {
 			self.x += self.speed
 		} else {
 			self.anime.direction *= -1
@@ -88,7 +89,7 @@ pub fn (mut self Dog) update(mut eye lyra.Eye) {
 	self.anime.update(self.x, self.y)
 }
 
-pub fn (self &Dog) draw(eye &lyra.Eye) {
+pub fn (self &Dog) draw(state &state.State) {
 	self.anime.draw()
 }
 

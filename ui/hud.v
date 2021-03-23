@@ -2,6 +2,7 @@ module ui
 
 import lyra
 import vraylib
+import state
 
 const (
 	exit_button  = 0
@@ -29,15 +30,15 @@ const start_y = 64
 const icon_scale = .7
 
 // state of button
-struct State {
+struct ButtonState {
 	texture C.Texture2D
-	execute fn (&lyra.Eye)
+	execute fn (&state.State)
 }
 
 // the icon / button
 struct Icon {
 mut:
-	states []State
+	states []ButtonState
 	state  int
 	x      int
 	y      int
@@ -51,35 +52,35 @@ mut:
 }
 
 // get the function to provoke if button activated
-fn get_fn(state string) fn (&lyra.Eye) {
+fn get_fn(state string) fn (&state.State) {
 	match state {
 		'exit' {
-			return fn (mut eye lyra.Eye) {
-				eye.state = .menu
+			return fn (mut state state.State) {
+	//			state.screen = .menu
 			}
 		}
 		'pause' {
-			return fn (mut eye lyra.Eye) {
-				eye.pause = false
+			return fn (mut state state.State) {
+				state.pause = false
 			}
 		}
 		'resume' {
-			return fn (mut eye lyra.Eye) {
-				eye.pause = true
+			return fn (mut state state.State) {
+				state.pause = true
 			}
 		}
 		'music' {
-			return fn (mut eye lyra.Eye) {
-				eye.mute = false
+			return fn (mut state state.State) {
+				state.mute = false
 			}
 		}
 		'no_music' {
-			return fn (mut eye lyra.Eye) {
-				eye.mute = true
+			return fn (mut state state.State) {
+				state.mute = true
 			}
 		}
 		else {
-			return fn (mut eye lyra.Eye) {}
+			return fn (mut state state.State) {}
 		}
 	}
 }
@@ -88,8 +89,8 @@ fn get_fn(state string) fn (&lyra.Eye) {
 fn (mut self HUD) add_icon(states []string, x int, y int) {
 	mut icon := Icon{}
 	icon.x, icon.y = x, y
-	for state in states {
-		icon.states << State{vraylib.load_texture(ui.asset_path + state + ui.asset_ext), get_fn(state)}
+	for btn in states {
+		icon.states << ButtonState{vraylib.load_texture(ui.asset_path + btn + ui.asset_ext), get_fn(btn)}
 	}
 	self.icons << icon
 }
@@ -111,9 +112,9 @@ pub fn (mut self HUD) load() {
 }
 
 // update hud
-pub fn (mut self HUD) update(mut eye lyra.Eye) {
+pub fn (mut self HUD) update(mut state state.State) {
 	// change icon state
-	update_state := fn (mut icon Icon, mut eye lyra.Eye) {
+	update_state := fn (mut icon Icon, mut state state.State) {
 		// updates button state
 		if icon.states.len > 1 {
 			icon.state++
@@ -122,7 +123,7 @@ pub fn (mut self HUD) update(mut eye lyra.Eye) {
 			}
 		}
 		// execute the function
-		icon.states[icon.state].execute(eye)
+		icon.states[icon.state].execute(state)
 	}
 
 	// key pressed
@@ -131,7 +132,7 @@ pub fn (mut self HUD) update(mut eye lyra.Eye) {
 	}
 	if vraylib.is_key_down(vraylib.key_m) {
 		if self.key_timeout == 0 {
-			update_state(mut self.icons[ui.music_button], mut eye)
+			update_state(mut self.icons[ui.music_button], mut state)
 		}
 		self.key_timeout = 2
 	}
@@ -146,7 +147,7 @@ pub fn (mut self HUD) update(mut eye lyra.Eye) {
 			&& my < icon.y + f32(ui.icon_h) * ui.icon_scale {
 			hover = true
 			if pressed {
-				update_state(mut icon, mut eye)
+				update_state(mut icon, mut state)
 			}
 		}
 	}
@@ -155,29 +156,29 @@ pub fn (mut self HUD) update(mut eye lyra.Eye) {
 	}
 }
 
-fn draw_score(eye &lyra.Eye) {
-	text := 'Score: $eye.score'
+fn draw_score(state &state.State) {
+	text := 'Score: $state.score'
 	font_size := 64
 	x := int(f32(lyra.game_width) * .5 - f32(vraylib.measure_text(text, font_size)) * .5)
-	vraylib.draw_text(text, x + int(eye.cx), 60, font_size, vraylib.pink)
+	vraylib.draw_text(text, x + int(state.cx), 60, font_size, vraylib.pink)
 }
 
 // draw hud
-pub fn (self &HUD) draw(eye &lyra.Eye) {
+pub fn (self &HUD) draw(state &state.State) {
 	for icon in self.icons {
 		img := icon.states[icon.state].texture
-		vraylib.draw_texture_ex(img, C.Vector2{icon.x + eye.cx, icon.y}, 0, ui.icon_scale,
+		vraylib.draw_texture_ex(img, C.Vector2{icon.x + state.cx, icon.y}, 0, ui.icon_scale,
 			vraylib.white)
 	}
 
-	draw_score(eye)
+	draw_score(state)
 }
 
 // unload hud
 pub fn (self &HUD) unload() {
 	for icon in self.icons {
-		for state in icon.states {
-			vraylib.unload_texture(state.texture)
+		for btn in icon.states {
+			vraylib.unload_texture(btn.texture)
 		}
 	}
 }

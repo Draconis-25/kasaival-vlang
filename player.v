@@ -4,6 +4,7 @@ import vraylib
 import lyra
 import math
 import particles
+import state
 
 pub struct Core {
 pub:
@@ -46,7 +47,7 @@ const (
 	key_down  = [vraylib.key_down, vraylib.key_s]
 )
 
-fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
+fn get_direction(self &Core, state &state.State) (f32, f32) {
 	angle := fn (dx f64, dy f64) (f64, f64) {
 		mut angle := math.atan2(dx, dy)
 		if angle < 0 {
@@ -69,7 +70,7 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	}
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
-		diff_x, diff_y := int(pos.x - self.x + eye.cx), int(pos.y - self.y)
+		diff_x, diff_y := int(pos.x - self.x + state.cx), int(pos.y - self.y)
 		offset := f32(self.speed) * .5
 		if diff_x > offset || diff_x < -offset || diff_y > offset || diff_y < -offset {
 			dx, dy = angle(diff_x, diff_y)
@@ -78,25 +79,25 @@ fn get_direction(self &Core, eye lyra.Eye) (f32, f32) {
 	return f32(dx), f32(dy)
 }
 
-pub fn (mut self Core) update(mut eye lyra.Eye) {
+pub fn (mut self Core) update(mut state state.State) {
 	w, h := self.flame.get_dimensions()
-	mut dx, mut dy := get_direction(self, eye)
+	mut dx, mut dy := get_direction(self, state)
 	dx *= self.speed
 	dy *= self.speed
 	eye_bound := lyra.game_width / 5
 
 	// if in eye bounds move the screen
-	if (self.x + dx < eye.cx + eye_bound && eye.cx > eye.start_x)
-		|| (self.x + dx > eye.cx + lyra.game_width - eye_bound
-		&& eye.cx < eye.gw + eye.start_x - lyra.game_width) {
-		eye.cx = eye.cx + dx
+	if (self.x + dx < state.cx + eye_bound && state.cx > state.start_x)
+		|| (self.x + dx > state.cx + lyra.game_width - eye_bound
+		&& state.cx < state.gw + state.start_x - lyra.game_width) {
+		state.cx = state.cx + dx
 	}
 
 	// otherwise move self.x and self.y
-	if self.x + dx < eye.cx + w * .5 && dx < 0 {
-		self.x = eye.cx + w * .5
-	} else if self.x + dx > eye.cx + lyra.game_width - w * .5 {
-		self.x = eye.cx + lyra.game_width - w * .5
+	if self.x + dx < state.cx + w * .5 && dx < 0 {
+		self.x = state.cx + w * .5
+	} else if self.x + dx > state.cx + lyra.game_width - w * .5 {
+		self.x = state.cx + lyra.game_width - w * .5
 	} else {
 		self.x += dx
 	}

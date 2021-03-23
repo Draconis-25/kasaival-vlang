@@ -3,8 +3,9 @@ module plants
 import vraylib
 import math
 import utils
-import lyra
 import rand
+import state
+import lyra
 
 const (
 	deg_to_rad = math.pi / 180
@@ -134,7 +135,7 @@ fn (self &Plant) get_hitbox() []f32 {
 	return [b.x1, b.x2, b.y2, b.y1]
 }
 
-fn (mut self Plant) update(lyra &lyra.Eye) {
+fn (mut self Plant) update(state &state.State) {
 	if self.burning > 0 {
 		for mut row in self.grid {
 			for mut branch in row {
@@ -167,7 +168,7 @@ fn (self &Plant) get_color(c C.Color) C.Color {
 	return C.Color{r, g, b, c.a}
 }
 
-fn (self &Plant) draw(eye &lyra.Eye) {
+fn (self &Plant) draw(state &state.State) {
 	for i, row in self.grid {
 		for branch in row {
 			x1, y1 := branch.x1, branch.y1
@@ -179,8 +180,8 @@ fn (self &Plant) draw(eye &lyra.Eye) {
 				x2 = get_next_pos(self, x1, x2)
 				y2 = get_next_pos(self, y1, y2)
 			}
-			if (x1 > eye.cx || x2 > eye.cx)
-				&& (x1 < eye.cx + lyra.game_width || x2 < eye.cx + lyra.game_width) {
+			if (x1 > state.cx || x2 > state.cx)
+				&& (x1 < state.cx + lyra.game_width || x2 < state.cx + lyra.game_width) {
 				vraylib.draw_line_ex(C.Vector2{x1, y1}, C.Vector2{x2, y2}, branch.w, self.get_color(branch.color))
 			}
 		}

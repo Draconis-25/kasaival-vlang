@@ -1,6 +1,6 @@
 module ecs
 
-import lyra
+import state
 
 pub struct Blank {
 	y      f32
@@ -10,10 +10,10 @@ pub struct Blank {
 
 pub fn (mut self Blank) load(x int, y int) {}
 
-pub fn (mut self Blank) update(eye &lyra.Eye) {
+pub fn (mut self Blank) update(state &state.State) {
 }
 
-pub fn (self &Blank) draw(eye &lyra.Eye) {
+pub fn (self &Blank) draw(state &state.State) {
 }
 
 pub fn (self &Blank) unload() {

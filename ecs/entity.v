@@ -4,15 +4,16 @@ import plants
 import mobs
 import lyra
 import rand
+import state
 
 interface Entity {
 	y f32
 	dead bool
 	points int
 	load(int, int)
-	update(lyra &lyra.Eye)
+	update(state &state.State)
 	unload()
-	draw(lyra &lyra.Eye)
+	draw(state &state.State)
 	collided(string, f32)
 	get_hitbox() []f32
 }
@@ -28,8 +29,8 @@ enum EntityName {
 	oak
 }
 
-pub fn get_spawn_pos(eye &lyra.Eye) (int, int) {
-	x := rand.int_in_range(eye.start_x, int(eye.start_x + eye.gw))
+pub fn get_spawn_pos(state &state.State) (int, int) {
+	x := rand.int_in_range(state.start_x, int(state.start_x + state.gw))
 	y := rand.int_in_range(lyra.start_y, lyra.game_height)
 	return x, y
 }

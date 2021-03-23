@@ -1,6 +1,6 @@
 module mobs
 
-import lyra
+import state
 import utils
 
 pub struct Fox {
@@ -19,11 +19,11 @@ pub fn (mut self Fox) load(x int, y int) {
 	// self.anime.load('Fox', 20, 12, 153, 139, 0)
 }
 
-pub fn (mut self Fox) update(eye &lyra.Eye) {
+pub fn (mut self Fox) update(state &state.State) {
 	self.anime.update(self.x, self.y)
 }
 
-pub fn (self &Fox) draw(eye &lyra.Eye) {
+pub fn (self &Fox) draw(state &state.State) {
 	self.anime.draw()
 }
 

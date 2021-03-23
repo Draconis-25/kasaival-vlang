@@ -18,24 +18,6 @@ pub fn get_color(cs []int) C.Color {
 	return C.Color{byte(r), byte(g), byte(b), 255}
 }
 
-enum State {
-	menu
-	game
-}
-
-pub struct Eye {
-pub mut:
-	state   State
-	mute    bool
-	pause   bool
-	camera  C.Camera2D = C.Camera2D{}
-	start_x int        = -100
-	cx      f32
-	gw      f32 = 1000
-	gh      f32 = 400
-	score   int
-}
-
 pub fn get_game_scale() (f32, C.Vector2) {
 	screen_width := f32(vraylib.get_screen_width())
 	screen_height := f32(vraylib.get_screen_height())
