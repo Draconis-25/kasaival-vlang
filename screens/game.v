@@ -85,10 +85,11 @@ pub fn (mut self Game) load(mut state state.State) {
 }
 
 pub fn (mut self Game) update(mut state state.State) {
-	if state.exit {
-		state.set_screen(&Menu{})
-		state.exit = false
-		return
+	defer {
+		if state.exit {
+			state.set_screen(&Menu{})
+			state.exit = false
+		}
 	}
 	// game time elapsed
 	self.elapsed++
