@@ -52,11 +52,11 @@ mut:
 }
 
 // get the function to provoke if button activated
-fn get_fn(state string) fn (&state.State) {
-	match state {
+fn get_fn(btn string) fn (&state.State) {
+	match btn {
 		'exit' {
 			return fn (mut state state.State) {
-	//			state.screen = .menu
+				state.exit = true
 			}
 		}
 		'pause' {

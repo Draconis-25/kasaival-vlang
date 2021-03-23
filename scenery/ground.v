@@ -51,7 +51,7 @@ pub fn (mut self Ground) load(mut state state.State, width int, cs [][]int) {
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
 			c = get_color(cs, x, state.start_x, int(end_x))
-			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w,
+			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, 
 				y + h}, c, c}
 			x += w
 		}

@@ -53,12 +53,10 @@ pub fn (mut self Dog) update(mut state state.State) {
 	if self.burning {
 		if self.counter < wt + pt {
 			self.counter = int(wt + pt)
-		}
-		else if self.counter > wt + pt + bt {
+		} else if self.counter > wt + pt + bt {
 			self.dead = true
 		}
-	}
-	else {
+	} else {
 		if self.counter > wt + pt {
 			self.counter = 0
 		}

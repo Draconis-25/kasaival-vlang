@@ -1,22 +1,22 @@
 module stages
 
-fn desert() []Scene {
+fn grassland() []Scene {
 	mut scene := Scene{}
 	scene.ground.width += 3000
 	scene.ground.cs = [
-		// desert
-		[170, 200, 115, 140, 80, 84],
-		[200, 220, 115, 140, 75, 80],
+		// grassland
+		[80, 140, 100, 150, 40, 64],
+		[80, 160, 135, 170, 55, 60],
 	]
 	// add saguaro spawner to spawners
-	scene.spawners << get_spawner(.kali, 100)
+	scene.spawners << get_spawner(.oak, 100)
 	// add mob spawner
 
 	// set Music
-	scene.music = 'spring/maintheme.ogg'
+	scene.music = 'spring/map.ogg'
 
 	// set background
-	scene.background = 'desert'
+	scene.background = 'grassland'
 	// return all scenes
 	return [scene]
 }

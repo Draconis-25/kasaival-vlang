@@ -23,8 +23,10 @@ pub mut:
 
 struct Scene {
 pub mut:
-	ground   Ground = Ground{}
-	spawners []Spawner
+	ground     Ground = Ground{}
+	spawners   []Spawner
+	music      string
+	background string
 }
 
 fn get_spawner(name ecs.EntityName, interval int) Spawner {
@@ -37,7 +39,7 @@ fn get_spawner(name ecs.EntityName, interval int) Spawner {
 pub fn get_props(stage_name StageName) []Scene {
 	match stage_name {
 		.desert { return desert() }
-		.grassland { return []Scene{} }
+		.grassland { return grassland() }
 		.@none { return []Scene{} }
 	}
 }

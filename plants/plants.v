@@ -16,7 +16,11 @@ pub fn saguaro() &Plant {
 
 pub fn oak() &Plant {
 	return &Plant{
+		w: 20
+		h: 50
+		points: 20
 		cs_branch: [40, 70, 170, 202, 60, 100]
+		change_color: [-10, -10, -10]
 		max_row: 8
 		split_chance: 70
 		split_angle: [20, 30]

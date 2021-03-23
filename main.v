@@ -12,7 +12,6 @@ const (
 	window_title  = 'Kasaival'
 )
 
-
 fn main() {
 	// init
 	// vraylib setup

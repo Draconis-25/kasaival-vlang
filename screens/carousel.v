@@ -5,15 +5,21 @@ import ui
 import state
 
 const start_x = 200
+
 const start_y = 500
+
 const stages = ['desert', 'grassland']
+
+const stages_id = [0, 1]
+
 const path = 'resources/stages/'
+
 const ext = '.jpg'
 
 pub struct Carousel {
 mut:
 	background C.Texture2D
-	stages []ui.ImageButton
+	stages     []ui.ImageButton
 }
 
 pub fn (mut self Carousel) load(mut state state.State) {
@@ -22,10 +28,10 @@ pub fn (mut self Carousel) load(mut state state.State) {
 
 	mut w := 0
 	mut off_x := 100
-	for i, stage in stages {
-		img := vraylib.load_texture(path + stage + ext)
-		x := start_x + w + off_x * i
-		y := start_y
+	for i, stage in screens.stages {
+		img := vraylib.load_texture(screens.path + stage + screens.ext)
+		x := screens.start_x + w + off_x * i
+		y := screens.start_y
 		self.stages << ui.ImageButton{img, x, y, 1}
 		w = img.width
 	}
@@ -33,16 +39,26 @@ pub fn (mut self Carousel) load(mut state state.State) {
 
 pub fn (mut self Carousel) update(mut state state.State) {
 	pressed := vraylib.is_mouse_button_pressed(vraylib.mouse_left_button)
-	for stage in self.stages {
+	for i, stage in self.stages {
 		if stage.mouse_on_button() {
 			if pressed {
-				state.set_screen(&Game{})
+				match i {
+					0 {
+						state.set_screen(&Game{
+							stage: .desert
+						})
+					}
+					1 {
+						state.set_screen(&Game{
+							stage: .grassland
+						})
+					}
+					else {}
+				}
 			}
 		}
 	}
-
 }
-
 
 pub fn (self &Carousel) draw(state &state.State) {
 	vraylib.draw_texture_ex(self.background, C.Vector2{0, 0}, 0, 1, vraylib.white)

@@ -23,16 +23,16 @@ struct Z_Order {
 
 pub struct Game {
 mut:
-	entities      []ecs.Entity
-	entity_order  []Z_Order
-	player        player.Core        = player.Core{}
-	ground        scenery.Ground     = scenery.Ground{}
-	background    scenery.Background = scenery.Background{}
-	current_stage stages.StageName   = .desert
-	music         C.Music
-	spawners      []stages.Spawner
-	hud           ui.HUD
-	elapsed       int
+	entities     []ecs.Entity
+	entity_order []Z_Order
+	player       player.Core        = player.Core{}
+	ground       scenery.Ground     = scenery.Ground{}
+	background   scenery.Background = scenery.Background{}
+	stage        stages.StageName   = .desert
+	music        C.Music
+	spawners     []stages.Spawner
+	hud          ui.HUD
+	elapsed      int
 }
 
 fn (mut self Game) add_entity(name ecs.EntityName, state &state.State) {
@@ -68,25 +68,27 @@ fn (mut self Game) load_scene(scene stages.Scene, mut state state.State) {
 	for _ in 0 .. 10 {
 		self.add_entity(.dog, state)
 	}
+	// load music
+	self.music = vraylib.load_music_stream('resources/music/' + scene.music)
+	vraylib.play_music_stream(self.music)
+	// load bacground
+	self.background.load(scene.background, state)
 }
 
 pub fn (mut self Game) load(mut state state.State) {
 	// load current scene
-	scenes := stages.get_props(self.current_stage)
+	scenes := stages.get_props(self.stage)
 	self.load_scene(scenes[0], mut state)
-	// load bacground
-	self.background.load(state)
-	// load music
-	self.music = vraylib.load_music_stream('resources/music/spring/maintheme.ogg')
-	vraylib.play_music_stream(self.music)
 	// load hud
 	self.hud = ui.HUD{}
 	self.hud.load()
 }
 
 pub fn (mut self Game) update(mut state state.State) {
-	if vraylib.is_key_pressed(vraylib.key_escape) {
-		println("ae")
+	if state.exit {
+		state.set_screen(&Menu{})
+		state.exit = false
+		return
 	}
 	// game time elapsed
 	self.elapsed++
