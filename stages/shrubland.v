@@ -6,19 +6,19 @@ pub struct Shrubland {
 	scenes []Scene
 }
 
-const ocean_cs = [[40, 50, 40, 60, 200, 220], [20, 30, 60, 80, 200, 220]]
-const beach_cs = [[180, 200, 190, 220, 40, 60], [200, 220, 190, 220, 40, 60]]
-const shrubland_cs =  [[180, 190, 220, 250, 40, 60]]
-const cave_cs = [[180, 200, 150, 180, 60, 90]]
+const ocean_gr = [[40, 40, 220], [70, 120, 190]]
+const beach_gr = [[70, 120, 190], [220, 220, 60]]
+const shrubland_gr =  [[220, 220, 60], [190, 250, 60]]
+const cave_gr = [[190, 250, 60], [200, 180, 90]]
 
 pub fn (mut self Shrubland) load() {
 	self.music = 'spring/maintheme.ogg'
 	// add ocean
-	self.scenes << Scene{1000, ocean_cs}
+	self.scenes << Scene{1000, ocean_gr}
 	// add beach
-	self.scenes << Scene{1600, beach_cs}
+	self.scenes << Scene{1600, beach_gr}
 	// add shrubland
-	self.scenes << Scene{2400, shrubland_cs}
+	self.scenes << Scene{2400, shrubland_gr}
 	// add cave
-	self.scenes << Scene{1920, cave_cs}
+	self.scenes << Scene{1920, cave_gr}
 }

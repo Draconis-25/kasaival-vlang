@@ -74,8 +74,9 @@ fn (mut self Game) load_stage(mut state state.State) {
 	self.ground = scenery.Ground{}
 	self.ground.start_x = state.start_x
 	for scene in self.stage.scenes {
-		self.ground.add(scene.width, scene.cs)
+		self.ground.add(scene.width, scene.gradient)
 	}
+
 	// load player
 	self.player.load()
 

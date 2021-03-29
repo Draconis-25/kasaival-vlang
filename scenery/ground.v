@@ -26,34 +26,46 @@ mut:
 	start_x int
 }
 
- fn get_color (cs [][]int, x int, start_x int, end_x int) C.Color {
-	mut id := f32(cs.len * (x - start_x)) / (end_x - start_x)
-	r := id - int(id)
+ fn get_color (gr [][]int, x int, start_x int, width int) C.Color {
+	mut rat := f32(x - start_x) / width
+	/*r := id - int(id)
 	id = rand.f32_in_range(r, 1) + id
 	if id > cs.len - 1 {
 		id = cs.len - 1
 	}
-	return utils.get_color(cs[int(id)])
+	return utils.get_color(cs[int(id)])*/
+
+	if rat < 0 {
+		rat = 0
+	}
+	if rat > 1 {
+		rat = 1
+	}
+	r := gr[0][0] * (1 - rat) + gr[1][0] * rat
+	g := gr[0][1] * (1 - rat) + gr[1][1] * rat
+	b := gr[0][2] * (1 - rat) + gr[1][2] * rat
+	println(rat)
+	return C.Color{byte(r), byte(g), byte(b), 255}
 }
 
-pub fn (mut self Ground) add(width int, cs [][]int) {
+pub fn (mut self Ground) add(width int, gradient [][]int) {
 	mut y := lyra.start_y
 	gh := lyra.game_height - y
 	w := gh / rows
 	h := w
 	self.tile_size = h
 	end_x := self.start_x + width + w
-	println(self.start_x)
 	for i in 0 .. rows {
 		if self.pos_y.len < rows {
 			self.pos_y << y
 		}
 		mut x := self.start_x - int(f32(w) * .5)
 		for x < end_x  + int(f32(w) * .5){
-			mut c := get_color(cs, x, self.start_x, int(end_x))
+
+			mut c := get_color(gradient, x, self.start_x, width)
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
-			c = get_color(cs, x, self.start_x, int(end_x))
+			c = get_color(gradient, x, self.start_x, width)
 			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w,
 				y + h}, c, c}
 			x += w
