@@ -7,12 +7,6 @@ interface Screen {
 	unload()
 }
 
-enum ScreenList {
-	menu
-	carousel
-	game
-}
-
 pub struct State {
 pub mut:
 	screen  Screen

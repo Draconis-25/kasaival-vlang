@@ -23,7 +23,7 @@ fn main() {
 	mut state := state.State{}
 	mut camera := C.Camera2D{}
 	camera.zoom, camera.offset = lyra.get_game_scale()
-	state.screen = screens.Menu{}
+	state.screen = screens.Game{}
 	state.screen.load(state)
 
 	// screen.load(.game, mut state)

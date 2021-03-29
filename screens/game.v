@@ -23,18 +23,17 @@ struct Z_Order {
 
 pub struct Game {
 mut:
+	stage stages.Shrubland
 	entities     []ecs.Entity
 	entity_order []Z_Order
 	player       player.Core        = player.Core{}
-	ground       scenery.Ground     = scenery.Ground{}
+	ground       scenery.Ground
 	background   scenery.Background = scenery.Background{}
-	stage        stages.StageName   = .desert
 	music        C.Music
-	spawners     []stages.Spawner
 	hud          ui.HUD
 	elapsed      int
 }
-
+/*
 fn (mut self Game) add_entity(name ecs.EntityName, state &state.State) {
 	new_entity := ecs.new_entity(name)
 	x, y := ecs.get_spawn_pos(state)
@@ -57,8 +56,30 @@ fn (mut self Game) add_entity(name ecs.EntityName, state &state.State) {
 		self.entities << new_entity
 	}
 }
+*/
+fn (mut self Game) load_stage(mut state state.State) {
+	// load stage
+	self.stage = stages.Shrubland{}
+	self.stage.load()
+	// load music
+	self.music = vraylib.load_music_stream('resources/music/' + self.stage.music)
+	vraylib.play_music_stream(self.music)
+	// setup state of stage
+	state.gw = 0
 
-fn (mut self Game) load_scene(scene stages.Scene, mut state state.State) {
+	for scene in self.stage.scenes { state.gw += scene.width }
+	state.start_x = int(-f32(state.gw) * .5 + lyra.game_width * .5)
+
+	// load ground
+	self.ground = scenery.Ground{}
+	self.ground.start_x = state.start_x
+	for scene in self.stage.scenes {
+		self.ground.add(scene.width, scene.cs)
+	}
+	// load player
+	self.player.load()
+
+	/*
 	for mut spawner in scene.spawners {
 		spawner.timer = rand.int_in_range(0, spawner.interval)
 		self.spawners << spawner
@@ -68,17 +89,16 @@ fn (mut self Game) load_scene(scene stages.Scene, mut state state.State) {
 	for _ in 0 .. 10 {
 		self.add_entity(.dog, state)
 	}
-	// load music
-	self.music = vraylib.load_music_stream('resources/music/' + scene.music)
-	vraylib.play_music_stream(self.music)
+
 	// load bacground
-	self.background.load(scene.background, state)
+	// self.background.load(scene.background, state)
+	// start muted for dev
+	state.mute = true
+	*/
 }
 
 pub fn (mut self Game) load(mut state state.State) {
-	// load current scene
-	scenes := stages.get_props(self.stage)
-	self.load_scene(scenes[0], mut state)
+	self.load_stage(mut state)
 	// load hud
 	self.hud = ui.HUD{}
 	self.hud.load()
@@ -94,7 +114,6 @@ pub fn (mut self Game) update(mut state state.State) {
 	// game time elapsed
 	self.elapsed++
 	if self.elapsed % (4 * lyra.fps) == 0 {
-		state.score++
 	}
 	// music
 	if !state.mute {
@@ -102,13 +121,14 @@ pub fn (mut self Game) update(mut state state.State) {
 	}
 	// mobs, plants. entities, player, ground, sky, scenery
 	if !state.pause {
+		/*
 		for mut spawner in self.spawners {
 			spawner.timer++
 			if spawner.timer > spawner.interval {
 				self.add_entity(spawner.name, state)
 				spawner.timer = 0
 			}
-		}
+		}*/
 
 		self.background.update(state)
 		self.ground.update()

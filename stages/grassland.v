@@ -1,6 +1,7 @@
 module stages
 
-fn grassland() []Scene {
+/*
+fn grassland()  {
 	mut scene := Scene{}
 	scene.ground.width += 3000
 	scene.ground.cs = [
@@ -18,5 +19,5 @@ fn grassland() []Scene {
 	// set background
 	scene.background = 'grassland'
 	// return all scenes
-	return [scene]
 }
+*/

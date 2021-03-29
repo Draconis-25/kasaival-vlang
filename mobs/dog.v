@@ -36,7 +36,7 @@ pub fn (mut self Dog) load(x int, y int) {
 	self.anime.load('dog', states, 6, self.w, self.h, 7)
 	self.walk_time = 5
 	self.pee_time = 3
-	self.burn_time = 1
+	self.burn_time = .15
 	self.counter = rand.int_in_range(0, int(self.walk_time * lyra.fps))
 	self.direction_y = rand.f32_in_range(-1, 1)
 	self.anime.direction = 1 - rand.intn(2) * 2

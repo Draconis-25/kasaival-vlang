@@ -6,6 +6,8 @@ import utils
 import rand
 import state
 
+const rows = 9
+
 struct Tile {
 	p1        C.Vector2
 	p2        C.Vector2
@@ -17,46 +19,48 @@ mut:
 
 pub struct Ground {
 mut:
-	tiles     []Tile
-	grid      [][]Tile
+	grid      [][]Tile = [][]Tile{len: rows, init: []Tile{}}
 	pos_y     []f32
-	rows      int = 9
 	tile_size f32
+	pub mut:
+	start_x int
 }
 
-pub fn (mut self Ground) load(mut state state.State, width int, cs [][]int) {
-	get_color := fn (cs [][]int, x int, start_x int, end_x int) C.Color {
-		mut id := f32(cs.len * (x - start_x)) / (end_x - start_x)
-		r := id - int(id)
-		id = rand.f32_in_range(r, 1) + id
-		if id > cs.len - 1 {
-			id = cs.len - 1
-		}
-		return utils.get_color(cs[int(id)])
+ fn get_color (cs [][]int, x int, start_x int, end_x int) C.Color {
+	mut id := f32(cs.len * (x - start_x)) / (end_x - start_x)
+	r := id - int(id)
+	id = rand.f32_in_range(r, 1) + id
+	if id > cs.len - 1 {
+		id = cs.len - 1
 	}
+	return utils.get_color(cs[int(id)])
+}
+
+pub fn (mut self Ground) add(width int, cs [][]int) {
 	mut y := lyra.start_y
 	gh := lyra.game_height - y
-	w := gh / self.rows
+	w := gh / rows
 	h := w
 	self.tile_size = h
-	state.gw = width
-	state.start_x = int(-f32(state.gw) * .5 + lyra.game_width * .5)
-	end_x := state.start_x + state.gw + w
-	self.grid = [][]Tile{len: self.rows, init: []Tile{}}
-	for i in 0 .. self.rows {
-		self.pos_y << y
-		mut x := state.start_x - int(f32(w) * .5)
-		for x < end_x + int(f32(w) * .5) {
-			mut c := get_color(cs, x, state.start_x, int(end_x))
+	end_x := self.start_x + width + w
+	println(self.start_x)
+	for i in 0 .. rows {
+		if self.pos_y.len < rows {
+			self.pos_y << y
+		}
+		mut x := self.start_x - int(f32(w) * .5)
+		for x < end_x  + int(f32(w) * .5){
+			mut c := get_color(cs, x, self.start_x, int(end_x))
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
-			c = get_color(cs, x, state.start_x, int(end_x))
-			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, 
+			c = get_color(cs, x, self.start_x, int(end_x))
+			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w,
 				y + h}, c, c}
 			x += w
 		}
 		y += h
 	}
+	self.start_x += width
 }
 
 fn (mut tile Tile) heal() {

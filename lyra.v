@@ -27,10 +27,10 @@ pub fn get_game_scale() (f32, C.Vector2) {
 	mut offset_x, mut offset_y := f32(0), f32(0)
 	if scale_x < scale_y {
 		scale = scale_x
-		offset_y = (screen_height - scale * game_height) * .5
+		offset_y = (screen_height - scale * lyra.game_height) * .5
 	} else {
 		scale = scale_y
-		offset_x = (screen_width - scale * game_width) * .5
+		offset_x = (screen_width - scale * lyra.game_width) * .5
 	}
 	return scale, C.Vector2{offset_x, offset_y}
 }

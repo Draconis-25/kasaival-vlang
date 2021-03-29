@@ -8,7 +8,7 @@ const start_x = 200
 
 const start_y = 500
 
-const stages = ['desert', 'grassland']
+const stages = ['shrubland', 'grassland']
 
 const stages_id = [0, 1]
 
@@ -40,41 +40,32 @@ pub fn (mut self Carousel) load(mut state state.State) {
 fn get_key_action(i int, mut state state.State) {
 	match i {
 		0 {
-			state.set_screen(&Game{
-				stage: .desert
-			})
+			state.set_screen(&Game{})
 		}
 		1 {
-			state.set_screen(&Game{
-				stage: .grassland
-			})
+			state.set_screen(&Game{})
 		}
 		else {}
 	}
 }
+
 pub fn (mut self Carousel) update(mut state state.State) {
+	mut key := -1
+	key_pressed := vraylib.get_key_pressed()
 	mouse_pressed := vraylib.is_mouse_button_pressed(vraylib.mouse_left_button)
-	if mouse_pressed {
-		for i, stage in self.stages {
-			if stage.mouse_on_button() {
-				get_key_action(i, mut state)
+	for i, stage in self.stages {
+		if stage.mouse_on_button() {
+			if mouse_pressed {
+				key = i
 			}
 		}
 	}
-	else {
-		mut key := -1
-		key_pressed := vraylib.get_key_pressed()
-		if key_pressed >= 49 && key_pressed < 58 {
-			key = key_pressed - 49
-		} else if key_pressed >= 321 && key_pressed < 330 {
-			key = key_pressed - 321
-		} else {
-			return
-		}
-		println(key)
-		get_key_action(key, mut state)
-
+	if key_pressed >= 49 && key_pressed < 58 {
+		key = key_pressed - 49
+	} else if key_pressed >= 321 && key_pressed < 330 {
+		key = key_pressed - 321
 	}
+	get_key_action(key, mut state)
 }
 
 pub fn (self &Carousel) draw(state &state.State) {
