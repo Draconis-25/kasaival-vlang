@@ -113,6 +113,9 @@ pub fn (mut self Core) update(mut state state.State) {
 	self.flame.update(self.x, self.y - h)
 }
 
+pub fn (self &Core) burn(fuel f32) {
+}
+
 pub fn (self &Core) get_hitbox() []f32 {
 	w, h := self.flame.get_dimensions()
 	return [self.x - w * .5, self.x + w * .5, self.y - h * .7, self.y - h * .1]

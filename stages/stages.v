@@ -5,7 +5,7 @@ import ecs
 pub struct Scene {
 	pub:
 	width int
-	gradient    [][]int
+	color   []int
 }
 
 pub interface Stage {

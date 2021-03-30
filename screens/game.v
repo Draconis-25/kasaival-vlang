@@ -73,8 +73,13 @@ fn (mut self Game) load_stage(mut state state.State) {
 	// load ground
 	self.ground = scenery.Ground{}
 	self.ground.start_x = state.start_x
-	for scene in self.stage.scenes {
-		self.ground.add(scene.width, scene.gradient)
+
+	// add ground for each scene
+	scenes := self.stage.scenes
+	for i, scene in scenes {
+		if i < scenes.len - 1{
+			self.ground.add(scene.width,  [scenes[i].color, scenes[i + 1].color])
+		}
 	}
 
 	// load player
@@ -151,7 +156,8 @@ pub fn (mut self Game) update(mut state state.State) {
 		}
 
 		self.player.update(mut state)
-		self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
+		fuel := self.ground.collide(self.player.get_hitbox(), self.player.element, self.player.dp)
+		self.player.burn(fuel)
 		for i, p in self.player.flame.particles {
 			self.entity_order << Z_Order{.player, p.y, i}
 		}

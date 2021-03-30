@@ -22,12 +22,13 @@ mut:
 	grid      [][]Tile = [][]Tile{len: rows, init: []Tile{}}
 	pos_y     []f32
 	tile_size f32
+	tick int
 	pub mut:
 	start_x int
 }
 
- fn get_color (gr [][]int, x int, start_x int, width int) C.Color {
-	mut rat := f32(x - start_x) / width
+ fn get_color (gr [][]int, x f32, start_x f32, width int) C.Color {
+	mut rat := (x - start_x) / width
 	/*r := id - int(id)
 	id = rand.f32_in_range(r, 1) + id
 	if id > cs.len - 1 {
@@ -44,7 +45,6 @@ mut:
 	r := gr[0][0] * (1 - rat) + gr[1][0] * rat
 	g := gr[0][1] * (1 - rat) + gr[1][1] * rat
 	b := gr[0][2] * (1 - rat) + gr[1][2] * rat
-	println(rat)
 	return C.Color{byte(r), byte(g), byte(b), 255}
 }
 
@@ -62,7 +62,7 @@ pub fn (mut self Ground) add(width int, gradient [][]int) {
 		mut x := self.start_x - int(f32(w) * .5)
 		for x < end_x  + int(f32(w) * .5){
 
-			mut c := get_color(gradient, x, self.start_x, width)
+			mut c := get_color(gradient, x - f32(w) * .5, self.start_x, width)
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
 			c = get_color(gradient, x, self.start_x, width)
@@ -77,7 +77,11 @@ pub fn (mut self Ground) add(width int, gradient [][]int) {
 
 fn (mut tile Tile) heal() {
 	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
-	_, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
+	o_r, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
+
+	if r != o_r {
+		r--
+	}
 	if b != o_b {
 		b++
 	}
@@ -88,20 +92,33 @@ fn (mut tile Tile) heal() {
 }
 
 pub fn (mut self Ground) update() {
-	for mut row in self.grid {
-		for mut tile in row {
-			tile.heal()
+	self.tick++
+
+	if self.tick > .5 * lyra.fps {
+		for mut row in self.grid {
+			for mut tile in row {
+				tile.heal()
+			}
 		}
+		self.tick = 0
 	}
 }
 
-fn (mut tile Tile) burn(power f32) {
+fn (mut tile Tile) burn(power f32) f32 {
+	dmg := power * .5
+	o_r, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
+
+	t_r, t_g, t_b := tile.color.r, tile.color.g, tile.color.b
 	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
-	b = 0
-	if g > 100 {
-		g -= 2
+
+	if g > o_g - 30 {
+		g -= byte(dmg)
+	}
+	if r < o_r + 20 {
+		r += byte(dmg)
 	}
 	tile.color = C.Color{r, g, b, 255}
+	return t_g - g - f32(b) * .05
 }
 
 fn (tile &Tile) get_lr(i int) (f32, f32) {
@@ -114,7 +131,8 @@ fn (tile &Tile) get_lr(i int) (f32, f32) {
 	return l, tile.p3.x
 }
 
-pub fn (mut self Ground) collide(b []f32, element string, power f32) {
+pub fn (mut self Ground) collide(b []f32, element string, power f32) f32 {
+	mut fuel := f32(0)
 	mut index := []int{}
 	for i, y in self.pos_y {
 		if y < b[3] && y + self.tile_size > b[2] {
@@ -126,11 +144,12 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) {
 			l, r := tile.get_lr(j)
 			if l < b[1] && r > b[0] {
 				if element == 'fire' {
-					self.grid[i][j].burn(power)
+					fuel += self.grid[i][j].burn(power)
 				}
 			}
 		}
 	}
+	return fuel
 }
 
 pub fn (self &Ground) draw(state &state.State) {
