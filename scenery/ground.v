@@ -45,6 +45,7 @@ mut:
 	r := gr[0][0] * (1 - rat) + gr[1][0] * rat
 	g := gr[0][1] * (1 - rat) + gr[1][1] * rat
 	b := gr[0][2] * (1 - rat) + gr[1][2] * rat
+
 	return C.Color{byte(r), byte(g), byte(b), 255}
 }
 
@@ -72,7 +73,7 @@ pub fn (mut self Ground) add(width int, gradient [][]int) {
 		}
 		y += h
 	}
-	self.start_x += width
+	self.start_x += width + w
 }
 
 fn (mut tile Tile) heal() {
@@ -106,9 +107,9 @@ pub fn (mut self Ground) update() {
 
 fn (mut tile Tile) burn(power f32) f32 {
 	dmg := power * .5
-	o_r, o_g, o_b := tile.org_color.r, tile.org_color.g, tile.org_color.b
+	o_r, o_g, _ := tile.org_color.r, tile.org_color.g, tile.org_color.b
 
-	t_r, t_g, t_b := tile.color.r, tile.color.g, tile.color.b
+	_, t_g, _ := tile.color.r, tile.color.g, tile.color.b
 	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
 
 	if g > o_g - 30 {

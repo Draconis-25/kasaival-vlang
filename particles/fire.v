@@ -65,14 +65,14 @@ pub fn (mut self Fire) update(x f32, y f32) {
 		self.particles << self.get_particle()
 	}
 	for i, mut p in self.particles {
-		p.lifetime--
 		if p.lifetime == 0 {
 			self.particles[i] = self.get_particle()
 		}
 		pp := f32(p.lifetime) / self.lifetime
-		p.position.x += p.vel_start.x * pp + p.vel_end.x * (1 - pp)
-		p.position.y += p.vel_start.y * pp + p.vel_end.y * (1 - pp)
-		// println(p.positon['x'])
+		if p.lifetime < self.lifetime {
+			p.position.x += p.vel_start.x * pp + p.vel_end.x * (1 - pp)
+			p.position.y += p.vel_start.y * pp + p.vel_end.y * (1 - pp)
+		}		// println(p.positon['x'])
 
 		p.color.r = byte(p.color_start.r * pp + p.color_end.r * (1 - pp))
 		p.color.g = byte(p.color_start.g * pp + p.color_end.g * (1 - pp))
@@ -80,6 +80,7 @@ pub fn (mut self Fire) update(x f32, y f32) {
 		p.color.a = byte(p.color_start.a * pp + p.color_end.a * (1 - pp))
 
 		p.scale *= p.shrink_factor
+		p.lifetime--
 	}
 }
 
