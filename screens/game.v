@@ -80,6 +80,9 @@ fn (mut self Game) load_stage(mut state state.State) {
 		if i < scenes.len - 1{
 			self.ground.add(scene.width,  [scenes[i].color, scenes[i + 1].color])
 		}
+		if(scene.scenary.texture.id > 0) {
+			// background add
+		}
 	}
 
 	// load player

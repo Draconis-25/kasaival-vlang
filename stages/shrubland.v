@@ -24,6 +24,12 @@ fn get_beach() Scene {
 	return get_scene(600, 200, 180, 60, 20, 10, 10)
 }
 
+fn get_forecave() Scene {
+	mut scene := get_scene(1800, 160, 140, 80, 10, 18, 6)
+	scene.scenary = Scenary{vraylib.load_texture(path + 'cave.png'), .8}
+	return scene
+}
+
 pub fn (mut self Shrubland) load() {
 	self.music = 'spring/maintheme.ogg'
 	// add ocean
@@ -38,14 +44,10 @@ pub fn (mut self Shrubland) load() {
 	self.scenes << get_shrubland()
 	self.scenes << get_shrubland()
 	// add cave_entrance
-	mut cave := Scene{}
-	cave.width = 1920
-	cave.color = [180, 150, 20]
-	cave.scenary = Scenary{vraylib.load_texture(path + 'cave.png'), .8}
-	self.scenes << cave
+	self.scenes << get_forecave()
 	// add end
 	mut end := Scene{}
-	end.color = [140, 110, 40]
+	end.color = [120, 100, 40]
 	self.scenes << end
 
 	// add cave
