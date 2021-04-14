@@ -76,12 +76,16 @@ fn (mut self Game) load_stage(mut state state.State) {
 
 	// add ground for each scene
 	scenes := self.stage.scenes
+	mut x := state.start_x
 	for i, scene in scenes {
+		x += scene.width
 		if i < scenes.len - 1{
 			self.ground.add(scene.width,  [scenes[i].color, scenes[i + 1].color])
 		}
-		if(scene.scenary.texture.id > 0) {
+		scs := scene.scenary
+		if scs.texture.id > 0 {
 			// background add
+			self.background.add(scs.texture, scs.cx, x, lyra.start_y - scs.texture.height)
 		}
 	}
 
@@ -111,6 +115,7 @@ pub fn (mut self Game) load(mut state state.State) {
 	// load hud
 	self.hud = ui.HUD{}
 	self.hud.load()
+	state.mute = true
 }
 
 pub fn (mut self Game) update(mut state state.State) {

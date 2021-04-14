@@ -35,7 +35,7 @@ mut:
 		id = cs.len - 1
 	}
 	return utils.get_color(cs[int(id)])*/
-
+	rat = rat + rand.f32_in_range(-.1, .1)
 	if rat < 0 {
 		rat = 0
 	}
@@ -112,10 +112,10 @@ fn (mut tile Tile) burn(power f32) f32 {
 	_, t_g, _ := tile.color.r, tile.color.g, tile.color.b
 	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
 
-	if g > o_g - 30 {
+	if g > o_g - 30 && g - byte(dmg) > 0 {
 		g -= byte(dmg)
 	}
-	if r < o_r + 20 {
+	if r < o_r + 20 && r + byte(dmg) < 255 {
 		r += byte(dmg)
 	}
 	tile.color = C.Color{r, g, b, 255}
