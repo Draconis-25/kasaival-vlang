@@ -1,4 +1,4 @@
-<img src="/esources/icon.png"/>
+<img src="/resources/icon.png"/>
 
 # Welcome
 
