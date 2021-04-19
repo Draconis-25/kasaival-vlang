@@ -1,6 +1,6 @@
 module scenery
 
-import vraylib
+import waotzi.vraylib
 import lyra
 import state
 
@@ -30,7 +30,7 @@ pub fn (self Background) draw(state &state.State) {
 	for item in self.items {
 		scale := f32(lyra.start_y) / item.texture.height
 		x := item.x + state.cx * item.cx - item.texture.width * scale
-		vraylib.draw_texture_ex(item.texture, C.Vector2{x, 0}, 0, scale, vraylib.white)
+		vraylib.draw_texture_ex(item.texture, C.Vector2{x, item.y}, 0, scale, vraylib.white)
 	}
 }
 

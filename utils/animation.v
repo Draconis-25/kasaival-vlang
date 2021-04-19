@@ -1,6 +1,6 @@
 module utils
 
-import vraylib
+import waotzi.vraylib
 
 pub struct Animation {
 pub mut:

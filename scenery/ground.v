@@ -1,12 +1,12 @@
 module scenery
 
-import vraylib
+import waotzi.vraylib
 import lyra
 import utils
 import rand
 import state
 
-const rows = 9
+const rows = 12
 
 struct Tile {
 	p1        C.Vector2

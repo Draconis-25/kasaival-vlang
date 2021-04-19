@@ -1,7 +1,7 @@
 module stages
 
 import rand
-import vraylib
+import waotzi.vraylib
 
 pub struct Shrubland {
 	pub mut:
@@ -21,12 +21,19 @@ fn get_beach() Scene {
 }
 
 fn get_shrubland() Scene {
-	return get_scene(1000, 180, 120, 10, 20, 10, 5)
+	mut scene := get_scene(1000, 180, 120, 10, 20, 10, 5)
+	for i in 0 .. 3 {
+		pos_y := [360, 220, 160]
+		scene.scenary << Scenary{vraylib.load_texture(path + 'shrubland/' + i.str() + '.png'), .1 * (3 - f32(i)), pos_y[i]}
+	}
+	return scene
 
 }
 fn get_forecave() Scene {
-	mut scene := get_scene(1500, 60, 0, 40, 10, 1, 6)
-	scene.scenary = Scenary{vraylib.load_texture(path + 'cave.png'), 0}
+	mut scene := get_scene(1000, 60, 0, 40, 10, 1, 6)
+	mut cave := Scenary{}
+	cave.texture = vraylib.load_texture(path + 'cave.png')
+	scene.scenary << cave
 	return scene
 }
 

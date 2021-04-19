@@ -1,7 +1,7 @@
 module ui
 
 import lyra
-import vraylib
+import waotzi.vraylib
 import state
 
 pub struct ImageButton {

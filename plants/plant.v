@@ -1,6 +1,6 @@
 module plants
 
-import vraylib
+import waotzi.vraylib
 import math
 import utils
 import rand

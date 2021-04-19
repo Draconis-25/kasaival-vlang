@@ -1,6 +1,6 @@
 module player
 
-import vraylib
+import waotzi.vraylib
 import lyra
 import math
 import particles

@@ -1,7 +1,7 @@
 module main
 
 import lyra
-import vraylib
+import waotzi.vraylib
 import screens
 import state
 

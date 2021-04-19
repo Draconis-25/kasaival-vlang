@@ -1,6 +1,6 @@
 module lyra
 
-import vraylib
+import waotzi.vraylib
 import rand
 
 pub const (

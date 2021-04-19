@@ -1,6 +1,6 @@
 module screens
 
-import vraylib
+import waotzi.vraylib
 import ui
 import state
 

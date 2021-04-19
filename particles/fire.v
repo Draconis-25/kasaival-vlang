@@ -1,6 +1,6 @@
 module particles
 
-import vraylib
+import waotzi.vraylib
 import rand
 
 struct Particle {

@@ -4,7 +4,7 @@ import lyra
 import player
 import scenery
 import stages
-import vraylib
+import waotzi.vraylib
 import rand
 import ecs
 import ui
@@ -82,10 +82,11 @@ fn (mut self Game) load_stage(mut state state.State) {
 		if i < scenes.len - 1{
 			self.ground.add(scene.width,  [scenes[i].color, scenes[i + 1].color])
 		}
-		scs := scene.scenary
-		if scs.texture.id > 0 {
+		if scene.scenary.len > 0 {
 			// background add
-			self.background.add(scs.texture, scs.cx, x, lyra.start_y - scs.texture.height)
+			for scenary in scene.scenary {
+				self.background.add(scenary.texture, scenary.cx, x, scenary.y)
+			}
 		}
 	}
 
