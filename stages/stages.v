@@ -4,6 +4,13 @@ import ecs
 
 const path = 'resources/scenery/'
 
+const(
+	ocean = [50, 60, 220]
+	beach = [200, 180, 60]
+	shrubland = [ 180, 120, 10]
+	caveland = [ 60, 0, 40]
+)
+
 struct Scenary {
 pub mut:
 	texture C.Texture2D
@@ -15,7 +22,6 @@ pub struct Scene {
 pub mut:
 	width   int
 	color   []int
-	scenary []Scenary
 }
 
 pub interface Stage {

@@ -51,7 +51,7 @@ fn main() {
 
 	mut state := state.State{}
 	mut camera := C.Camera2D{}
-	state.screen = screens.Title{}
+	state.screen = screens.Game{}
 	state.screen.load(state)
 
 	mut key_timeout := 0
@@ -106,7 +106,7 @@ fn main() {
 					vraylib.begin_mode_2d(camera)
 					{
 
-						vraylib.clear_background(vraylib.raywhite)
+						vraylib.clear_background(vraylib.black)
 						state.screen.draw(state)
 					}
 					vraylib.end_mode_2d()

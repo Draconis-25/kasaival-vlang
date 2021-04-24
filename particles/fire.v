@@ -24,10 +24,9 @@ mut:
 	position C.Vector2
 	color    C.Color
 	amount   int
+	radius int
 pub mut:
 	scale f32
-
-	texture   C.Texture2D
 	particles []Particle
 }
 
@@ -37,26 +36,26 @@ fn (self &Fire) get_particle() Particle {
 	p.position = self.position
 	vel_x := rand.int_in_range(-3, 3)
 	p.vel_start = C.Vector2{vel_x, -3}
-	p.vel_end = C.Vector2{f32(rand.int_in_range(-vel_x - 2, -vel_x + 2)) * 1.2, -3}
+	p.vel_end = C.Vector2{f32(rand.int_in_range(-vel_x - 2, -vel_x + 2)) * 1.6, -3}
 	p.color_start = self.color
 	p.color_end = C.Color{0, 30, 20, 0}
 	p.color = p.color_start
 	p.scale = self.scale
 	p.shrink_factor = rand.f32_in_range(0.95, .99)
 	// the start y, used for z sorting
-	p.y = self.position.y + f32(self.texture.height) * .8 * self.scale
+	p.y = self.position.y + f32(self.radius) * .8 * self.scale
 	return p
 }
 
 pub fn (mut self Fire) load() {
-	self.texture = vraylib.load_texture('resources/spark_flame.png')
+	self.radius = 48
 	self.color = C.Color{180, 30, 40, 200}
 	self.amount = self.lifetime
 	self.scale = .7
 }
 
 pub fn (self &Fire) get_dimensions() (f32, f32) {
-	return self.texture.width * self.scale, self.texture.height * self.scale
+	return self.radius * self.scale, self.radius * self.scale
 }
 
 pub fn (mut self Fire) update(x f32, y f32) {
@@ -87,10 +86,9 @@ pub fn (mut self Fire) update(x f32, y f32) {
 
 pub fn (self &Fire) draw(i int) {
 	p := self.particles[i]
-	x := p.position.x - self.texture.width * p.scale * .5
-	vraylib.draw_texture_ex(self.texture, C.Vector2{x, p.position.y}, 0, p.scale, p.color)
+	x := p.position.x - self.radius * p.scale * .5
+	vraylib.draw_circle(int(x), int(p.position.y), self.radius * p.scale, p.color)
 }
 
 pub fn (self &Fire) unload() {
-	vraylib.unload_texture(self.texture)
 }
