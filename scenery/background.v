@@ -6,13 +6,12 @@ import state
 
 struct Item {
 mut:
-	texture     C.Texture2D
-	cx f32
-	x 	int
-	y        int
-	layer int
+	texture C.Texture2D
+	cx      f32
+	x       int
+	y       int
+	layer   int
 }
-
 
 pub struct Background {
 mut:

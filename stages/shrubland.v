@@ -4,8 +4,8 @@ import rand
 import waotzi.vraylib
 
 pub struct Shrubland {
-	pub mut:
-	music string
+pub mut:
+	music  string
 	scenes []Scene
 }
 
@@ -27,8 +27,8 @@ fn get_shrubland() Scene {
 		scene.scenary << Scenary{vraylib.load_texture(path + 'shrubland/' + i.str() + '.png'), .1 * (3 - f32(i)), pos_y[i]}
 	}
 	return scene
-
 }
+
 fn get_forecave() Scene {
 	mut scene := get_scene(1000, 60, 0, 40, 10, 1, 6)
 	mut cave := Scenary{}

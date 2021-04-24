@@ -72,7 +72,8 @@ pub fn (mut self Fire) update(x f32, y f32) {
 		if p.lifetime < self.lifetime {
 			p.position.x += p.vel_start.x * pp + p.vel_end.x * (1 - pp)
 			p.position.y += p.vel_start.y * pp + p.vel_end.y * (1 - pp)
-		}		// println(p.positon['x'])
+		}
+		// println(p.positon['x'])
 
 		p.color.r = byte(p.color_start.r * pp + p.color_end.r * (1 - pp))
 		p.color.g = byte(p.color_start.g * pp + p.color_end.g * (1 - pp))

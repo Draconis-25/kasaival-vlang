@@ -140,8 +140,7 @@ pub fn (mut self HUD) update(mut state state.State) {
 	// icons
 	pressed := vraylib.is_mouse_button_pressed(vraylib.mouse_left_button)
 	mut hover := false
-	mouse_pos := lyra.get_game_pos(vraylib.get_mouse_position())
-	mx, my := mouse_pos.x, mouse_pos.y
+	mx, my := state.mouse.x, state.mouse.y
 	for mut icon in self.icons {
 		if mx > icon.x && mx < icon.x + f32(ui.icon_w) * ui.icon_scale && my > icon.y
 			&& my < icon.y + f32(ui.icon_h) * ui.icon_scale {

@@ -19,17 +19,18 @@ mut:
 
 pub struct Ground {
 mut:
-	grid      [][]Tile = [][]Tile{len: rows, init: []Tile{}}
+	grid      [][]Tile = [][]Tile{len: scenery.rows, init: []Tile{}}
 	pos_y     []f32
 	tile_size f32
-	tick int
-	pub mut:
+	tick      int
+pub mut:
 	start_x int
 }
 
- fn get_color (gr [][]int, x f32, start_x f32, width int) C.Color {
+fn get_color(gr [][]int, x f32, start_x f32, width int) C.Color {
 	mut rat := (x - start_x) / width
-	/*r := id - int(id)
+	/*
+	r := id - int(id)
 	id = rand.f32_in_range(r, 1) + id
 	if id > cs.len - 1 {
 		id = cs.len - 1
@@ -52,17 +53,16 @@ mut:
 pub fn (mut self Ground) add(width int, gradient [][]int) {
 	mut y := lyra.start_y
 	gh := lyra.game_height - y
-	w := gh / rows
+	w := gh / scenery.rows
 	h := w
 	self.tile_size = h
 	end_x := self.start_x + width + w
-	for i in 0 .. rows {
-		if self.pos_y.len < rows {
+	for i in 0 .. scenery.rows {
+		if self.pos_y.len < scenery.rows {
 			self.pos_y << y
 		}
 		mut x := self.start_x - int(f32(w) * .5)
-		for x < end_x  + int(f32(w) * .5){
-
+		for x < end_x + int(f32(w) * .5) {
 			mut c := get_color(gradient, x - f32(w) * .5, self.start_x, width)
 			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
 				f32(w) * .5, y}, c, c}
@@ -95,7 +95,7 @@ fn (mut tile Tile) heal() {
 pub fn (mut self Ground) update() {
 	self.tick++
 
-	if self.tick > .5 * lyra.fps {
+	if self.tick > .5 * 60 {
 		for mut row in self.grid {
 			for mut tile in row {
 				tile.heal()

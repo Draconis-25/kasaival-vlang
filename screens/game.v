@@ -1,10 +1,10 @@
 module screens
 
+import waotzi.vraylib
 import lyra
 import player
 import scenery
 import stages
-import waotzi.vraylib
 import rand
 import ecs
 import ui
@@ -23,16 +23,17 @@ struct Z_Order {
 
 pub struct Game {
 mut:
-	stage stages.Shrubland
+	stage        stages.Shrubland
 	entities     []ecs.Entity
 	entity_order []Z_Order
-	player       player.Core        = player.Core{}
+	player       player.Core = player.Core{}
 	ground       scenery.Ground
 	background   scenery.Background = scenery.Background{}
 	music        C.Music
 	hud          ui.HUD
 	elapsed      int
 }
+
 /*
 fn (mut self Game) add_entity(name ecs.EntityName, state &state.State) {
 	new_entity := ecs.new_entity(name)
@@ -67,7 +68,9 @@ fn (mut self Game) load_stage(mut state state.State) {
 	// setup state of stage
 	state.gw = 0
 
-	for scene in self.stage.scenes { state.gw += scene.width }
+	for scene in self.stage.scenes {
+		state.gw += scene.width
+	}
 	state.start_x = int(-f32(state.gw) * .5 + lyra.game_width * .5)
 
 	// load ground
@@ -79,8 +82,8 @@ fn (mut self Game) load_stage(mut state state.State) {
 	mut x := state.start_x
 	for i, scene in scenes {
 		x += scene.width
-		if i < scenes.len - 1{
-			self.ground.add(scene.width,  [scenes[i].color, scenes[i + 1].color])
+		if i < scenes.len - 1 {
+			self.ground.add(scene.width, [scenes[i].color, scenes[i + 1].color])
 		}
 		if scene.scenary.len > 0 {
 			// background add
@@ -122,13 +125,13 @@ pub fn (mut self Game) load(mut state state.State) {
 pub fn (mut self Game) update(mut state state.State) {
 	defer {
 		if state.exit {
-			state.set_screen(&Menu{})
+			state.set_screen(&Title{})
 			state.exit = false
 		}
 	}
 	// game time elapsed
 	self.elapsed++
-	if self.elapsed % (4 * lyra.fps) == 0 {
+	if self.elapsed % (4 * 60) == 0 {
 	}
 	// music
 	if !state.mute {

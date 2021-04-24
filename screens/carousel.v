@@ -54,7 +54,7 @@ pub fn (mut self Carousel) update(mut state state.State) {
 	key_pressed := vraylib.get_key_pressed()
 	mouse_pressed := vraylib.is_mouse_button_pressed(vraylib.mouse_left_button)
 	for i, stage in self.stages {
-		if stage.mouse_on_button() {
+		if stage.mouse_on_button(state) {
 			if mouse_pressed {
 				key = i
 			}

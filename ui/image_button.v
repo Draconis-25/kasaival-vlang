@@ -12,11 +12,10 @@ mut:
 	scale   int
 }
 
-pub fn (self &ImageButton) mouse_on_button() bool {
-	mouse_pos := lyra.get_game_pos(vraylib.get_mouse_position())
+pub fn (self &ImageButton) mouse_on_button(state &state.State) bool {
 	w, h := self.texture.width * self.scale, self.texture.height * self.scale
-	if mouse_pos.x > self.x && mouse_pos.x < self.x + w {
-		if mouse_pos.y > self.y && mouse_pos.y < self.y + h {
+	if state.mouse.x > self.x && state.mouse.x < self.x + w {
+		if state.mouse.y > self.y && state.mouse.y < self.y + h {
 			vraylib.set_mouse_cursor(vraylib.mouse_cursor_hand)
 			return true
 		}

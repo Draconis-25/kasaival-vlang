@@ -18,6 +18,7 @@ pub mut:
 	gw      f32 = 1000
 	gh      f32 = 400
 	score   int
+	mouse   C.Vector2
 }
 
 pub fn (mut state State) set_screen(screen Screen) {

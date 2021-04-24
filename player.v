@@ -69,7 +69,7 @@ fn get_direction(self &Core, state &state.State) (f32, f32) {
 		dy = 1
 	}
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
-		mut pos := lyra.get_game_pos(vraylib.get_mouse_position())
+		mut pos := state.mouse
 		diff_x, diff_y := int(pos.x - self.x + state.cx), int(pos.y - self.y)
 		offset := f32(self.speed) * .5
 		if diff_x > offset || diff_x < -offset || diff_y > offset || diff_y < -offset {

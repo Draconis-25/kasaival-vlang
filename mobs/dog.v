@@ -37,16 +37,16 @@ pub fn (mut self Dog) load(x int, y int) {
 	self.walk_time = 5
 	self.pee_time = 3
 	self.burn_time = .15
-	self.counter = rand.int_in_range(0, int(self.walk_time * lyra.fps))
+	self.counter = rand.int_in_range(0, int(self.walk_time * 60))
 	self.direction_y = rand.f32_in_range(-1, 1)
 	self.anime.direction = 1 - rand.intn(2) * 2
 }
 
 pub fn (mut self Dog) update(mut state state.State) {
 	// aliases
-	wt := self.walk_time * lyra.fps
-	pt := self.pee_time * lyra.fps
-	bt := self.burn_time * lyra.fps
+	wt := self.walk_time * 60
+	pt := self.pee_time * 60
+	bt := self.burn_time * 60
 
 	// update counter
 	self.counter++

@@ -2,19 +2,19 @@ module stages
 
 import ecs
 
-const	path = 'resources/scenery/'
+const path = 'resources/scenery/'
 
 struct Scenary {
- pub mut:
- texture C.Texture2D
- cx f32
- y int
+pub mut:
+	texture C.Texture2D
+	cx      f32
+	y       int
 }
 
 pub struct Scene {
-	pub mut:
-	width int
-	color []int
+pub mut:
+	width   int
+	color   []int
 	scenary []Scenary
 }
 
