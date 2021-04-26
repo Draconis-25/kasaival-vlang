@@ -1,7 +1,6 @@
 module screens
 
 import waotzi.vraylib
-
 import lyra
 import player
 import scenery
@@ -9,6 +8,7 @@ import stages
 import ecs
 import ui
 import state
+import rand
 
 enum ToOrder {
 	player
@@ -29,25 +29,23 @@ mut:
 	player       player.Core = player.Core{}
 	ground       scenery.Ground
 	background   scenery.Background = scenery.Background{}
-	sky scenery.Sky = scenery.Sky{}
+	sky          scenery.Sky        = scenery.Sky{}
 	music        C.Music
 	hud          ui.HUD
-	elapsed      int
+	elapsed      f32
 }
 
-/*
-fn (mut self Game) add_entity(name ecs.EntityName, state &state.State) {
-	new_entity := ecs.new_entity(name)
-	x, y := ecs.get_spawn_pos(state)
-	new_entity.load(x, y)
-
+fn (mut self Game) add_entity(name ecs.EntityName, start_x int, end_x int) {
+	obj := ecs.new_entity(name)
+	x, y := ecs.get_spawn_pos(start_x, end_x)
+	obj.load(x, y)
 	// if found blank entity (such as an entity that has died)
 	// then replace it with the new entity
 	mut found_blank := false
 	for i, entity in self.entities {
 		match entity {
 			ecs.Blank {
-				self.entities[i] = new_entity
+				self.entities[i] = obj
 				found_blank = true
 				return
 			}
@@ -55,10 +53,10 @@ fn (mut self Game) add_entity(name ecs.EntityName, state &state.State) {
 		}
 	}
 	if !found_blank {
-		self.entities << new_entity
+		self.entities << obj
 	}
 }
-*/
+
 fn (mut self Game) load_stage(mut state state.State) {
 	// load stage
 	self.stage = stages.Shrubland{}
@@ -73,6 +71,10 @@ fn (mut self Game) load_stage(mut state state.State) {
 		state.gw += scene.width
 	}
 	state.start_x = int(-f32(state.gw) * .5 + lyra.game_width * .5)
+	for mut obj in self.stage.spawners {
+		obj.start_x += state.start_x
+		obj.end_x += state.start_x
+	}
 
 	// load ground
 	self.ground = scenery.Ground{}
@@ -92,20 +94,9 @@ fn (mut self Game) load_stage(mut state state.State) {
 	self.sky.load()
 
 	/*
-	for mut spawner in scene.spawners {
-		spawner.timer = rand.int_in_range(0, spawner.interval)
-		self.spawners << spawner
-	}
-	self.ground.load(mut state, scene.ground.width, scene.ground.cs)
-	self.player.load()
 	for _ in 0 .. 10 {
 		self.add_entity(.dog, state)
 	}
-
-	// load bacground
-	// self.background.load(scene.background, state)
-	// start muted for dev
-	state.mute = true
 	*/
 }
 
@@ -119,31 +110,29 @@ pub fn (mut self Game) load(mut state state.State) {
 }
 
 pub fn (mut self Game) update(mut state state.State) {
+	delta := vraylib.get_frame_time()
+	self.elapsed += delta
+
 	defer {
 		if state.exit {
 			state.set_screen(&Title{})
 			state.exit = false
 		}
 	}
-	// game time elapsed
-	self.elapsed++
-	if self.elapsed % (4 * 60) == 0 {
-	}
+
 	// music
 	if !state.mute {
 		vraylib.update_music_stream(self.music)
 	}
 	// mobs, plants. entities, player, ground, sky, scenery
 	if !state.pause {
-		/*
-		for mut spawner in self.spawners {
-			spawner.timer++
-			if spawner.timer > spawner.interval {
-				self.add_entity(spawner.name, state)
-				spawner.timer = 0
+		for mut obj in self.stage.spawners {
+			obj.timer += delta
+			if obj.timer >= obj.interval {
+				self.add_entity(obj.name, obj.start_x, obj.end_x)
+				obj.timer = 0
 			}
-		}*/
-
+		}
 		self.background.update(state)
 		self.sky.update(state)
 		self.ground.update()
@@ -152,7 +141,6 @@ pub fn (mut self Game) update(mut state state.State) {
 		for i, mut entity in self.entities {
 			if !entity.dead {
 				entity.update(state)
-
 				self.entity_order << Z_Order{.entity, entity.y, i}
 
 				if ecs.check_collision(self.player.get_hitbox(), entity.get_hitbox()) {

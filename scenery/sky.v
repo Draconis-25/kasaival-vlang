@@ -1,11 +1,7 @@
-
 module scenery
 
 import waotzi.vraylib
-import lyra
 import state
-
-
 
 pub struct Sky {
 mut:
@@ -13,8 +9,8 @@ mut:
 }
 
 pub fn (mut self Sky) load() {
-	self.bg << vraylib.load_texture("resources/sky/planets.jpg")
-	self.bg << vraylib.load_texture("resources/sky/nebula.png")
+	self.bg << vraylib.load_texture('resources/sky/planets.jpg')
+	self.bg << vraylib.load_texture('resources/sky/nebula.png')
 }
 
 pub fn (mut self Sky) update(state &state.State) {

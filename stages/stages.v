@@ -18,6 +18,15 @@ pub mut:
 	y       int
 }
 
+pub struct Spawner {
+pub mut:
+	name     ecs.EntityName
+	start_x  int
+	end_x    int
+	interval f32
+	timer    f32
+}
+
 pub struct Scene {
 pub mut:
 	width int
@@ -34,25 +43,4 @@ enum StageName {
 	@none
 	shrubland
 	grassland
-}
-
-struct Ground {
-pub mut:
-	width int
-	cs    [][]int
-}
-
-struct Spawner {
-pub mut:
-	name     ecs.EntityName
-	interval int
-	timer    int
-}
-
-
-fn get_spawner(name ecs.EntityName, interval int) Spawner {
-	mut spawner := Spawner{}
-	spawner.interval = interval
-	spawner.name = name
-	return spawner
 }*/

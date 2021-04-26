@@ -1,12 +1,10 @@
 module stages
 
-import waotzi.vraylib
-import rand
-
 pub struct Shrubland {
 pub mut:
-	music  string
-	scenes []Scene
+	music    string
+	scenes   []Scene
+	spawners []Spawner
 }
 
 pub fn (mut self Shrubland) load() {
@@ -25,10 +23,11 @@ pub fn (mut self Shrubland) load() {
 	self.scenes << Scene{1000, beach}
 	// add ocean
 	self.scenes << Scene{1500, ocean}
-	// add end
+	// add end for color gradient
 	mut end := Scene{}
 	end.color = [21, 0, 13]
 	self.scenes << end
 
-	// add cave
+	// add shrub spawner
+	self.spawners << Spawner{.kali, 3500, 7000, 1, 0}
 }

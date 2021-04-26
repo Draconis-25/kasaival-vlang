@@ -18,7 +18,7 @@ interface Entity {
 	get_hitbox() []f32
 }
 
-enum EntityName {
+pub enum EntityName {
 	// mobs
 	dog
 	frog
@@ -29,8 +29,8 @@ enum EntityName {
 	oak
 }
 
-pub fn get_spawn_pos(state &state.State) (int, int) {
-	x := rand.int_in_range(state.start_x, int(state.start_x + state.gw))
+pub fn get_spawn_pos(start_x int, end_x int) (int, int) {
+	x := rand.int_in_range(start_x, end_x)
 	y := rand.int_in_range(lyra.start_y, lyra.game_height)
 	return x, y
 }
