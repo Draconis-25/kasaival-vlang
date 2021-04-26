@@ -1,6 +1,7 @@
 module screens
 
 import waotzi.vraylib
+
 import lyra
 import player
 import scenery
@@ -28,6 +29,7 @@ mut:
 	player       player.Core = player.Core{}
 	ground       scenery.Ground
 	background   scenery.Background = scenery.Background{}
+	sky scenery.Sky = scenery.Sky{}
 	music        C.Music
 	hud          ui.HUD
 	elapsed      int
@@ -87,6 +89,7 @@ fn (mut self Game) load_stage(mut state state.State) {
 
 	// load player
 	self.player.load()
+	self.sky.load()
 
 	/*
 	for mut spawner in scene.spawners {
@@ -112,7 +115,7 @@ pub fn (mut self Game) load(mut state state.State) {
 	self.hud = ui.HUD{}
 	self.hud.load()
 	state.cx = 0
-	state.mute = true
+	state.mute = false
 }
 
 pub fn (mut self Game) update(mut state state.State) {
@@ -142,6 +145,7 @@ pub fn (mut self Game) update(mut state state.State) {
 		}*/
 
 		self.background.update(state)
+		self.sky.update(state)
 		self.ground.update()
 
 		self.entity_order = []Z_Order{}
@@ -175,6 +179,7 @@ pub fn (mut self Game) update(mut state state.State) {
 
 pub fn (self &Game) draw(state &state.State) {
 	self.background.draw(state)
+	self.sky.draw(state)
 	self.ground.draw(state)
 
 	for obj in self.entity_order {
@@ -189,6 +194,7 @@ pub fn (self &Game) draw(state &state.State) {
 pub fn (self &Game) unload() {
 	vraylib.unload_music_stream(self.music)
 	self.background.unload()
+	self.sky.unload()
 	self.ground.unload()
 	self.player.unload()
 	for entity in self.entities {
