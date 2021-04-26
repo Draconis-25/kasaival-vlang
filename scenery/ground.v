@@ -2,7 +2,6 @@ module scenery
 
 import waotzi.vraylib
 import lyra
-import utils
 import rand
 import state
 
@@ -17,25 +16,32 @@ mut:
 	color C.Color
 }
 
-pub struct Ground {
+struct Section {
 mut:
-	grid      [][]Tile = [][]Tile{len: scenery.rows, init: []Tile{}}
-	pos_y     []f32
-	tile_size f32
-	tick      int
-pub mut:
-	start_x int
+	grid      [][]Tile
+	water     bool
+	direction int
+	gradient  [][]int
+	tile_w    f32
+	width     int
+	start_x   f32
 }
 
-fn get_color(gr [][]int, x f32, start_x f32, width int) C.Color {
+pub struct Ground {
+mut:
+	sections  []Section
+	pos_y     []f32
+	tile_size f32
+	elapsed   f32
+	tick      f32
+}
+
+fn get_color(s Section, x f32) C.Color {
+	gr := s.gradient
+	width := s.width
+	start_x := s.start_x
 	mut rat := (x - start_x) / width
-	/*
-	r := id - int(id)
-	id = rand.f32_in_range(r, 1) + id
-	if id > cs.len - 1 {
-		id = cs.len - 1
-	}
-	return utils.get_color(cs[int(id)])*/
+
 	rat = rat + rand.f32_in_range(-.1, .1)
 	if rat < 0 {
 		rat = 0
@@ -50,30 +56,46 @@ fn get_color(gr [][]int, x f32, start_x f32, width int) C.Color {
 	return C.Color{byte(r), byte(g), byte(b), 255}
 }
 
-pub fn (mut self Ground) add(width int, gradient [][]int) {
+pub fn (mut self Ground) add_section(start_x f32, width int, gradient [][]int, direction int) f32 {
 	mut y := lyra.start_y
 	gh := lyra.game_height - y
-	w := gh / scenery.rows
+	mut s := Section{}
+	s.gradient = gradient
+	s.width = width
+	s.tile_w = gh / scenery.rows
+	s.start_x = start_x
+	s.direction = direction
+	w := s.tile_w
 	h := w
 	self.tile_size = h
-	end_x := self.start_x + width + w
+	// make the grid for this section
+	mut last_x := f32(0)
+	s.grid = [][]Tile{len: scenery.rows, init: []Tile{}}
 	for i in 0 .. scenery.rows {
 		if self.pos_y.len < scenery.rows {
 			self.pos_y << y
 		}
-		mut x := self.start_x - int(f32(w) * .5)
-		for x < end_x + int(f32(w) * .5) {
-			mut c := get_color(gradient, x - f32(w) * .5, self.start_x, width)
-			self.grid[i] << Tile{C.Vector2{x - f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x +
-				f32(w) * .5, y}, c, c}
-			c = get_color(gradient, x, self.start_x, width)
-			self.grid[i] << Tile{C.Vector2{x + f32(w) * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w,
-				y + h}, c, c}
-			x += w
+		mut x := s.start_x - w
+		for x < s.start_x + width + w {
+			c1 := get_color(s, x - w * .5)
+			s.grid[i] << Tile{C.Vector2{x - w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w * .5, y}, c1, c1}
+			c2 := get_color(s, x)
+			s.grid[i] << Tile{C.Vector2{x + w * .5, y}, C.Vector2{x, y + h}, C.Vector2{x + w, y + h}, c2, c2}
+			x += int(w)
 		}
-		y += h
+		y += int(h)
+		last_x = x + w
 	}
-	self.start_x += width + w
+	// check if water
+	for i, g in gradient {
+		if g[2] > g[0] && g[2] > g[1] {
+			s.water = true
+			s.direction = i
+		}
+	}
+
+	self.sections << s
+	return last_x
 }
 
 fn (mut tile Tile) heal() {
@@ -92,21 +114,47 @@ fn (mut tile Tile) heal() {
 	tile.color = C.Color{r, g, b, 255}
 }
 
-pub fn (mut self Ground) update() {
-	self.tick++
+fn get_rgb(c C.Color) (f32, f32, f32) {
+	return f32(c.r), f32(c.g), f32(c.b)
+}
 
-	if self.tick > .5 * 60 {
-		for mut row in self.grid {
-			for mut tile in row {
-				tile.heal()
+fn (mut tile Tile) wave(c C.Color) {
+	mut r, mut g, mut b := get_rgb(tile.color)
+	o_r, o_g, o_b := get_rgb(tile.org_color)
+	n_r, n_g, n_b := get_rgb(c)
+	r = (o_r + n_r) * .5
+	g = (o_g + n_g) * .5
+	b = (o_b + n_b) * .5
+	tile.color = C.Color{byte(r), byte(g), byte(b), 255}
+}
+
+pub fn (mut self Ground) update() {
+	delta := vraylib.get_frame_time()
+	self.elapsed += delta
+	self.tick += delta
+
+	for s in self.sections {
+		for mut row in s.grid {
+			for i, mut tile in row {
+				if self.tick > 0.1 {
+					tile.heal()
+				}
+				if s.water {
+					modi := if s.direction == 0 { i + 1 } else { row.len - i + 1 }
+					if int(self.elapsed * 60) % modi == 0 {
+						tile.wave(get_color(s, tile.p2.x - f32(s.tile_w) * .5))
+					}
+				}
 			}
 		}
+	}
+	if self.tick > 0.1 {
 		self.tick = 0
 	}
 }
 
 fn (mut tile Tile) burn(power f32) f32 {
-	dmg := power * .5
+	dmg := power
 	o_r, o_g, _ := tile.org_color.r, tile.org_color.g, tile.org_color.b
 
 	_, t_g, _ := tile.color.r, tile.color.g, tile.color.b
@@ -140,12 +188,14 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) f32 {
 			index << i
 		}
 	}
-	for i in index {
-		for j, tile in self.grid[i] {
-			l, r := tile.get_lr(j)
-			if l < b[1] && r > b[0] {
-				if element == 'fire' {
-					fuel += self.grid[i][j].burn(power)
+	for mut section in self.sections {
+		for i in index {
+			for j, tile in section.grid[i] {
+				l, r := tile.get_lr(j)
+				if l < b[1] && r > b[0] {
+					if element == 'fire' {
+						fuel += section.grid[i][j].burn(power)
+					}
 				}
 			}
 		}
@@ -154,12 +204,14 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) f32 {
 }
 
 pub fn (self &Ground) draw(state &state.State) {
-	for row in self.grid {
-		for i, tile in row {
-			l, r := tile.get_lr(i)
-			w := r - l
-			if l + w > state.cx && r < state.cx + lyra.game_width + w {
-				vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)
+	for section in self.sections {
+		for mut row in section.grid {
+			for i, tile in row {
+				l, r := tile.get_lr(i)
+				w := r - l
+				if l + w > state.cx && r < state.cx + lyra.game_width + w {
+					vraylib.draw_triangle(tile.p1, tile.p2, tile.p3, tile.color)
+				}
 			}
 		}
 	}

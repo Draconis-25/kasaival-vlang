@@ -1,6 +1,5 @@
 module ui
 
-import lyra
 import waotzi.vraylib
 import state
 

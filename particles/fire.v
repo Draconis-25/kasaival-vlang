@@ -24,9 +24,9 @@ mut:
 	position C.Vector2
 	color    C.Color
 	amount   int
-	radius int
+	radius   int
 pub mut:
-	scale f32
+	scale     f32
 	particles []Particle
 }
 

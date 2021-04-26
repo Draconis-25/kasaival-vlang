@@ -1,7 +1,7 @@
 module stages
 
-import rand
 import waotzi.vraylib
+import rand
 
 pub struct Shrubland {
 pub mut:
@@ -13,7 +13,7 @@ pub fn (mut self Shrubland) load() {
 	self.music = 'spring/maintheme.ogg'
 
 	// add start
-	self.scenes << Scene{1500,  [21, 0, 13]}
+	self.scenes << Scene{1500, [21, 0, 13]}
 
 	// add ocean
 	self.scenes << Scene{1500, ocean}

@@ -47,6 +47,7 @@ const (
 	key_down  = [vraylib.key_down, vraylib.key_s]
 )
 
+// get move direction
 fn get_direction(self &Core, state &state.State) (f32, f32) {
 	angle := fn (dx f64, dy f64) (f64, f64) {
 		mut angle := math.atan2(dx, dy)
@@ -68,10 +69,11 @@ fn get_direction(self &Core, state &state.State) (f32, f32) {
 	if is_key_down(player.key_down) {
 		dy = 1
 	}
+	// check mouse press
 	if vraylib.is_mouse_button_down(vraylib.mouse_left_button) {
 		mut pos := state.mouse
 		diff_x, diff_y := int(pos.x - self.x + state.cx), int(pos.y - self.y)
-		offset := f32(self.speed) * .5
+		offset := f32(self.speed) * .3
 		if diff_x > offset || diff_x < -offset || diff_y > offset || diff_y < -offset {
 			dx, dy = angle(diff_x, diff_y)
 		}
@@ -79,6 +81,7 @@ fn get_direction(self &Core, state &state.State) (f32, f32) {
 	return f32(dx), f32(dy)
 }
 
+// player update
 pub fn (mut self Core) update(mut state state.State) {
 	w, h := self.flame.get_dimensions()
 	mut dx, mut dy := get_direction(self, state)

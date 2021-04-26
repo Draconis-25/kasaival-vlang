@@ -1,7 +1,6 @@
 module main
 
 import waotzi.vraylib
-import lyra
 import screens
 import state
 
@@ -91,8 +90,8 @@ fn main() {
 			state.mouse = clamp_value(virtual_mouse, C.Vector2{}, C.Vector2{game_screen_width, game_screen_height})
 
 			// Apply the same transformation as the virtual mouse to the real mouse (i.e. to work with raygui)
-			//vraylib.set_mouse_offset(int(-(vraylib.get_screen_width() - (game_screen_width*scale))*0.5), int(-(vraylib.get_screen_height() - (game_screen_height*scale))*0.5))
-			//vraylib.set_mouse_scale(1/scale, 1/scale)
+			// vraylib.set_mouse_offset(int(-(vraylib.get_screen_width() - (game_screen_width*scale))*0.5), int(-(vraylib.get_screen_height() - (game_screen_height*scale))*0.5))
+			// vraylib.set_mouse_scale(1/scale, 1/scale)
 			//----------------------------------------------------------------------------------
 
 			// Draw
@@ -105,12 +104,10 @@ fn main() {
 				{
 					vraylib.begin_mode_2d(camera)
 					{
-
 						vraylib.clear_background(vraylib.black)
 						state.screen.draw(state)
 					}
 					vraylib.end_mode_2d()
-
 				}
 				vraylib.end_texture_mode()
 				// Draw RenderTexture2D to window, properly scaled

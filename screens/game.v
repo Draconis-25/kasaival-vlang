@@ -5,7 +5,6 @@ import lyra
 import player
 import scenery
 import stages
-import rand
 import ecs
 import ui
 import state
@@ -75,15 +74,14 @@ fn (mut self Game) load_stage(mut state state.State) {
 
 	// load ground
 	self.ground = scenery.Ground{}
-	self.ground.start_x = state.start_x
-
 	// add ground for each scene
 	scenes := self.stage.scenes
-	mut x := state.start_x
+	mut x := f32(state.start_x)
 	for i, scene in scenes {
-		x += scene.width
 		if i < scenes.len - 1 {
-			self.ground.add(scene.width, [scenes[i].color, scenes[i + 1].color])
+			dire := if i < f32(scenes.len) * .5 { 1 } else { 0 }
+			x = self.ground.add_section(x, scene.width, [scenes[i].color, scenes[i + 1].color],
+				dire)
 		}
 	}
 
@@ -113,6 +111,7 @@ pub fn (mut self Game) load(mut state state.State) {
 	// load hud
 	self.hud = ui.HUD{}
 	self.hud.load()
+	state.cx = 0
 	state.mute = true
 }
 

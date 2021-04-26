@@ -1,6 +1,5 @@
 module lyra
 
-import waotzi.vraylib
 import rand
 
 pub const (
