@@ -58,14 +58,15 @@ fn (mut self Plant) load(start_x int, y int) {
 	mut x := start_x
 	mut start_angle := -90
 	if self.two_start_branches {
-		x += rand.int_in_range(5, 10)
 		self.grid[0] << Branch{start_angle + 10, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch)}
 		start_angle -= 10
 
-		x -= rand.int_in_range(10, 20)
+		x += rand.int_in_range(10, 20)
 	}
 	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch)}
 	// grow to current size
+	self.left_x = x
+	self.right_x = x + self.w
 	if self.grow_to_random_row {
 		grow_to_row := rand.int_in_range(1, self.max_row)
 		for _ in 1 .. grow_to_row {
@@ -106,6 +107,11 @@ fn (mut self Plant) grow() {
 			ny := int(py + math.sin(f32(deg) * plants.deg_to_rad) * h)
 			c := utils.get_color(self.cs_branch)
 			self.grid[self.current_row + 1] << Branch{deg, px, py, nx, ny, w, h, c}
+			if nx < self.left_x {
+				self.left_x = nx
+			} else if nx > self.right_x {
+				self.right_x = nx + w
+			}
 		}
 	}
 	self.current_row++
@@ -132,7 +138,9 @@ fn (mut self Plant) collided(element string, dp f32) {
 
 fn (self &Plant) get_hitbox() []f32 {
 	b := self.grid[0][0]
-	return [b.x1, b.x2, b.y2, b.y1]
+	x1 := self.left_x
+	x2 := self.right_x
+	return [x1, x2, b.y2, b.y1]
 }
 
 fn (mut self Plant) update(state &state.State) {

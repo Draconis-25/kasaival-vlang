@@ -22,7 +22,7 @@ mut:
 }
 
 pub fn (mut self Animation) load(mob string, states map[string]int, speed int, frame_w int, frame_h int, burn_frame int) {
-	self.states = &states
+	self.states = states.clone()
 	self.direction = 1
 	self.speed = speed
 	self.texture = vraylib.load_texture('resources/mobs/' + mob + '.png')
@@ -51,7 +51,7 @@ pub fn (mut self Animation) update(x f32, y f32) {
 
 		mut start_frame := 0
 		mut state_frames := 0
-		for state, frames in &self.states {
+		for state, frames in self.states {
 			if self.state == state {
 				state_frames = frames
 				break
