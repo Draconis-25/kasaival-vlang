@@ -9,7 +9,6 @@ import stages
 import ecs
 import ui
 import state
-import rand
 
 enum ToOrder {
 	player

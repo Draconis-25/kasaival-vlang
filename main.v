@@ -3,6 +3,7 @@ module main
 import waotzi.vraylib
 import screens
 import state
+import lyra
 
 fn max(a f32, b f32) f32 {
 	return if a > b { a } else { b }
@@ -25,8 +26,6 @@ fn clamp_value(value C.Vector2, min C.Vector2, max C.Vector2) C.Vector2 {
 
 // Constant Variables Definition
 const (
-	game_screen_width  = 1920
-	game_screen_height = 1080
 	screen_width       = 800
 	screen_height      = 450
 	window_title       = 'Kasaival'
@@ -43,7 +42,7 @@ fn main() {
 	vraylib.init_window(screen_width, screen_height, window_title)
 
 	// Render texture initialization, used to hold the rendering result so we can easily resize it
-	target := vraylib.load_render_texture(game_screen_width, game_screen_height)
+	target := vraylib.load_render_texture(lyra.game_width, lyra.game_height)
 	vraylib.set_texture_filter(target.texture, vraylib.filter_bilinear)
 
 	vraylib.init_audio_device()
@@ -66,7 +65,7 @@ fn main() {
 			// Update
 			//----------------------------------------------------------------------------------
 			// Compute required framebuffer scaling
-			scale := min(f32(vraylib.get_screen_width()) / game_screen_width, f32(vraylib.get_screen_height()) / game_screen_height)
+			scale := min(f32(vraylib.get_screen_width()) / lyra.game_width, f32(vraylib.get_screen_height()) / lyra.game_height)
 
 			if key_timeout > 0 {
 				key_timeout--
@@ -85,12 +84,12 @@ fn main() {
 			// Update virtual mouse (clamped mouse value behind game screen)
 			mouse := vraylib.get_mouse_position()
 			mut virtual_mouse := C.Vector2{}
-			virtual_mouse.x = (mouse.x - (vraylib.get_screen_width() - (game_screen_width * scale)) * .5) / scale
-			virtual_mouse.y = (mouse.y - (vraylib.get_screen_height() - (game_screen_height * scale)) * .5) / scale
-			state.mouse = clamp_value(virtual_mouse, C.Vector2{}, C.Vector2{game_screen_width, game_screen_height})
+			virtual_mouse.x = (mouse.x - (vraylib.get_screen_width() - (lyra.game_width * scale)) * .5) / scale
+			virtual_mouse.y = (mouse.y - (vraylib.get_screen_height() - (lyra.game_height * scale)) * .5) / scale
+			state.mouse = clamp_value(virtual_mouse, C.Vector2{}, C.Vector2{lyra.game_width, lyra.game_height})
 
 			// Apply the same transformation as the virtual mouse to the real mouse (i.e. to work with raygui)
-			// vraylib.set_mouse_offset(int(-(vraylib.get_screen_width() - (game_screen_width*scale))*0.5), int(-(vraylib.get_screen_height() - (game_screen_height*scale))*0.5))
+			// vraylib.set_mouse_offset(int(-(vraylib.get_screen_width() - (lyra.game_width*scale))*0.5), int(-(vraylib.get_screen_height() - (lyra.game_height*scale))*0.5))
 			// vraylib.set_mouse_scale(1/scale, 1/scale)
 			//----------------------------------------------------------------------------------
 
@@ -112,7 +111,7 @@ fn main() {
 				vraylib.end_texture_mode()
 				// Draw RenderTexture2D to window, properly scaled
 				vraylib.draw_texture_pro(target.texture, C.Rectangle{0, 0, f32(target.texture.width), f32(-target.texture.height)},
-					C.Rectangle{(vraylib.get_screen_width() - game_screen_width * scale) * .5, (vraylib.get_screen_height() - (game_screen_height * scale)) * 0.5, f32(game_screen_width) * scale, f32(game_screen_height) * scale},
+					C.Rectangle{(vraylib.get_screen_width() - lyra.game_width * scale) * .5, (vraylib.get_screen_height() - (lyra.game_height * scale)) * 0.5, f32(lyra.game_width) * scale, f32(lyra.game_height) * scale},
 					C.Vector2{}, 0.0, vraylib.white)
 			}
 			vraylib.end_drawing()
