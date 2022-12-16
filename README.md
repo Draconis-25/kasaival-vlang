@@ -17,5 +17,3 @@ Kasaival is licensed under [GPLv3](LICENSE), giving everyone the freedom to:
 * change the software to suit your needs,
 * share the software with your friends and neighbors, and
 * share the changes you make.
-
-Currently the main developer is <a href="https://wolfi.space" target="_blank">Wolfi ☬ Space</a>. If you have feedback, feel free to use the forum or contact me directly.
