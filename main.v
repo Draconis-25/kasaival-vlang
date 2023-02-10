@@ -50,7 +50,7 @@ fn main() {
 	mut state := state.State{}
 	mut camera := C.Camera2D{}
 	state.screen = screens.Game{}
-	state.screen.load(state)
+	state.screen.load(mut state)
 
 	mut key_timeout := 0
 
@@ -76,7 +76,7 @@ fn main() {
 				}
 				key_timeout = 2
 			}
-			state.screen.update(state)
+			state.screen.update(mut state)
 
 			camera.target = C.Vector2{state.cx, 0}
 			camera.zoom = 1

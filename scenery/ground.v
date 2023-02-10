@@ -42,7 +42,7 @@ fn get_color(s Section, x f32) C.Color {
 	start_x := s.start_x
 	mut rat := (x - start_x) / width
 
-	rat = rat + rand.f32_in_range(-.1, .1)
+	rat = rat + rand.f32_in_range(-.1, .1) or { 0 }
 	if rat < 0 {
 		rat = 0
 	}
@@ -53,7 +53,7 @@ fn get_color(s Section, x f32) C.Color {
 	g := gr[0][1] * (1 - rat) + gr[1][1] * rat
 	b := gr[0][2] * (1 - rat) + gr[1][2] * rat
 
-	return C.Color{byte(r), byte(g), byte(b), 255}
+	return C.Color{r, g, b, 255}
 }
 
 pub fn (mut self Ground) add_section(start_x f32, width int, gradient [][]int, direction int) f32 {
@@ -125,7 +125,7 @@ fn (mut tile Tile) wave(c C.Color) {
 	r = (o_r + n_r) * .5
 	g = (o_g + n_g) * .5
 	b = (o_b + n_b) * .5
-	tile.color = C.Color{byte(r), byte(g), byte(b), 255}
+	tile.color = C.Color{r, g, b, 255}
 }
 
 pub fn (mut self Ground) update() {
@@ -133,7 +133,7 @@ pub fn (mut self Ground) update() {
 	self.elapsed += delta
 	self.tick += delta
 
-	for s in self.sections {
+	for mut s in self.sections {
 		for mut row in s.grid {
 			for i, mut tile in row {
 				if self.tick > 0.1 {
@@ -160,11 +160,11 @@ fn (mut tile Tile) burn(power f32) f32 {
 	_, t_g, _ := tile.color.r, tile.color.g, tile.color.b
 	mut r, mut g, mut b := tile.color.r, tile.color.g, tile.color.b
 
-	if g > o_g - 30 && g - byte(dmg) > 0 {
-		g -= byte(dmg)
+	if g > o_g - 30 && g - dmg > 0 {
+		g -= dmg
 	}
-	if r < o_r + 20 && r + byte(dmg) < 255 {
-		r += byte(dmg)
+	if r < o_r + 20 && r + dmg < 255 {
+		r += dmg
 	}
 	tile.color = C.Color{r, g, b, 255}
 	return t_g - g - f32(b) * .05
@@ -203,8 +203,8 @@ pub fn (mut self Ground) collide(b []f32, element string, power f32) f32 {
 	return fuel
 }
 
-pub fn (self &Ground) draw(state &state.State) {
-	for section in self.sections {
+pub fn (mut self Ground) draw(state &state.State) {
+	for mut section in self.sections {
 		for mut row in section.grid {
 			for i, tile in row {
 				l, r := tile.get_lr(i)

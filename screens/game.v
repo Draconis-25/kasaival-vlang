@@ -36,7 +36,7 @@ mut:
 }
 
 fn (mut self Game) add_entity(name ecs.EntityName, start_x int, end_x int) {
-	obj := ecs.new_entity(name)
+	mut obj := ecs.new_entity(name)
 	x, y := ecs.get_spawn_pos(start_x, end_x)
 	obj.load(x, y)
 	// if found blank entity (such as an entity that has died)
@@ -165,7 +165,7 @@ pub fn (mut self Game) update(mut state state.State) {
 	self.hud.update(mut state)
 }
 
-pub fn (self &Game) draw(state &state.State) {
+pub fn (mut self Game) draw(state &state.State) {
 	self.background.draw(state)
 	self.sky.draw(state)
 	self.ground.draw(state)

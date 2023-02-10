@@ -10,13 +10,15 @@ interface Entity {
 	y f32
 	dead bool
 	points int
-	load(int, int)
-	update(state &state.State)
 	unload()
 	draw(state &state.State)
-	collided(string, f32)
 	get_hitbox() []f32
-}
+
+	mut: 
+		load(int, int)
+		collided(string, f32)
+	 	update(state &state.State)
+	}
 
 pub enum EntityName {
 	// mobs
@@ -30,8 +32,8 @@ pub enum EntityName {
 }
 
 pub fn get_spawn_pos(start_x int, end_x int) (int, int) {
-	x := rand.int_in_range(start_x, end_x)
-	y := rand.int_in_range(lyra.start_y, lyra.game_height)
+	x := rand.int_in_range(start_x, end_x) or { 0 }
+	y := rand.int_in_range(lyra.start_y, lyra.game_height) or { 0 }
 	return x, y
 }
 

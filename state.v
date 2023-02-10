@@ -1,8 +1,9 @@
 module state
 
 interface Screen {
-	load(&State)
-	update(&State)
+	mut:
+	load(mut State)
+	update(mut State)
 	draw(&State)
 	unload()
 }
@@ -25,5 +26,5 @@ pub fn (mut state State) set_screen(screen Screen) {
 	state.cx = 0
 	state.screen.unload()
 	state.screen = Screen(screen)
-	state.screen.load(state)
+	state.screen.load(mut state)
 }

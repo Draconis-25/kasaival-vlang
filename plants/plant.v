@@ -52,23 +52,23 @@ mut:
 
 fn (mut self Plant) load(start_x int, y int) {
 	self.y = y
-	self.grow_timer = rand.intn(self.grow_time)
+	self.grow_timer = rand.intn(self.grow_time) or { 0 }
 	self.grid = [][]Branch{len: self.max_row, init: []Branch{}}
 	// make a start branch
 	mut x := start_x
 	mut start_angle := -90
 	if self.two_start_branches {
-		self.grid[0] << Branch{start_angle + 10, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch)}
+		self.grid[0] << Branch{start_angle + 10, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch) or { C.Color{255, 0, 255, 255} }}
 		start_angle -= 10
 
-		x += rand.int_in_range(10, 20)
+		x += rand.int_in_range(10, 20) or { 0 }
 	}
-	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch)}
+	self.grid[0] << Branch{start_angle, x, y, x, y - self.h, self.w, self.h, utils.get_color(self.cs_branch) or { C.Color{255, 0, 255, 255}  }}
 	// grow to current size
 	self.left_x = x
 	self.right_x = x + self.w
 	if self.grow_to_random_row {
-		grow_to_row := rand.int_in_range(1, self.max_row)
+		grow_to_row := rand.int_in_range(1, self.max_row) or { 0 }
 		for _ in 1 .. grow_to_row {
 			self.grow()
 		}
@@ -89,23 +89,23 @@ fn (mut self Plant) grow() {
 	// previous row
 	prev_row := self.grid[self.current_row]
 	for prev_branch in prev_row {
-		split := rand.int_in_range(0, 100)
+		split := rand.int_in_range(0, 100) or { 0 }
 		px, py := prev_branch.x2, prev_branch.y2
 		w, h := prev_branch.w * .9, prev_branch.h * .95
 		mut degs := []int{}
 		if self.split_chance > split {
-			get_angle := fn (self &Plant) int {
-				return rand.int_in_range(self.split_angle[0], self.split_angle[1])
+			get_angle := fn (self &Plant) !int {
+				return rand.int_in_range(self.split_angle[0], self.split_angle[1])!
 			}
-			degs << prev_branch.deg - get_angle(self)
-			degs << prev_branch.deg + get_angle(self)
+			degs << prev_branch.deg - get_angle(self) or { 0 }
+			degs << prev_branch.deg + get_angle(self) or { 0 }
 		} else {
 			degs << prev_branch.deg
 		}
 		for deg in degs {
 			nx := int(px + math.cos(f32(deg) * plants.deg_to_rad) * h)
 			ny := int(py + math.sin(f32(deg) * plants.deg_to_rad) * h)
-			c := utils.get_color(self.cs_branch)
+			c := utils.get_color(self.cs_branch) or {C.Color{255, 0, 255, 255}}
 			self.grid[self.current_row + 1] << Branch{deg, px, py, nx, ny, w, h, c}
 			if nx < self.left_x {
 				self.left_x = nx
@@ -121,7 +121,7 @@ fn (mut branch Branch) burn_color(self &Plant) {
 	mut r, mut g, mut b := branch.color.r, branch.color.g, branch.color.b
 	b = 0
 	if r < 200 {
-		r += byte(self.burn_intensity * 2)
+		r +=self.burn_intensity * 2
 	}
 	if g > 100 {
 		g -= 2
@@ -170,9 +170,9 @@ fn (mut self Plant) update(state &state.State) {
 
 fn (self &Plant) get_color(c C.Color) C.Color {
 	growth := f32(self.current_row + 1 - f32(self.grow_timer) / self.grow_time) / self.grid.len
-	r := byte(c.r + self.change_color[0] * growth)
-	g := byte(c.g + self.change_color[1] * growth)
-	b := byte(c.b + self.change_color[2] * growth)
+	r := c.r + self.change_color[0] * growth
+	g := c.g + self.change_color[1] * growth
+	b := c.b + self.change_color[2] * growth
 	return C.Color{r, g, b, c.a}
 }
 

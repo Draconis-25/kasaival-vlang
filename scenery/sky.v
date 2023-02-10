@@ -24,7 +24,7 @@ mut:
 }
 
 fn rand_byte(a int, n int) byte {
-	return byte(a + rand.intn(n))
+	return a + rand.intn(n) or { 0 }
 }
 
 fn star_color() C.Color {
@@ -35,9 +35,9 @@ pub fn (mut self Sky) load() {
 	self.bg << vraylib.load_texture('resources/sky/planets.jpg')
 	self.nebula = vraylib.load_texture('resources/sky/nebula.png')
 	for i := 0; i < 100; i++ {
-		x := rand.intn(lyra.game_width)
-		y := rand.intn(lyra.game_height)
-		mut r := rand.int_in_range(4, 15)
+		x := rand.intn(lyra.game_width) or { 0 }
+		y := rand.intn(lyra.game_height) or { 0 }
+		mut r := rand.int_in_range(4, 15) or { 0 }
 		c := star_color()
 		if i == 80 {
 			r = 50
@@ -46,7 +46,7 @@ pub fn (mut self Sky) load() {
 			r = 150
 		}
 		time := f32(.5)
-		elapsed := rand.f32n(.5)
+		elapsed := rand.f32n(.5) or { 0 }
 		self.stars << Star{elapsed, time, x, y, r, c, star_color()}
 	}
 }
@@ -57,7 +57,7 @@ fn (star &Star) get_current_color(rat f32) C.Color {
 	r := pc.r * (1 - rat) + nc.r * rat
 	g := pc.g * (1 - rat) + nc.g * rat
 	b := pc.b * (1 - rat) + nc.b * rat
-	return C.Color{byte(r), byte(g), byte(b), 245}
+	return C.Color{r, g, b, 245}
 }
 
 pub fn (mut self Sky) update(state &state.State) {
@@ -68,7 +68,7 @@ pub fn (mut self Sky) update(state &state.State) {
 			star.nc = star_color()
 			star.elapsed = 0
 			star.y --
-			star.x += rand.int_in_range(-2, 2)
+			star.x += rand.int_in_range(-2, 2)or { 0 }
 			if star.y + star.r < 0 {
 				star.y += lyra.game_height
 			}

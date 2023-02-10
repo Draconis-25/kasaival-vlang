@@ -28,7 +28,7 @@ mut:
 
 pub fn (mut self Dog) load(x int, y int) {
 	self.x, self.y = x, y
-	states := map{
+	states := {
 		'walk': 3
 		'pee':  3
 		'burn': 6
@@ -37,12 +37,12 @@ pub fn (mut self Dog) load(x int, y int) {
 	self.walk_time = 5
 	self.pee_time = 3
 	self.burn_time = .15
-	self.counter = rand.int_in_range(0, int(self.walk_time * 60))
-	self.direction_y = rand.f32_in_range(-1, 1)
-	self.anime.direction = 1 - rand.intn(2) * 2
+	self.counter = rand.int_in_range(0, int(self.walk_time * 60)) or { 0 }
+	self.direction_y = rand.f32_in_range(-1, 1) or { 0 }
+	self.anime.direction = 1 - rand.intn(2) or { 0 } * 2
 }
 
-pub fn (mut self Dog) update(mut state state.State) {
+pub fn (mut self Dog) update(state &state.State) {
 	// aliases
 	wt := self.walk_time * 60
 	pt := self.pee_time * 60
@@ -79,7 +79,7 @@ pub fn (mut self Dog) update(mut state state.State) {
 		self.anime.state = 'walk'
 	} else if self.counter < wt + pt {
 		self.anime.state = 'pee'
-		self.direction_y = rand.f32_in_range(-1, 1)
+		self.direction_y = rand.f32_in_range(-1, 1) or { 0 }
 	} else if self.counter < wt + pt + bt {
 		self.anime.state = 'burn'
 	}

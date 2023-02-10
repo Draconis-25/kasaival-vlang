@@ -113,7 +113,7 @@ pub fn (mut self Core) update(mut state state.State) {
 		self.y += dy
 	}
 
-	self.flame.update(self.x, self.y - h)
+	self.flame.update(self.x, self.y - h) or { 0 }
 }
 
 pub fn (self &Core) burn(fuel f32) {
